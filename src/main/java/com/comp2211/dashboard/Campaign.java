@@ -195,4 +195,21 @@ public class Campaign {
   public double getClickThroughRate() {
     return (double) (clickDataList.size() / impressionDataList.size()) * 100;
   }
+
+  /**
+   * Calculates the total cost of the campaign.
+   * @return Uses the sum of the costs of impression and clicks to return a total cost of the campaign.
+   */
+  public double getTotalCost(){
+    ArrayList<ClickData> clist = getClickDataList();
+    ArrayList<ImpressionData> ilist = getImpressionDataList();
+    double sum = 0;
+    for (ClickData clickData : clist) {
+      sum += clickData.getClickCost();
+    }
+    for (ImpressionData impressionData : ilist) {
+      sum += impressionData.getImpressionCost();
+    }
+    return sum;
+  }
 }
