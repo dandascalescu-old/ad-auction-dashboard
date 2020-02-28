@@ -1,7 +1,10 @@
 package com.comp2211.dashboard;
 
 import com.comp2211.dashboard.data.*;
+import com.comp2211.dashboard.io.DatabaseManager;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 
 /**
@@ -13,6 +16,9 @@ public class Campaign {
   private ArrayList<ImpressionData> impressionDataList;
   private ArrayList<ServerData> serverDataList;
   private ArrayList<ClickData> clickDataList;
+  
+  private BigDecimal totalClickCost, totalImpressionCost = null;
+  private long clickDataCount, impressionDataCount, serverDataCount = 0L;
 
   /**
    * Constructor for a campaign.
@@ -23,6 +29,19 @@ public class Campaign {
     this.campaignID = campaignID;
   }
 
+  public void cacheData(int limit) {
+    clickDataCount = DatabaseManager.retrieveDataCount(DatabaseManager.Table.click_table);
+    impressionDataCount = DatabaseManager.retrieveDataCount(DatabaseManager.Table.impression_table);
+	serverDataCount = DatabaseManager.retrieveDataCount(DatabaseManager.Table.server_table);
+	
+	totalClickCost = DatabaseManager.retrieveTotalClickCost();
+	totalImpressionCost = DatabaseManager.retrieveTotalImpressionCost();
+
+	setClickDataList(DatabaseManager.retrieveClickData(limit));
+	setImpressionDataList(DatabaseManager.retrieveImpressionData(limit));
+	setServerDataList(DatabaseManager.retrieveServerData(limit));
+  }
+  
   /**
    * Returns impression data list for the campaign.
    *
@@ -174,28 +193,32 @@ public class Campaign {
     serverDataList.remove(serverData);
   }
 
+  public long getClickDataCount() {
+	return clickDataCount;
+  }
+	  
+  public long getImpressionDataCount() {
+	return impressionDataCount;
+  }
+	  
+  public long getServerDataCount() {
+	return serverDataCount;
+  }
+  
   /**
    * Sums up all the costs of each click.
    * @return Total cost of all click in campaign.
    */
-  private double getTotalClickCost(){
-    double sum = 0;
-    for (ClickData clickData : getClickDataList()) {
-      sum += clickData.getClickCost();
-    }
-    return sum;
+  private BigDecimal getTotalClickCost(){
+    return totalClickCost;
   }
 
   /**
    * Sums up all the costs of each impression.
    * @return Total cost of all impressions in campaign.
    */
-  private double getTotalImpressionCost(){
-    double sum = 0;
-    for (ImpressionData impressionData : getImpressionDataList()) {
-      sum += impressionData.getImpressionCost();
-    }
-    return sum;
+  private BigDecimal getTotalImpressionCost(){
+    return totalImpressionCost;
   }
 
   /**
@@ -203,8 +226,8 @@ public class Campaign {
    *
    * @return Average cost per click given in pence.
    */
-  public double getAvgCostPerClick() {
-    return getTotalClickCost() / clickDataList.size();
+  public BigDecimal getAvgCostPerClick() {
+    return getTotalCost().divide(BigDecimal.valueOf(getClickDataCount()), 6, RoundingMode.HALF_UP);
   }
 
   /**
@@ -212,8 +235,8 @@ public class Campaign {
    *
    * @return Click through rate as a percentage.
    */
-  public double getClickThroughRate() {
-    return (double) (clickDataList.size() / impressionDataList.size()) * 100;
+  public BigDecimal getClickThroughRate() {
+    return BigDecimal.valueOf(clickDataCount).divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
   }
 
   /**
@@ -221,8 +244,8 @@ public class Campaign {
    *
    * @return Total cost of a campaign in pence.
    */
-  public double getTotalCost() {
-    return getTotalClickCost() + getTotalImpressionCost();
+  public BigDecimal getTotalCost() {
+    return getTotalClickCost().add(getTotalImpressionCost());
   }
 
   /**
@@ -231,20 +254,20 @@ public class Campaign {
    *
    * @return The average cost per acquisition given in pence.
    */
-  public double getAvgCostPerAcquisition() {
+  public BigDecimal getAvgCostPerAcquisition() {
     ArrayList<ClickData> clist = getClickDataList();
-    double sum = 0;
-    int count = 0;
+    BigDecimal sum = BigDecimal.valueOf(0);
+    long count = 0L;
     for (ClickData clickData : clist) {
       if (getServerDataByID(clickData.getId()).hasConverted()) {
-        sum += clickData.getClickCost();
+        sum.add(clickData.getClickCost());
         count++;
       }
     }
     if (count == 0) {
-      return 0;
+      return sum;
     }
-    return sum / count;
+    return sum.divide(BigDecimal.valueOf(count), 6, RoundingMode.HALF_UP);
   }
 
   /**
@@ -252,7 +275,7 @@ public class Campaign {
    *
    * @return The average cost per acquisition given in pence.
    */
-  public double getCostPerThousandImpressions(){
-    return getTotalImpressionCost() / impressionDataList.size() * 1000;
+  public BigDecimal getCostPerThousandImpressions(){
+    return getTotalImpressionCost().divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(1000));
   }
 }

@@ -1,11 +1,11 @@
 package com.comp2211.dashboard.data;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 /** A type of campaign data. Used to store information about server. */
 public class ServerData extends CampaignData {
-  private Date entryDate, exitDate;
-  private String pagesViewed;
+  private Timestamp entryDate, exitDate;
+  private int pagesViewed;
   private boolean converted;
 
   /**
@@ -20,7 +20,7 @@ public class ServerData extends CampaignData {
    * @param converted Boolean denoting if the user click has led to a conversion.
    */
   public ServerData(
-      String id, Date entryDate, Date exitDate, String pagesViewed, boolean converted) {
+      String id, Timestamp entryDate, Timestamp exitDate, int pagesViewed, boolean converted) {
     super(id);
     this.entryDate = entryDate;
     this.exitDate = exitDate;
@@ -33,7 +33,7 @@ public class ServerData extends CampaignData {
    *
    * @return entryDate is the date/time of the initial entry to the server in Java Date type.
    */
-  public Date getEntryDate() {
+  public Timestamp getEntryDate() {
     return entryDate;
   }
 
@@ -42,7 +42,7 @@ public class ServerData extends CampaignData {
    *
    * @param entryDate Must be of using Java Date type.
    */
-  public void setEntryDate(Date entryDate) {
+  public void setEntryDate(Timestamp entryDate) {
     this.entryDate = entryDate;
   }
 
@@ -51,7 +51,7 @@ public class ServerData extends CampaignData {
    *
    * @return exitDate returned. Not all exits may be logged, so this may be null!
    */
-  public Date getExitDate() {
+  public Timestamp getExitDate() {
     return exitDate;
   }
 
@@ -60,7 +60,7 @@ public class ServerData extends CampaignData {
    *
    * @param exitDate Must be of using Java Date type.
    */
-  public void setExitDate(Date exitDate) {
+  public void setExitDate(Timestamp exitDate) {
     this.exitDate = exitDate;
   }
 
@@ -70,7 +70,7 @@ public class ServerData extends CampaignData {
    * @return pagesViewed is the number of pages the user has gone through or accessed within the
    *     server.
    */
-  public String getPagesViewed() {
+  public int getPagesViewed() {
     return pagesViewed;
   }
 
@@ -79,7 +79,7 @@ public class ServerData extends CampaignData {
    *
    * @param pagesViewed The number of pages the user has gone through or accessed within the server.
    */
-  public void setPagesViewed(String pagesViewed) {
+  public void setPagesViewed(int pagesViewed) {
     this.pagesViewed = pagesViewed;
   }
 
