@@ -7,7 +7,7 @@ public class ImpressionData extends CampaignData {
   private Date impressionDate;
   private String age;
   private int income, context, gender;
-  private double cost;
+  private double impressionCost;
 
   /**
    * Constructor for storing impression data.
@@ -20,23 +20,23 @@ public class ImpressionData extends CampaignData {
    *     follows: Low=0,Medium=1,High=2.
    * @param context The type of context where the user has seen the impression. E.g.
    *     Blog=0,News=1,Shopping=2,Social Media=3.
-   * @param cost The cost of the impression in pence.
+   * @param impressionCost The cost of the impression in pence.
    * @param gender The gender of the user, given as follows: Male=0,Female=1.
    */
   public ImpressionData(
-      String id,
-      Date impressionDate,
-      String ageRange,
-      int income,
-      int context,
-      double cost,
-      int gender) {
+          String id,
+          Date impressionDate,
+          String ageRange,
+          int income,
+          int context,
+          double impressionCost,
+          int gender) {
     super(id);
     this.impressionDate = impressionDate;
     this.age = ageRange;
     this.income = income;
     this.context = context;
-    this.cost = cost;
+    this.impressionCost = impressionCost;
     this.gender = gender;
   }
 
@@ -114,17 +114,17 @@ public class ImpressionData extends CampaignData {
    *
    * @return cost is the cost of the impression in pence.
    */
-  public double getCost() {
-    return cost;
+  public double getImpressionCost() {
+    return impressionCost;
   }
 
   /**
    * Sets the impression cost.
    *
-   * @param cost Click cost in pence.
+   * @param impressionCost Click cost in pence.
    */
-  public void setCost(double cost) {
-    this.cost = cost;
+  public void setImpressionCost(double impressionCost) {
+    this.impressionCost = impressionCost;
   }
 
   /**
