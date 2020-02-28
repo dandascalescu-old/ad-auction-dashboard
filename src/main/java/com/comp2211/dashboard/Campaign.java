@@ -1,6 +1,7 @@
 package com.comp2211.dashboard;
 
 import com.comp2211.dashboard.data.*;
+
 import java.util.ArrayList;
 
 /**
@@ -176,15 +177,15 @@ public class Campaign {
   /**
    * Calculates the average cost per click using the Click Data List.
    *
-   * @return Average cost per click.
+   * @return Average cost per click given in pence.
    */
   public double getAvgCostPerClick() {
-    ArrayList<ClickData> list = getClickDataList();
+    ArrayList<ClickData> clist = getClickDataList();
     double sum = 0;
-    for (ClickData clickData : list) {
+    for (ClickData clickData : clist) {
       sum += clickData.getClickCost();
     }
-    return sum / list.size();
+    return sum / clist.size();
   }
 
   /**
@@ -198,9 +199,11 @@ public class Campaign {
 
   /**
    * Calculates the total cost of the campaign.
-   * @return Uses the sum of the costs of impression and clicks to return a total cost of the campaign.
+   *
+   * @return Uses the sum of the costs of impression and clicks to return a total cost of the
+   *     campaign in pence.
    */
-  public double getTotalCost(){
+  public double getTotalCost() {
     ArrayList<ClickData> clist = getClickDataList();
     ArrayList<ImpressionData> ilist = getImpressionDataList();
     double sum = 0;
@@ -211,5 +214,27 @@ public class Campaign {
       sum += impressionData.getImpressionCost();
     }
     return sum;
+  }
+
+  /**
+   * Calculates the average cost per acquisition/conversion by summing all converted clicks and
+   * dividing by the count.
+   *
+   * @return The average cost per acquisition given in pence.
+   */
+  public double getAvgCostPerAcquisition() {
+    ArrayList<ClickData> clist = getClickDataList();
+    double sum = 0;
+    int count = 0;
+    for (ClickData clickData : clist) {
+      if (getServerDataByID(clickData.getId()).hasConverted()) {
+        sum += clickData.getClickCost();
+        count++;
+      }
+    }
+    if (count == 0) {
+      return 0;
+    }
+    return sum / count;
   }
 }

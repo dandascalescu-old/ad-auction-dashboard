@@ -24,13 +24,13 @@ public class ImpressionData extends CampaignData {
    * @param gender The gender of the user, given as follows: Male=0,Female=1.
    */
   public ImpressionData(
-          String id,
-          Date impressionDate,
-          String ageRange,
-          int income,
-          int context,
-          double impressionCost,
-          int gender) {
+      String id,
+      Date impressionDate,
+      String ageRange,
+      int income,
+      int context,
+      double impressionCost,
+      int gender) {
     super(id);
     this.impressionDate = impressionDate;
     this.age = ageRange;
