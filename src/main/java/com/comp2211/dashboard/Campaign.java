@@ -175,17 +175,36 @@ public class Campaign {
   }
 
   /**
-   * Calculates the average cost per click using the Click Data List.
+   * Sums up all the costs of each click.
+   * @return Total cost of all click in campaign.
+   */
+  private double getTotalClickCost(){
+    double sum = 0;
+    for (ClickData clickData : getClickDataList()) {
+      sum += clickData.getClickCost();
+    }
+    return sum;
+  }
+
+  /**
+   * Sums up all the costs of each impression.
+   * @return Total cost of all impressions in campaign.
+   */
+  private double getTotalImpressionCost(){
+    double sum = 0;
+    for (ImpressionData impressionData : getImpressionDataList()) {
+      sum += impressionData.getImpressionCost();
+    }
+    return sum;
+  }
+
+  /**
+   * Calculates the average cost per click using the total click cost divided by the number of clicks.
    *
    * @return Average cost per click given in pence.
    */
   public double getAvgCostPerClick() {
-    ArrayList<ClickData> clist = getClickDataList();
-    double sum = 0;
-    for (ClickData clickData : clist) {
-      sum += clickData.getClickCost();
-    }
-    return sum / clist.size();
+    return getTotalClickCost() / clickDataList.size();
   }
 
   /**
@@ -198,22 +217,12 @@ public class Campaign {
   }
 
   /**
-   * Calculates the total cost of the campaign.
+   * Calculates the total cost of the campaign using the sum of the costs of impression and clicks.
    *
-   * @return Uses the sum of the costs of impression and clicks to return a total cost of the
-   *     campaign in pence.
+   * @return Total cost of a campaign in pence.
    */
   public double getTotalCost() {
-    ArrayList<ClickData> clist = getClickDataList();
-    ArrayList<ImpressionData> ilist = getImpressionDataList();
-    double sum = 0;
-    for (ClickData clickData : clist) {
-      sum += clickData.getClickCost();
-    }
-    for (ImpressionData impressionData : ilist) {
-      sum += impressionData.getImpressionCost();
-    }
-    return sum;
+    return getTotalClickCost() + getTotalImpressionCost();
   }
 
   /**
@@ -236,5 +245,14 @@ public class Campaign {
       return 0;
     }
     return sum / count;
+  }
+
+  /**
+   * Calculates/estimates the cost per thousand impression by calculating the average cost of a single impression multiplied by 1000
+   *
+   * @return The average cost per acquisition given in pence.
+   */
+  public double getCostPerThousandImpressions(){
+    return getTotalImpressionCost() / impressionDataList.size() * 1000;
   }
 }
