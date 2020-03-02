@@ -5,7 +5,9 @@ import com.comp2211.dashboard.io.DatabaseManager;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Campaign object used to represent each individual campaign. Contains impression, click and server
@@ -277,5 +279,14 @@ public class Campaign {
    */
   public BigDecimal getCostPerThousandImpressions(){
     return getTotalImpressionCost().divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(1000));
+  }
+
+  //todo:
+  public HashMap<String,BigDecimal> getDateAverages(){
+    HashMap<String,BigDecimal> test = new HashMap<>();
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    String o = sdf.format(impressionDataList.get(0).getImpressionDate());
+    test.put("asdf",BigDecimal.valueOf(0.22));
+    return test;
   }
 }

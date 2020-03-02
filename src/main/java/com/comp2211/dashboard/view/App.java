@@ -1,5 +1,8 @@
 package com.comp2211.dashboard.view;
 
+import com.comp2211.dashboard.Campaign;
+import com.comp2211.dashboard.io.DatabaseManager;
+import com.comp2211.dashboard.viewmodel.PrimaryController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,28 +11,33 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-/**
- * JavaFX App
- */
+/** JavaFX App */
 public class App extends Application {
 
-    private static Scene scene;
+  private static Scene scene;
 
-    @Override
-    public void start(Stage primaryStage) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("primary.fxml"));
-        //Parent root2 = FXMLLoader.load(getClass().getResource("testScene1.fxml"));
-        Scene scene = new Scene(root);
+  @Override
+  public void start(Stage primaryStage) throws IOException {
+    DatabaseManager.init();
+    Campaign campaign = new Campaign("1");
+    campaign.cacheData(10);
+    System.out.println(campaign.getTotalCost());
+    FXMLLoader fxmlLoader = new FXMLLoader();
+    Parent root = fxmlLoader.load(getClass().getResource("primary.fxml"));
+    PrimaryController primaryController = (PrimaryController) fxmlLoader.getController();
+    primaryController.setGraphValue(campaign.getDateAverages());
 
-        primaryStage.setScene(scene);
-        //primaryStage.initStyle(StageStyle.DECORATED);
+    // Parent root2 = FXMLLoader.load(getClass().getResource("testScene1.fxml"));
+    Scene scene = new Scene(root);
 
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
+    primaryStage.setScene(scene);
+    // primaryStage.initStyle(StageStyle.DECORATED);
 
-    public static void main(String[] args) {
-        launch();
-    }
+    primaryStage.setScene(scene);
+    primaryStage.show();
+  }
 
+  public static void main(String[] args) {
+    launch();
+  }
 }

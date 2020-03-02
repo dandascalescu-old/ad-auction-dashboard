@@ -1,10 +1,14 @@
 package com.comp2211.dashboard.viewmodel;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 
+import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.view.DatabasePanel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,7 +39,12 @@ public class PrimaryController implements Initializable {
         //databaseTreeTable.getColumns().addAll(myColumn);
 
         System.out.println("Hellow");
+    }
 
+    public void setGraphValue(HashMap<String, BigDecimal> hm){
+        //sets the values in the variables
+    System.out.println("test");
 
+    //update the view
     }
 }
