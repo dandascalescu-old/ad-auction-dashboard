@@ -24,6 +24,7 @@ public class Campaign {
   private long clickDataCount, impressionDataCount, serverDataCount = 0L;
 
   private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+  private boolean initialLoad = false;
 
   /**
    * Constructor for a campaign.
@@ -34,10 +35,33 @@ public class Campaign {
     this.campaignID = campaignID;
   }
 
+  public boolean isClickDataLoaded() {
+	if (initialLoad) {
+      return clickDataList.size() == clickDataCount;
+	}
+	return false;
+  }
+
+  public boolean isImpressionDataLoaded() {
+	if (initialLoad) {
+      return impressionDataList.size() == impressionDataCount;
+	}
+	return false;
+  }
+
+  public boolean isServerDataLoaded() {
+	if (initialLoad) {
+      return serverDataList.size() == serverDataCount;
+    }
+    return false;
+  }
+
   public void cacheData(int limit) {
     clickDataCount = DatabaseManager.retrieveDataCount(DatabaseManager.Table.click_table);
     impressionDataCount = DatabaseManager.retrieveDataCount(DatabaseManager.Table.impression_table);
     serverDataCount = DatabaseManager.retrieveDataCount(DatabaseManager.Table.server_table);
+
+    initialLoad = true;
 
     totalClickCost = DatabaseManager.retrieveTotalClickCost();
     totalImpressionCost = DatabaseManager.retrieveTotalImpressionCost();
