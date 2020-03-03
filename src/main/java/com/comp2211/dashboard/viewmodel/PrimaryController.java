@@ -11,11 +11,17 @@ import com.comp2211.dashboard.Campaign;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.chart.*;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import org.junit.Test;
 // import org.testfx.api.FxAssert;
@@ -37,39 +43,49 @@ public class PrimaryController implements Initializable {
 
   @FXML BarChart<String, Double> demographics_barchart;
 
-  @FXML JFXComboBox<String> demogCombobox;
+  @FXML JFXComboBox<String> demogCombobox, campaignCombobox;
 
   @FXML Text averageCostTitle, totalCostTitle, demographicsTitle;
   @FXML Text totalClickCost, totalImpresCost, totalCost, clickThroughRateText;
+
 
   Campaign campaign;
 
   String avgCostAcq = "Average Cost of Acquisition",
       avgCostImpr = "Average Cost of Impression",
       avgCostClick = "Average Cost of Click",
+
       percAge = "Age",
       percGender = "Gender",
       percIncome = "Income",
       percContext = "Context";
 
+  //Linked with button to open Database Panel
   public void openDatabasePane(ActionEvent event) {
     mainPane.setCenter(databasePane);
   }
 
+  //Linked with button to open Dashboard Panel
   public void openDashboardPane(ActionEvent event) {
     mainPane.setCenter(dashboardPane);
   }
 
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+
     averageCombobox.getItems().addAll(avgCostAcq, avgCostImpr, avgCostClick);
-
     demogCombobox.getItems().addAll(percAge, percGender, percIncome, percContext);
-
+    campaignCombobox.getItems().addAll("Campaign 1", "Campaign 2", "Campaign 3", "Campaign 4");
     averageCombobox.setPromptText(avgCostAcq);
     demogCombobox.setPromptText(percAge);
+    campaignCombobox.setPromptText("Campaign 1");
+
+
+
   }
 
+  //Not called from fxml
   public void setCampaign(Campaign campaign) {
     this.campaign = campaign;
     populateChart(campaign.getDatedAcquisitionCostAverages(), "Acquisitions", average_linechart);
@@ -77,12 +93,15 @@ public class PrimaryController implements Initializable {
     updateAll();
   }
 
+  //Not called from fxml
+
   public void updateAll() {
     setTotalCosts();
     // populateDemogChart();
 
   }
 
+  //Not called from fxml
   private void setTotalCosts() {
 
     totalClickCost.setText("£" + campaign.getTotalClickCost().setScale(2, RoundingMode.CEILING).toString());
@@ -104,6 +123,10 @@ public class PrimaryController implements Initializable {
     } else if (averageComboboxValue.equals(avgCostClick)) {
       populateChart(campaign.getDatedClickCostAverages(), "Clicks", average_linechart);
     }
+  }
+
+  public void campaignComboboxController(){
+
   }
 
   public void demogComboboxController() {
@@ -130,15 +153,23 @@ public class PrimaryController implements Initializable {
    */
   private void populateChart(
       HashMap<String, BigDecimal> hm, String name, XYChart<String, Double> chart) {
-    chart.getData().clear();
-    XYChart.Series<String, Double> seriesAverage = new XYChart.Series<String, Double>();
-    for (String dateString : hm.keySet()) {
-      seriesAverage
-          .getData()
-          .add(new XYChart.Data<String, Double>(dateString, hm.get(dateString).doubleValue()));
-    }
-    seriesAverage.setName(name);
-    chart.getData().add(seriesAverage);
+
+      chart.getData().clear();
+      XYChart.Series<String, Double> seriesAverage = new XYChart.Series<String, Double>();
+
+      Double previousValue = new Double(0.0);
+      for (String dateString : hm.keySet()) {
+
+        XYChart.Data<String, Double> data = new XYChart.Data<String, Double>(dateString, hm.get(dateString).doubleValue());
+        data.setNode(new HoveredThresholdNode(previousValue,hm.get(dateString).doubleValue()));
+
+        seriesAverage.getData().add(data);
+
+        previousValue = hm.get(dateString).doubleValue();
+      }
+
+      seriesAverage.setName(name);
+      chart.getData().add(seriesAverage);
   }
 
   @Test
@@ -148,5 +179,43 @@ public class PrimaryController implements Initializable {
 
     // FxAssert.verifyThat( "#averageCostTitle", LabeledMatchers.hasText(""));
 
+  }
+
+
+
+  class HoveredThresholdNode extends StackPane {
+    HoveredThresholdNode(Double priorValue, Double value) {
+      setPrefSize(12, 12);
+
+      final Label label = createDataThresholdLabel(String.valueOf(priorValue), String.valueOf(value));
+
+      setOnMouseEntered(new EventHandler<MouseEvent>() {
+        @Override public void handle(MouseEvent mouseEvent) {
+          getChildren().setAll(label);
+          setCursor(Cursor.NONE);
+          toFront();
+        }
+      });
+      setOnMouseExited(new EventHandler<MouseEvent>() {
+        @Override public void handle(MouseEvent mouseEvent) {
+          getChildren().clear();
+          setCursor(Cursor.CROSSHAIR);
+        }
+      });
+    }
+
+    private Label createDataThresholdLabel(String priorValue, String value) {
+      final Label label = new Label(value + "");
+      label.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
+      label.setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
+
+
+      label.setTextFill(Color.DARKGRAY);
+
+
+
+      label.setMinSize(Label.USE_PREF_SIZE, Label.USE_PREF_SIZE);
+      return label;
+    }
   }
 }

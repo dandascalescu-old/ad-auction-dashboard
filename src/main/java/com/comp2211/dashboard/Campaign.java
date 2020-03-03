@@ -514,12 +514,16 @@ public class Campaign {
       switch (impressionData.getIncome()) {
         case 0:
           incrementPercentageCounter(countMap, "Blog");
+          break;
         case 1:
           incrementPercentageCounter(countMap, "News");
+          break;
         case 2:
           incrementPercentageCounter(countMap, "Shopping");
+          break;
         case 3:
           incrementPercentageCounter(countMap, "Social Media");
+          break;
       }
       total++;
     }

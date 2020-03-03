@@ -59,13 +59,13 @@
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.4</version>
         <configuration>
-          <mainClass>com.comp2211.dashboard.view.GUIStarter</mainClass>
+          <mainClass>com.comp2211.dashboard.GUIStarter</mainClass>
         </configuration>
       </plugin>
       <plugin>
         <!-- Build an all inclusive Jar file for stand alone execution -->
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.1.1</version>
+        <version>3.2.0</version>
         <configuration>
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>

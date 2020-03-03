@@ -33,6 +33,7 @@
                      </font>
                   </Text>
                   <Line endX="-24.0" endY="-18.0" layoutX="109.0" layoutY="91.0" opacity="0.1" startX="-24.0" startY="-92.0" strokeLineCap="BUTT" />
+                  <JFXComboBox fx:id="campaignCombobox" layoutX="929.0" layoutY="24.0" onAction="#campaignComboboxController" prefHeight="27.0" prefWidth="180.0" />
                </children>
                <effect>
                   <DropShadow color="TRANSPARENT" />
@@ -94,10 +95,10 @@
                                                 <JFXComboBox fx:id="averageCombobox" layoutX="787.0" layoutY="10.0" onAction="#averageComboboxController" prefHeight="27.0" prefWidth="180.0" />
                                                 <LineChart fx:id="average_linechart" animated="false" layoutX="114.0" layoutY="55.0" prefHeight="276.0" prefWidth="834.0">
                                                   <xAxis>
-                                                    <CategoryAxis side="BOTTOM" fx:id="xLineAxis" />
+                                                    <CategoryAxis label="Date" side="BOTTOM" fx:id="xLineAxis" />
                                                   </xAxis>
                                                   <yAxis>
-                                                    <NumberAxis fx:id="yAxisLine" side="LEFT" />
+                                                    <NumberAxis fx:id="yAxisLine" label="Cost (£)" side="LEFT" />
                                                   </yAxis>
                                                 </LineChart>
                                              </children>
@@ -115,10 +116,10 @@
                                                 </Text>
                                                 <BarChart fx:id="demographics_barchart" animated="false" barGap="1.0" categoryGap="1.0" layoutX="76.0" layoutY="75.0" legendSide="RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="223.0" prefWidth="437.0" style="-fx-background-radius: 20; -fx-vertical-grid-lines-visible: false;" styleClass="dashboard_table">
                                                    <xAxis>
-                                                      <CategoryAxis side="BOTTOM" />
+                                                      <CategoryAxis label="Categories" side="BOTTOM" />
                                                    </xAxis>
                                                    <yAxis>
-                                                      <NumberAxis side="LEFT" />
+                                                      <NumberAxis label="Percentage" side="LEFT" />
                                                    </yAxis>
                                                    <opaqueInsets>
                                                       <Insets />
