@@ -21,7 +21,7 @@ public class DatabaseManager {
    * Initialise the database connection using info from the configuration file
    */
   public static void init() {
-    sqlDatabase = new Database("localhost","3306","seg2020","seg","pass");
+    sqlDatabase = new Database("64.227.36.253","3306","seg2020","seg23","exw3karpouziastinakri");
 
     if (sqlDatabase.open() == null) {
       System.out.println("Database error occured. Exiting now.");
