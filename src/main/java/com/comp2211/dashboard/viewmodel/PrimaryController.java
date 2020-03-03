@@ -1,6 +1,7 @@
 package com.comp2211.dashboard.viewmodel;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +40,7 @@ public class PrimaryController implements Initializable {
   @FXML JFXComboBox<String> demogCombobox;
 
   @FXML Text averageCostTitle, totalCostTitle, demographicsTitle;
-  @FXML Text totalClickCost, totalImpresCost, totalCost;
+  @FXML Text totalClickCost, totalImpresCost, totalCost, clickThroughRateText;
 
   Campaign campaign;
 
@@ -84,9 +85,11 @@ public class PrimaryController implements Initializable {
 
   private void setTotalCosts() {
 
-    totalClickCost.setText("£" + campaign.getTotalClickCost().toString());
-    totalImpresCost.setText("£" + campaign.getTotalImpressionCost().toString());
-    totalCost.setText("£" + campaign.getTotalCost().toString());
+    totalClickCost.setText("£" + campaign.getTotalClickCost().setScale(2, RoundingMode.CEILING).toString());
+    totalImpresCost.setText("£" + campaign.getTotalImpressionCost().setScale(2, RoundingMode.CEILING).toString());
+    totalCost.setText("£" + campaign.getTotalCost().setScale(2, RoundingMode.CEILING).toString());
+    clickThroughRateText.setText(campaign.getClickThroughRate().setScale(2, RoundingMode.CEILING).toString() + "%");
+
   }
 
   public void averageComboboxController(ActionEvent event) {
@@ -118,24 +121,6 @@ public class PrimaryController implements Initializable {
     }
   }
 
-  private void populatePercentage() {
-
-    XYChart.Series<String, Double> seriesAverage = new XYChart.Series<String, Double>();
-    seriesAverage.setName("Age");
-
-    seriesAverage.getData().add(new XYChart.Data<String, Double>("Jan", 0.565));
-    seriesAverage.getData().add(new XYChart.Data<String, Double>("Feb", 1.242));
-
-    seriesAverage.getData().add(new XYChart.Data<String, Double>("Mar", 1.542));
-    seriesAverage.getData().add(new XYChart.Data<String, Double>("Apr", 2.242));
-    seriesAverage.getData().add(new XYChart.Data<String, Double>("Jun", 2.542));
-
-    seriesAverage.getData().add(new XYChart.Data<String, Double>("Jul", 3.042));
-    seriesAverage.getData().add(new XYChart.Data<String, Double>("Aug", 3.542));
-    seriesAverage.getData().add(new XYChart.Data<String, Double>("Sep", 4.042));
-
-    demographics_barchart.getData().add(seriesAverage);
-  }
 
   /**
    * Given a hashmap of dates with averages for the dates, and a series name, generates a graph.
