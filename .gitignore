@@ -3,6 +3,7 @@
 
 ### Custom Ignores ###
 burndown/
+.DS_Store
 
 ### Eclipse ###
 .metadata

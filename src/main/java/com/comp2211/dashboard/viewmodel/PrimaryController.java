@@ -1,24 +1,27 @@
 package com.comp2211.dashboard.viewmodel;
 
-import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
-
 import com.comp2211.dashboard.Campaign;
-import com.comp2211.dashboard.view.DatabasePanel;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.chart.*;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 //import org.junit.Test;
 //import org.testfx.api.FxAssert;
@@ -28,230 +31,179 @@ import javafx.scene.text.Text;
 
 public class PrimaryController implements Initializable {
 
-    @FXML
-    BorderPane mainPane;
+  @FXML BorderPane mainPane;
 
-    @FXML
-    Pane databasePane, dashboardPane;
+  @FXML Pane databasePane, dashboardPane;
 
-    @FXML
-    JFXButton profileButton;
+  @FXML JFXButton profileButton;
 
-    @FXML
-    JFXComboBox<String> averageCombobox;
+  @FXML JFXComboBox<String> averageCombobox;
 
-    @FXML
-    LineChart<String, Double> average_linechart;
+  @FXML LineChart<String, Double> average_linechart;
 
-    @FXML
-    BarChart<String, Double> demographics_barchart;
+  @FXML BarChart<String, Double> demographics_barchart;
 
-    @FXML
-    JFXComboBox<String> demogCombobox;
+  @FXML JFXComboBox<String> demogCombobox, campaignCombobox;
 
-    @FXML
-    Text averageCostTitle, totalCostTitle, demographicsTitle;
+  @FXML Text averageCostTitle, totalCostTitle, demographicsTitle;
+  @FXML Text totalClickCost, totalImpresCost, totalCost, clickThroughRateText;
 
-    @FXML
-    Text totalClickCost, totalImpresCost, totalCost;
 
-    Campaign campaign;
+  Campaign campaign;
 
-    String avgCostAcq = "Average Cost of Acquisition", avgCostImpr = "Average Cost of Impression", avgCostClick = "Average Cost of Click",
-            percAge = "Age", percGender = "Gender", percIncome = "Income", percContext = "Context";
+  String avgCostAcq = "Average Cost of Acquisition",
+      avgCostImpr = "Average Cost of Impression",
+      avgCostClick = "Average Cost of Click",
 
-    public void openDatabasePane(ActionEvent event) {
-        mainPane.setCenter(databasePane);
+      percAge = "Age",
+      percGender = "Gender",
+      percIncome = "Income",
+      percContext = "Context";
 
+  //Linked with button to open Database Panel
+  public void openDatabasePane(ActionEvent event) {
+    mainPane.setCenter(databasePane);
+  }
+
+  //Linked with button to open Dashboard Panel
+  public void openDashboardPane(ActionEvent event) {
+    mainPane.setCenter(dashboardPane);
+  }
+
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+
+    averageCombobox.getItems().addAll(avgCostAcq, avgCostImpr, avgCostClick);
+    demogCombobox.getItems().addAll(percAge, percGender, percIncome, percContext);
+    campaignCombobox.getItems().addAll("Campaign 1", "Campaign 2", "Campaign 3", "Campaign 4");
+    averageCombobox.setPromptText(avgCostAcq);
+    demogCombobox.setPromptText(percAge);
+    campaignCombobox.setPromptText("Campaign 1");
+
+
+
+  }
+
+  //Not called from fxml
+  public void setCampaign(Campaign campaign) {
+    this.campaign = campaign;
+    populateChart(campaign.getDatedAcquisitionCostAverages(), "Acquisitions", average_linechart);
+    populateChart(campaign.getAgePercentage(), "Age", demographics_barchart);
+    updateAll();
+  }
+
+  //Not called from fxml
+
+  public void updateAll() {
+    setTotalCosts();
+    // populateDemogChart();
+
+  }
+
+  //Not called from fxml
+  private void setTotalCosts() {
+
+    totalClickCost.setText("£" + campaign.getTotalClickCost().setScale(2, RoundingMode.CEILING).toString());
+    totalImpresCost.setText("£" + campaign.getTotalImpressionCost().setScale(2, RoundingMode.CEILING).toString());
+    totalCost.setText("£" + campaign.getTotalCost().setScale(2, RoundingMode.CEILING).toString());
+    clickThroughRateText.setText(campaign.getClickThroughRate().setScale(2, RoundingMode.CEILING).toString() + "%");
+
+  }
+
+  public void averageComboboxController(ActionEvent event) {
+
+    String averageComboboxValue = averageCombobox.getValue();
+
+    if (averageComboboxValue.equals(avgCostAcq)) {
+      populateChart(campaign.getDatedAcquisitionCostAverages(), "Acquisitions", average_linechart);
+    } else if (averageComboboxValue.equals(avgCostImpr)) {
+      populateChart(campaign.getDatedImpressionCostAverages(), "Impressions", average_linechart);
+
+    } else if (averageComboboxValue.equals(avgCostClick)) {
+      populateChart(campaign.getDatedClickCostAverages(), "Clicks", average_linechart);
     }
+  }
 
-    public void openDashboardPane(ActionEvent event){
-        mainPane.setCenter(dashboardPane);
+  public void campaignComboboxController(){
+
+  }
+
+  public void demogComboboxController() {
+
+    String averageComboboxValue = demogCombobox.getValue();
+
+    if (averageComboboxValue.equals(percAge)) {
+      populateChart(campaign.getAgePercentage(), "Age", demographics_barchart);
+    } else if (averageComboboxValue.equals(percGender)) {
+      populateChart(campaign.getGenderPercentage(), "Gender", demographics_barchart);
+    } else if (averageComboboxValue.equals(percIncome)) {
+      populateChart(campaign.getIncomePercentage(), "Income", demographics_barchart);
+    } else if (averageComboboxValue.equals(percContext)) {
+      populateChart(campaign.getContextPercentage(), "Context", demographics_barchart);
     }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        averageCombobox.getItems().addAll(avgCostAcq, avgCostImpr, avgCostClick);
-
-        demogCombobox.setPromptText("--- Select Metric ---");
-        demogCombobox.getItems().addAll(percAge, percGender, percIncome, percContext);
-
-        averageCombobox.setPromptText(avgCostAcq);
+  }
 
 
+  /**
+   * Given a hashmap of dates with averages for the dates, and a series name, generates a graph.
+   *
+   * @param hm HashMap containing Date (as a string) and average for the date.
+   * @param name Series name for graph.
+   */
+  private void populateChart(
+      HashMap<String, BigDecimal> hm, String name, XYChart<String, Double> chart) {
 
-        //setTotalCosts();
+      chart.getData().clear();
+      XYChart.Series<String, Double> seriesAverage = new XYChart.Series<String, Double>();
 
-    }
+      Double previousValue = new Double(0.0);
+      for (String dateString : hm.keySet()) {
 
-    public void setCampaign(Campaign campaign) {
-        this.campaign = campaign;
+        XYChart.Data<String, Double> data = new XYChart.Data<String, Double>(dateString, hm.get(dateString).doubleValue());
+        data.setNode(new HoveredThresholdNode(previousValue,hm.get(dateString).doubleValue()));
 
-        updateAll();
-    }
+        seriesAverage.getData().add(data);
 
-    public void updateAll(){
-        setTotalCosts();
-        populateDemogChart();
-        populateAverageCost();
+        previousValue = hm.get(dateString).doubleValue();
+      }
 
+      seriesAverage.setName(name);
+      chart.getData().add(seriesAverage);
+  }
 
-    }
+  class HoveredThresholdNode extends StackPane {
+    HoveredThresholdNode(Double priorValue, Double value) {
+      setPrefSize(12, 12);
 
-    private void setTotalCosts() {
+      final Label label = createDataThresholdLabel(String.valueOf(priorValue), String.valueOf(value));
 
-        totalClickCost.setText("£"+ campaign.getTotalClickCost().toString());
-        totalImpresCost.setText("£" + campaign.getTotalImpressionCost().toString());
-        totalCost.setText("£" + campaign.getTotalCost().toString());
-
-    }
-
-    private void populateDemogChart() {
-
-        XYChart.Series<String, Double> seriesAverage= new XYChart.Series<String, Double>();
-        seriesAverage.setName("Cost");
-
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Jan",0.565));
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Feb", 1.242));
-
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Mar", 1.542));
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Apr", 2.242));
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Jun", 2.542));
-
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Jul", 3.042));
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Aug", 3.542));
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Sep", 4.042));
-
-        demographics_barchart.getData().add(seriesAverage);
-
-
-    }
-
-    public void averageComboboxController(ActionEvent event){
-
-        String averageComboboxValue = averageCombobox.getValue();
-
-        if (averageComboboxValue.equals(avgCostAcq)){
-            average_linechart.getData().clear();
-            populateAverageCost();
-        }else if (averageComboboxValue.equals(avgCostImpr)){
-            average_linechart.getData().clear();
-            populateAverage(campaign.getDatedImpressionCostAverages(), "Impression");
-
-        }else if (averageComboboxValue.equals(avgCostClick)){
-            average_linechart.getData().clear();
-            populateAverageClick();
+      setOnMouseEntered(new EventHandler<MouseEvent>() {
+        @Override public void handle(MouseEvent mouseEvent) {
+          getChildren().setAll(label);
+          setCursor(Cursor.NONE);
+          toFront();
         }
-
-    }
-
-    public void demogComboboxController(){
-
-        String averageComboboxValue = demogCombobox.getValue();
-
-        if (averageComboboxValue.equals(percAge)){
-
-        }else if (averageComboboxValue.equals(percGender)){
-            demographics_barchart.getData().clear();
-
-        }else if (averageComboboxValue.equals(percIncome)){
-
-        }else if (averageComboboxValue.equals(percContext)){
-
+      });
+      setOnMouseExited(new EventHandler<MouseEvent>() {
+        @Override public void handle(MouseEvent mouseEvent) {
+          getChildren().clear();
+          setCursor(Cursor.CROSSHAIR);
         }
-
+      });
     }
 
+    private Label createDataThresholdLabel(String priorValue, String value) {
+      final Label label = new Label(value + "");
+      label.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
+      label.setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
 
-    public void populateAverageCost(){
+      label.setTextFill(Color.DARKGRAY);
 
-        XYChart.Series<String, Double> seriesAverage= new XYChart.Series<String, Double>();
-        seriesAverage.setName("Cost");
 
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Jan",0.565));
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Feb", 1.242));
 
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Mar", 1.542));
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Apr", 2.242));
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Jun", 2.542));
-
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Jul", 3.042));
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Aug", 3.542));
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Sep", 4.042));
-
-        average_linechart.getData().add(seriesAverage);
-
+      label.setMinSize(Label.USE_PREF_SIZE, Label.USE_PREF_SIZE);
+      return label;
     }
-
-    /**
-     * Given a hashmap of dates with averages for the dates, and a series name, generates a graph.
-     * @param hm HashMap containing Date (as a string) and average for the date.
-     * @param name Series name for graph.
-     */
-    private void populateAverage(HashMap<String, BigDecimal> hm, String name){
-        XYChart.Series<String, Double> seriesAverage= new XYChart.Series<String, Double>();
-        for(String dateString:hm.keySet()){
-            seriesAverage.getData().add(new XYChart.Data<String, Double>(dateString, hm.get(dateString).doubleValue()));
-        }
-        seriesAverage.setName(name);
-    }
-
-    private void populateAverageImpr() {
-
-        XYChart.Series<String, Double> seriesAverage= new XYChart.Series<String, Double>();
-        HashMap<String, BigDecimal> hm = campaign.getDatedImpressionCostAverages();
-
-        for(String dateString:hm.keySet()){
-            seriesAverage.getData().add(new XYChart.Data<String, Double>(dateString, hm.get(dateString).doubleValue()));
-        }
-        seriesAverage.setName("Impressions");
-
-//        seriesAverage.getData().add(new XYChart.Data<String, Double>("Jan",1.565));
-//        seriesAverage.getData().add(new XYChart.Data<String, Double>("Feb", 2.242));
-//
-//        seriesAverage.getData().add(new XYChart.Data<String, Double>("Mar", 2.542));
-//        seriesAverage.getData().add(new XYChart.Data<String, Double>("Apr", 3.242));
-//        seriesAverage.getData().add(new XYChart.Data<String, Double>("Jun", 3.542));
-//
-//        seriesAverage.getData().add(new XYChart.Data<String, Double>("Jul", 4.042));
-//        seriesAverage.getData().add(new XYChart.Data<String, Double>("Aug", 5.542));
-//        seriesAverage.getData().add(new XYChart.Data<String, Double>("Sep", 6.042));
-
-        average_linechart.getData().add(seriesAverage);
-
-
-    }
-
-    private void populateAverageClick() {
-
-        XYChart.Series<String, Double> seriesAverage= new XYChart.Series<String, Double>();
-        seriesAverage.setName("Click");
-
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Jan",2.565));
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Feb", 3.242));
-
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Mar", 4.542));
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Apr", 5.242));
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Jun", 6.542));
-
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Jul", 6.042));
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Aug", 7.542));
-        seriesAverage.getData().add(new XYChart.Data<String, Double>("Sep", 8.042));
-
-        average_linechart.getData().add(seriesAverage);
-
-    }
-
-
-//    @Test
-//    public void should_contain_text_with_text(){
-//        //System.out.println(averageCostTitle.getText());
-//       // FxAssert.verifyThat(averageCostTitle, TextMatchers.hasText(averageCostTitle.getText()));
-//
-//        //FxAssert.verifyThat( "#averageCostTitle", LabeledMatchers.hasText(""));
-//
-//
-//
-//    }
+  }
 }
-

@@ -23,13 +23,16 @@ public class App extends Application {
     Campaign campaign = new Campaign("1");
     campaign.cacheData(0);
     System.out.println(campaign.getTotalCost());
+
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("primary.fxml"));
     Parent root = fxmlLoader.load();
     PrimaryController primaryController = (PrimaryController) fxmlLoader.getController();
+
     System.out.println(primaryController);
     System.out.println(campaign);
+
     primaryController.setCampaign(campaign);
-    primaryController.updateAll();
+
     //primaryController.setGraphValue(campaign.getDateAverages());
 
     // Parent root2 = FXMLLoader.load(getClass().getResource("testScene1.fxml"));
