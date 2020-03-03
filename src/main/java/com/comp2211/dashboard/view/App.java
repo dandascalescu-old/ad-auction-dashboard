@@ -30,7 +30,7 @@ public class App extends Application {
     System.out.println(primaryController);
     System.out.println(campaign);
     primaryController.setCampaign(campaign);
-    primaryController.updateAll();
+
     //primaryController.setGraphValue(campaign.getDateAverages());
 
     // Parent root2 = FXMLLoader.load(getClass().getResource("testScene1.fxml"));
