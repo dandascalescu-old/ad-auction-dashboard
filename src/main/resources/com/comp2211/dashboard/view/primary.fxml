@@ -176,20 +176,20 @@
                                                 <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
                                              </effect>
                                           </Pane>
-                                          <Pane layoutX="55.0" layoutY="755.0" prefHeight="330.0" prefWidth="420.0" style="-fx-background-color: #FFFFFF;">
+                                          <Pane layoutX="55.0" layoutY="763.0" prefHeight="330.0" prefWidth="420.0" style="-fx-background-color: #FFFFFF;">
                                              <children>
                                                 <Line endX="785.0" layoutX="-365.0" layoutY="53.0" opacity="0.1" startX="365.0" />
-                                                <Text fx:id="totalCostTitle1" fill="#474c49" layoutX="153.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Click Through rate">
+                                                <Text fx:id="totalCostTitle1" fill="#474c49" layoutX="153.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Click Through Rate">
                                                    <font>
                                                       <Font name="SansSerif Bold" size="13.0" />
                                                    </font>
                                                 </Text>
-                                                <Text fx:id="clickThroughRateText" fill="#474c49" layoutX="152.0" layoutY="185.0" strokeType="OUTSIDE" strokeWidth="0.0" text="4.93%">
+                                                <Text fx:id="clickThroughRateText" fill="#474c49" layoutX="128.0" layoutY="185.0" strokeType="OUTSIDE" strokeWidth="0.0" text="4.93%">
                                                    <font>
                                                       <Font name="SansSerif Bold" size="58.0" />
                                                    </font>
                                                 </Text>
-                                                <Text fx:id="totalCostTitle11" fill="#474c49" layoutX="152.0" layoutY="228.0" strokeType="OUTSIDE" strokeWidth="0.0" text="click / impressions">
+                                                <Text fx:id="totalCostTitle11" fill="#474c49" layoutX="152.0" layoutY="224.0" strokeType="OUTSIDE" strokeWidth="0.0" text="click / impressions">
                                                    <font>
                                                       <Font name="SansSerif Bold" size="13.0" />
                                                    </font>
@@ -234,9 +234,9 @@
                            </image>
                         </ImageView>
                      </graphic></JFXButton>
-                  <JFXButton alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="109.0" onAction="#openDatabasePane" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
+                  <JFXButton alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="10.0" layoutY="109.0" onAction="#openDatabasePane" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
                      <graphic>
-                        <ImageView>
+                        <ImageView disable="true" opacity="0.4">
                            <image>
                               <Image url="@../img/database3.png" />
                            </image>
@@ -247,7 +247,7 @@
                         <Font name="SansSerif Bold" size="10.0" />
                      </font>
                   </Text>
-                  <JFXButton fx:id="profileButton" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="462.0" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
+                  <JFXButton fx:id="profileButton" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="10.0" layoutY="462.0" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
                      <graphic>
                         <ImageView>
                            <image>
@@ -255,7 +255,7 @@
                            </image>
                         </ImageView>
                      </graphic></JFXButton>
-                  <JFXButton alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="649.0" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
+                  <JFXButton alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="10.0" layoutY="649.0" opacity="0.4" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
                      <graphic>
                         <ImageView>
                            <image>
@@ -263,7 +263,7 @@
                            </image>
                         </ImageView>
                      </graphic></JFXButton>
-                  <JFXButton alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="556.0" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
+                  <JFXButton alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="10.0" layoutY="556.0" opacity="0.4" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
                      <graphic>
                         <ImageView>
                            <image>
