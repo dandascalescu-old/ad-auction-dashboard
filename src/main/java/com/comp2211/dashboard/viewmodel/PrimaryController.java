@@ -20,7 +20,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
-import org.junit.Test;
+//import org.junit.Test;
 //import org.testfx.api.FxAssert;
 //import org.testfx.matcher.control.LabeledMatchers;
 //import org.testfx.matcher.control.TextMatchers;
@@ -243,15 +243,15 @@ public class PrimaryController implements Initializable {
     }
 
 
-    @Test
-    public void should_contain_text_with_text(){
-        //System.out.println(averageCostTitle.getText());
-       // FxAssert.verifyThat(averageCostTitle, TextMatchers.hasText(averageCostTitle.getText()));
-
-        //FxAssert.verifyThat( "#averageCostTitle", LabeledMatchers.hasText(""));
-
-
-
-    }
+//    @Test
+//    public void should_contain_text_with_text(){
+//        //System.out.println(averageCostTitle.getText());
+//       // FxAssert.verifyThat(averageCostTitle, TextMatchers.hasText(averageCostTitle.getText()));
+//
+//        //FxAssert.verifyThat( "#averageCostTitle", LabeledMatchers.hasText(""));
+//
+//
+//
+//    }
 }
 
