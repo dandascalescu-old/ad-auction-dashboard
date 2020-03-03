@@ -27,10 +27,10 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   private JFXComboBox<String> averageCombobox;
 
   @FXML
-  private LineChart<String, Double> average_linechart;
+  private LineChart<String, Double> averageLinechart;
 
   @FXML
-  private BarChart<String, Double> demographics_barchart;
+  private BarChart<String, Double> demographicsBarchart;
 
   @FXML
   private JFXComboBox<String> demogCombobox, campaignCombobox;
@@ -52,6 +52,8 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
     averageCombobox.setItems(viewModel.averagesList());
     averageCombobox.valueProperty().bindBidirectional(viewModel.selectedAverageProperty());
+
+    averageLinechart.setData(viewModel.averageLinechartData());
   }
 
   public void campaignComboboxController() {
