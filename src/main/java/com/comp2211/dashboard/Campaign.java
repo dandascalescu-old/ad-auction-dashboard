@@ -239,7 +239,7 @@ public class Campaign {
    *
    * @return Total cost of all click in campaign.
    */
-  private BigDecimal getTotalClickCost() {
+  public BigDecimal getTotalClickCost() {
     return totalClickCost;
   }
 
@@ -248,7 +248,7 @@ public class Campaign {
    *
    * @return Total cost of all impressions in campaign.
    */
-  private BigDecimal getTotalImpressionCost() {
+  public BigDecimal getTotalImpressionCost() {
     return totalImpressionCost;
   }
 
