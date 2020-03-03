@@ -84,7 +84,7 @@ public class ImpressionData extends CampaignData {
    * @return income is the type of income of the user who was given the impression. This is given as
    *     follows: Low=0,Medium=1,High=2.
    */
-  public int getIncome() {
+  public byte getIncome() {
     return income;
   }
 

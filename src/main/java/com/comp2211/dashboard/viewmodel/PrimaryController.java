@@ -3,7 +3,6 @@ package com.comp2211.dashboard.viewmodel;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -157,7 +156,7 @@ public class PrimaryController implements Initializable {
       chart.getData().clear();
       XYChart.Series<String, Double> seriesAverage = new XYChart.Series<String, Double>();
 
-      Double previousValue = new Double(0.0);
+      Double previousValue = 0D;
       for (String dateString : hm.keySet()) {
 
         XYChart.Data<String, Double> data = new XYChart.Data<String, Double>(dateString, hm.get(dateString).doubleValue());

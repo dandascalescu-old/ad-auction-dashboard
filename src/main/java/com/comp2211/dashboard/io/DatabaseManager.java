@@ -29,9 +29,11 @@ public class DatabaseManager {
     System.out.println("Database connection established.");
     open = true;
     verifyDatabaseTables();
-    testData();
   }
 
+  /**
+   * Verifies and prints if any database tables aren't available
+   */
   public static void verifyDatabaseTables() {
     if (!sqlDatabase.tableExists("click_table")) {
       System.out.println("Click table doesn't exist.");
@@ -51,6 +53,10 @@ public class DatabaseManager {
     return open;
   }
 
+  /**
+   * Retrieve the total click cost using an SQL query
+   * @return the calculated click cost
+   */
   public static BigDecimal retrieveTotalClickCost() {
     final ResultSet rs = sqlDatabase.readQuery("SELECT SUM(Click_Cost) FROM click_table;");
     try {
@@ -64,6 +70,10 @@ public class DatabaseManager {
     return BigDecimal.valueOf(0);
   }
   
+  /**
+   * Retrieve the total impression cost using an SQL query
+   * @return the calculated impression cost
+   */
   public static BigDecimal retrieveTotalImpressionCost() {
     final ResultSet rs = sqlDatabase.readQuery("SELECT SUM(Impression_Cost) FROM impression_table;");
     try {
@@ -77,6 +87,11 @@ public class DatabaseManager {
     return BigDecimal.valueOf(0);
   }
 
+  /**
+   * Retrieve the amount of entries in the specified database table
+   * @param t the Table to check
+   * @return the amount of entries found
+   */
   public static long retrieveDataCount(Table t) {
 	final ResultSet rs = sqlDatabase.readQuery("SELECT COUNT(*) FROM " + t.toString() + ";");
 	try {
@@ -90,6 +105,12 @@ public class DatabaseManager {
 	return 0L;
   }
   
+  /**
+   * Helper function to build a query with optional limit
+   * @param table the table to query
+   * @param limit the amount of entries to get, use 0 to select all entries.
+   * @return the final query
+   */
   public static String buildDataQuery(Table table, int limit) {
 	String query = "SELECT * FROM " + table;
 	if(limit > 0) {
@@ -98,6 +119,11 @@ public class DatabaseManager {
     return query + ";";
   }
   
+  /**
+   * Retrieves clickData entries from the database
+   * @param limit the amount of entries to get, use 0 to select all entries.
+   * @return a list of all the selected entries
+   */
   public static ArrayList<ClickData> retrieveClickData(int limit) {
 	final ResultSet rs = sqlDatabase.readQuery(buildDataQuery(Table.click_table, limit));
 	ArrayList<ClickData> dataList = new ArrayList<ClickData>(limit);
@@ -112,6 +138,11 @@ public class DatabaseManager {
 	return dataList;
   }
 
+  /**
+   * Retrieves impressionData entries from the database
+   * @param limit the amount of entries to get, use 0 to select all entries.
+   * @return a list of all the selected entries
+   */
   public static ArrayList<ImpressionData> retrieveImpressionData(int limit) {
 	final ResultSet rs = sqlDatabase.readQuery(buildDataQuery(Table.impression_table, limit));
 	ArrayList<ImpressionData> dataList = new ArrayList<ImpressionData>(limit);
@@ -126,34 +157,22 @@ public class DatabaseManager {
 	return dataList;
   }
   
+  /**
+   * Retrieves serverData entries from the database
+   * @param limit the amount of entries to get, use 0 to select all entries.
+   * @return a list of all the selected entries
+   */
   public static ArrayList<ServerData> retrieveServerData(int limit) {
 	final ResultSet rs = sqlDatabase.readQuery(buildDataQuery(Table.server_table, limit));
 	ArrayList<ServerData> dataList = new ArrayList<ServerData>(limit);
 	try {
 	  while (rs.next()) {
-		dataList.add(new ServerData(rs.getString("ID"), rs.getTimestamp("Entry_Date"), rs.getTimestamp("Exit_Date"), (int) rs.getInt("Pages_Viewed"), rs.getBoolean("Conversion")));
+		dataList.add(new ServerData(rs.getString("ID"), rs.getTimestamp("Entry_Date"), rs.getTimestamp("Exit_Date"), rs.getByte("Pages_Viewed"), rs.getBoolean("Conversion")));
 	  }
     } catch (SQLException e) {
 	   // TODO Auto-generated catch block
        e.printStackTrace();
 	}
 	return dataList;
-  }
-  
-  public static void testData() {
-    final ResultSet rs1 = sqlDatabase.readQuery("SELECT COUNT(Click_Cost) FROM click_table WHERE Click_Cost >= 10;");
-    final ResultSet rs2 = sqlDatabase.readQuery("SELECT SUM(Click_Cost) FROM click_table WHERE Click_Cost >= 10;");
-    try {
-      if (rs1.next()) {
-        System.out.println("Amount of rows with click_cost >= 10: " + rs1.getInt("COUNT(Click_Cost)"));
-      }
-
-      if (rs2.next()) {
-        System.out.println("Total Cost from those rows (with individual click_cost >= 10): " + rs2.getBigDecimal("SUM(Click_Cost)"));
-      }
-    } catch (SQLException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
   }
 }
