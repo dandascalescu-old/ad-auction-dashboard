@@ -511,7 +511,7 @@ public class Campaign {
     HashMap<String, BigDecimal> outMap = new HashMap<>();
     int total = 0;
     for (ImpressionData impressionData : impressionDataList) {
-      switch (impressionData.getIncome()) {
+      switch (impressionData.getContext()) {
         case 0:
           incrementPercentageCounter(countMap, "Blog");
           break;
