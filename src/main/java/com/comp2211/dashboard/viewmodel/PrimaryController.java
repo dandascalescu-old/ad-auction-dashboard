@@ -23,11 +23,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import org.junit.Test;
-// import org.testfx.api.FxAssert;
-// import org.testfx.matcher.control.LabeledMatchers;
-// import org.testfx.matcher.control.TextMatchers;
-// import org.testfx.service.query.NodeQuery;
+//import org.junit.Test;
+//import org.testfx.api.FxAssert;
+//import org.testfx.matcher.control.LabeledMatchers;
+//import org.testfx.matcher.control.TextMatchers;
+//import org.testfx.service.query.NodeQuery;
 
 public class PrimaryController implements Initializable {
 
@@ -172,17 +172,6 @@ public class PrimaryController implements Initializable {
       chart.getData().add(seriesAverage);
   }
 
-  @Test
-  public void should_contain_text_with_text() {
-    // System.out.println(averageCostTitle.getText());
-    // FxAssert.verifyThat(averageCostTitle, TextMatchers.hasText(averageCostTitle.getText()));
-
-    // FxAssert.verifyThat( "#averageCostTitle", LabeledMatchers.hasText(""));
-
-  }
-
-
-
   class HoveredThresholdNode extends StackPane {
     HoveredThresholdNode(Double priorValue, Double value) {
       setPrefSize(12, 12);
@@ -208,7 +197,6 @@ public class PrimaryController implements Initializable {
       final Label label = new Label(value + "");
       label.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
       label.setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
-
 
       label.setTextFill(Color.DARKGRAY);
 
