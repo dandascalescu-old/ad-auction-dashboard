@@ -2,6 +2,7 @@ package com.comp2211.dashboard.viewmodel;
 
 import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.io.DatabaseManager;
+import com.comp2211.dashboard.view.ChartPointLabel;
 import de.saxsys.mvvmfx.ViewModel;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -41,24 +42,10 @@ public class PrimaryViewModel implements ViewModel {
     setupAverageSelector();
 
     DatabaseManager.init();
-    Campaign campaign = new Campaign("1");
+    campaign = new Campaign("1");
     campaign.cacheData(0);
-    System.out.println(campaign.getTotalCost());
 
-    HashMap<String, BigDecimal> hm = campaign.getDatedAcquisitionCostAverages();
-
-      XYChart.Series<String, Double> seriesAverage = new XYChart.Series<>();
-
-      for (String dateString : hm.keySet()) {
-
-        XYChart.Data<String, Double> data = new XYChart.Data<>(dateString, hm.get(dateString).doubleValue());
-
-        seriesAverage.getData().add(data);
-      }
-
-      seriesAverage.setName("Acquisitions");
-
-      averageLinechartData.add(seriesAverage);
+    populateChart(campaign.getDatedAcquisitionCostAverages(), "Acquisition", averageLinechartData);
   }
 
   public ObservableList<String> averagesList() {
@@ -104,7 +91,40 @@ public class PrimaryViewModel implements ViewModel {
       } else {
         selectedAverage.set(defaultAverage);
       }
+
+      if (selectedAverage.getValue().equals(avgCostAcq)) {
+        populateChart(campaign.getDatedAcquisitionCostAverages(), "Acquisitions", averageLinechartData);
+      } else if (selectedAverage.getValue().equals(avgCostImpr)) {
+        populateChart(campaign.getDatedImpressionCostAverages(), "Impressions", averageLinechartData);
+      } else if (selectedAverage.getValue().equals(avgCostClick)) {
+        populateChart(campaign.getDatedClickCostAverages(), "Clicks", averageLinechartData);
+      }
     });
+  }
+
+  /**
+   * Given a HashMap of dates with averages for the dates, and a series name, generates data for a graph.
+   *
+   * @param hm HashMap containing Date (as a string) and average for the date.
+   * @param name Series name for graph.
+   */
+  private void populateChart(HashMap<String, BigDecimal> hm, String name, ObservableList<Series<String, Double>> chartData) {
+    XYChart.Series<String, Double> seriesAverage = new XYChart.Series<>();
+
+    Double previousValue = new Double(0.0);
+    for (String dateString : hm.keySet()) {
+      XYChart.Data<String, Double> data = new XYChart.Data<>(dateString, hm.get(dateString).doubleValue());
+
+      // TODO: Refactor, this is not MVVM (view code is in viewmodel)
+      data.setNode(new ChartPointLabel(previousValue,hm.get(dateString).doubleValue()));
+
+      seriesAverage.getData().add(data);
+    }
+
+    seriesAverage.setName(name);
+
+    chartData.clear();
+    chartData.add(seriesAverage);
   }
 
 }
