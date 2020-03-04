@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import java.util.LinkedHashMap;
 import com.comp2211.dashboard.model.data.ClickData;
 import com.comp2211.dashboard.model.data.ImpressionData;
 import com.comp2211.dashboard.model.data.ServerData;
@@ -87,6 +88,60 @@ public class DatabaseManager {
     return BigDecimal.valueOf(0);
   }
 
+  /**
+   * Retrieve the average impression cost for each date.
+   * @return a map with each date as keys and the avg for that date as a value
+   */
+  public static LinkedHashMap<String, BigDecimal> retrieveAverageImpressionCostPerDate() {
+    final ResultSet rs = sqlDatabase.readQuery("SELECT AVG(Impression_Cost), DATE(Date) DateOnly FROM impression_table GROUP BY DateOnly;");
+    LinkedHashMap<String, BigDecimal> resultMap = new LinkedHashMap<>();
+    try {
+      while (rs.next()) {
+        resultMap.put(rs.getString("DateOnly"), rs.getBigDecimal("AVG(Impression_Cost)"));
+      }
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return resultMap;
+  }
+  
+  /**
+   * Retrieve the average click cost for each date.
+   * @return a map with each date as keys and the avg for that date as a value
+   */
+  public static LinkedHashMap<String, BigDecimal> retrieveAverageClickCostPerDate() {
+    final ResultSet rs = sqlDatabase.readQuery("SELECT AVG(Click_Cost), DATE(Date) DateOnly FROM click_table GROUP BY DateOnly;");
+    LinkedHashMap<String, BigDecimal> resultMap = new LinkedHashMap<>();
+    try {
+      while (rs.next()) {
+        resultMap.put(rs.getString("DateOnly"), rs.getBigDecimal("AVG(Click_Cost)"));
+      }
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return resultMap;
+  }
+  
+  /**
+   * Retrieve the average acquisition cost for each date.
+   * @return a map with each date as keys and the avg for that date as a value
+   */
+  public static LinkedHashMap<String, BigDecimal> retrieveAcquisitionCostPerDate() {
+    final ResultSet rs = sqlDatabase.readQuery("SELECT DATE(Date) DateOnly, AVG(Click_Cost) FROM click_table WHERE ID IN (SELECT DISTINCT ID FROM server_table WHERE Conversion=1) GROUP BY DateOnly;");
+    LinkedHashMap<String, BigDecimal> resultMap = new LinkedHashMap<>();
+    try {
+      while (rs.next()) {
+        resultMap.put(rs.getString("DateOnly"), rs.getBigDecimal("AVG(Click_Cost)"));
+      }
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return resultMap;
+  }
+  
   /**
    * Retrieve the amount of entries in the specified database table
    * @param t the Table to check

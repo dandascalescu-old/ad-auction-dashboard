@@ -5,9 +5,7 @@ import com.comp2211.dashboard.io.DatabaseManager;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
@@ -24,12 +22,11 @@ public class Campaign {
   private BigDecimal totalImpressionCost = BigDecimal.ZERO;
   private long clickDataCount, impressionDataCount, serverDataCount = 0L;
 
-  private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
   private boolean initialLoad = false;
 
   private LinkedHashMap<String, BigDecimal> cachedDatedAcquisitionCostAverages, cachedDatedImpressionCostAverages, cachedDatedClickCostAverages;
   private LinkedHashMap<String, BigDecimal> cachedAgePercentage, cachedGenderPercentage, cachedIncomePercentage, cachedContextPercentage;
-  
+
   /**
    * Constructor for a campaign.
    *
@@ -57,7 +54,7 @@ public class Campaign {
   public String getCampaignID() {
     return campaignID;
   }
-  
+
   /**
    * Check if all clickData are loaded from the database
    * @return true if loaded
@@ -108,7 +105,13 @@ public class Campaign {
     setClickDataList(DatabaseManager.retrieveClickData(limit));
     setImpressionDataList(DatabaseManager.retrieveImpressionData(limit));
     setServerDataList(DatabaseManager.retrieveServerData(limit));
-    
+
+    clearCache();
+
+    System.out.println("Data loaded successfully.");
+  }
+
+  public void clearCache() {
     cachedDatedClickCostAverages.clear();
     cachedDatedImpressionCostAverages.clear();
     cachedDatedAcquisitionCostAverages.clear();
@@ -116,8 +119,6 @@ public class Campaign {
     cachedGenderPercentage.clear();
     cachedIncomePercentage.clear();
     cachedContextPercentage.clear();
-    
-    System.out.println("Data loaded successfully.");
   }
 
   /**
@@ -367,7 +368,7 @@ public class Campaign {
       }
     }
     if (count == 0) {
-      return sum;
+      return BigDecimal.ZERO;
     }
     return sum.divide(BigDecimal.valueOf(count), 6, RoundingMode.HALF_UP);
   }
@@ -382,9 +383,7 @@ public class Campaign {
     if (impressionDataCount == 0) {
       return BigDecimal.ZERO;
     }
-    return getTotalImpressionCost()
-        .divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP)
-        .multiply(BigDecimal.valueOf(1000));
+    return getTotalImpressionCost().divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(1000));
   }
 
   /**
@@ -398,23 +397,8 @@ public class Campaign {
       return cachedDatedAcquisitionCostAverages;
     }
 
-    ArrayList<String> checked = new ArrayList<String>();
-    LinkedHashMap<String, BigDecimal> outMap = new LinkedHashMap<>();
-    LinkedHashMap<String, Integer> countMap = new LinkedHashMap<>();
-    for (ClickData cd : getClickDataList()) {
-      if(checked.contains(cd.getId())) {
-        continue;
-      }
-      checked.add(cd.getId());
-      for (ServerData sd : getServerDataByID(cd.getId())) {
-        if (sd.hasConverted()) {
-          getDatedClickCost(outMap, countMap, cd);
-        }
-      }
-    }
-
     cachedDatedAcquisitionCostAverages.clear();
-    cachedDatedAcquisitionCostAverages.putAll(getDatedCostOutput(outMap, countMap));
+    cachedDatedAcquisitionCostAverages.putAll(DatabaseManager.retrieveAcquisitionCostPerDate());
     return cachedDatedAcquisitionCostAverages;
   }
 
@@ -429,25 +413,8 @@ public class Campaign {
       return cachedDatedImpressionCostAverages;
     }
 
-    LinkedHashMap<String, BigDecimal> outMap = new LinkedHashMap<>();
-    LinkedHashMap<String, Integer> countMap = new LinkedHashMap<>();
-    for (ImpressionData impressionData : impressionDataList) {
-      String key = sdf.format(impressionData.getImpressionDate());
-      BigDecimal oVal = outMap.get(key);
-      Integer cVal = countMap.get(key);
-      if (oVal != null) {
-        oVal = oVal.add(impressionData.getImpressionCost());
-        cVal++;
-      } else {
-        oVal = impressionData.getImpressionCost();
-        cVal = 1;
-      }
-      outMap.put(key, oVal);
-      countMap.put(key, cVal);
-    }
-
     cachedDatedImpressionCostAverages.clear();
-    cachedDatedImpressionCostAverages.putAll(getDatedCostOutput(outMap, countMap));
+    cachedDatedImpressionCostAverages.putAll(DatabaseManager.retrieveAverageImpressionCostPerDate());
     return cachedDatedImpressionCostAverages;
   }
 
@@ -462,69 +429,15 @@ public class Campaign {
       return cachedDatedClickCostAverages;
     }
 
-    LinkedHashMap<String, BigDecimal> outMap = new LinkedHashMap<>();
-    LinkedHashMap<String, Integer> countMap = new LinkedHashMap<>();
-    for (ClickData clickData : clickDataList) {
-      getDatedClickCost(outMap, countMap, clickData);
-    }
-
     cachedDatedClickCostAverages.clear();
-    cachedDatedClickCostAverages.putAll(getDatedCostOutput(outMap, countMap));
+    cachedDatedClickCostAverages.putAll(DatabaseManager.retrieveAverageClickCostPerDate());
     return cachedDatedClickCostAverages;
-  }
-
-  /**
-   * Returns the output for getDated methods.
-   *
-   * @param outMap This is the hash map containing dateString in dd/MM/yyyy with value of the sum of
-   *     costs.
-   * @param countMap This is the hash map containing dateString in dd/MM/yyyy with value of how many
-   *     dates were counted.
-   * @return Returns the averaged outMap. i.e outMap value is divided by corresponding countMap
-   *     value.
-   */
-  private LinkedHashMap<String, BigDecimal> getDatedCostOutput(
-      LinkedHashMap<String, BigDecimal> outMap, LinkedHashMap<String, Integer> countMap) {
-    for (String key : outMap.keySet()) {
-      Integer keyValue = countMap.get(key);
-      if (keyValue != 0) {
-        outMap.put(
-            key, outMap.get(key).divide(BigDecimal.valueOf(keyValue), RoundingMode.HALF_UP));
-      }
-    }
-    return outMap;
-  }
-
-  /**
-   * Adds the total cost of click costs for each day and keeps track of a count of the amount of
-   * days.
-   *
-   * @param outMap This is the hash map containing dateString in dd/MM/yyyy with value of the sum of
-   *     costs.
-   * @param countMap This is the hash map containing dateString in dd/MM/yyyy with value of how many
-   *     dates were counted.
-   * @param clickData The Click Data to add to the maps.
-   */
-  private void getDatedClickCost(
-    HashMap<String, BigDecimal> outMap, HashMap<String, Integer> countMap, ClickData clickData) {
-    String key = sdf.format(clickData.getClickDate());
-    BigDecimal oVal = outMap.get(key);
-    Integer cVal = countMap.get(key);
-    if (oVal != null) {
-      oVal = oVal.add(clickData.getClickCost());
-      cVal++;
-    } else {
-      oVal = clickData.getClickCost();
-      cVal = 1;
-    }
-    outMap.put(key, oVal);
-    countMap.put(key, cVal);
   }
 
   /**
    * Calculates percentage of each age group.
    *
-   * @return HashMap containing the age groups as keys, and the percentage of each group in the
+   * @return LinkedHashMap containing the age groups as keys, and the percentage of each group in the
    *     campaign.
    */
   public LinkedHashMap<String, BigDecimal> getAgePercentage() {
@@ -532,53 +445,46 @@ public class Campaign {
       return cachedAgePercentage;
     }
 
-    LinkedHashMap<String, Integer> countMap = new LinkedHashMap<>();
-    LinkedHashMap<String, BigDecimal> outMap = new LinkedHashMap<>();
-    outMap.put("<25", BigDecimal.ZERO);
-    outMap.put("25-34", BigDecimal.ZERO);
-    outMap.put("35-44", BigDecimal.ZERO);
-    outMap.put("45-54", BigDecimal.ZERO);
-    outMap.put(">54", BigDecimal.ZERO);
-    int total = 0;
+    LinkedHashMap<String, SumWithCount> ageMap = new LinkedHashMap<>();
+
+    ageMap.put("<25", new SumWithCount());
+    ageMap.put("25-34", new SumWithCount());
+    ageMap.put("35-44", new SumWithCount());
+    ageMap.put("45-54", new SumWithCount());
+    ageMap.put(">54", new SumWithCount());
 
     for (ImpressionData impressionData : impressionDataList) {
-      incrementPercentageCounter(countMap, impressionData.getAge());
-      total++;
-    }
-    for (String key : countMap.keySet()) {
-      outMap.put(key, percentageDivider(countMap, key, total));
+      ageMap.get(impressionData.getAge()).incrementCount();
     }
 
     cachedAgePercentage.clear();
-    cachedAgePercentage.putAll(outMap);
+    cachedAgePercentage.putAll(percentageMap(ageMap));
     return cachedAgePercentage;
   }
 
   /**
    * Calculates percentage of each gender.
    *
-   * @return HashMap containing the gender groups as keys, and the percentage of each gender in the
+   * @return LinkedHashMap containing the gender groups as keys, and the percentage of each gender in the
    *     campaign.
    */
-  public HashMap<String, BigDecimal> getGenderPercentage() {
+  public LinkedHashMap<String, BigDecimal> getGenderPercentage() {
     if (cachedGenderPercentage != null && !cachedGenderPercentage.isEmpty()) {
       return cachedGenderPercentage;
     }
 
-    HashMap<String, Integer> countMap = new HashMap<>();
-    HashMap<String, BigDecimal> outMap = new HashMap<>();
-    int total = 0;
+    LinkedHashMap<String, SumWithCount> genderMap = new LinkedHashMap<>();
+
+    genderMap.put("Male", new SumWithCount());
+    genderMap.put("Female", new SumWithCount());
+
     for (ImpressionData impressionData : impressionDataList) {
-      if (impressionData.getGender()) incrementPercentageCounter(countMap, "Male");
-      else incrementPercentageCounter(countMap, "Female");
-      total++;
-    }
-    for (String key : countMap.keySet()) {
-      outMap.put(key, percentageDivider(countMap, key, total));
+      String gender = impressionData.getGender() ? "Male" : "Female";
+      genderMap.get(gender).incrementCount();
     }
 
     cachedGenderPercentage.clear();
-    cachedGenderPercentage.putAll(outMap);
+    cachedGenderPercentage.putAll(percentageMap(genderMap));
     return cachedGenderPercentage;
   }
 
@@ -593,96 +499,82 @@ public class Campaign {
       return cachedIncomePercentage;
     }
 
-    LinkedHashMap<String, Integer> countMap = new LinkedHashMap<>();
-    LinkedHashMap<String, BigDecimal> outMap = new LinkedHashMap<>();
-    int total = 0;
-    outMap.put("Low", BigDecimal.ZERO);
-    outMap.put("Medium", BigDecimal.ZERO);
-    outMap.put("High", BigDecimal.ZERO);
+    LinkedHashMap<String, SumWithCount> incomeMap = new LinkedHashMap<>();
+
+    incomeMap.put("Low", new SumWithCount());
+    incomeMap.put("Medium", new SumWithCount());
+    incomeMap.put("High", new SumWithCount());
+
     for (ImpressionData impressionData : impressionDataList) {
       switch (impressionData.getIncome()) {
         case 0:
-          incrementPercentageCounter(countMap, "Low");
+          incomeMap.get("Low").incrementCount();
           break;
         case 1:
-          incrementPercentageCounter(countMap, "Medium");
+          incomeMap.get("Medium").incrementCount();
           break;
         case 2:
-          incrementPercentageCounter(countMap, "High");
-          break;
+          incomeMap.get("High").incrementCount();
+          break;  
       }
-      total++;
-    }
-    for (String key : countMap.keySet()) {
-      outMap.put(key, percentageDivider(countMap, key, total));
     }
 
     cachedIncomePercentage.clear();
-    cachedIncomePercentage.putAll(outMap);
+    cachedIncomePercentage.putAll(percentageMap(incomeMap));
     return cachedIncomePercentage;
   }
 
   /**
    * Calculates percentage of each context. Blog=0,News=1,Shopping=2,Social Media=3.
    *
-   * @return HashMap containing the context types as keys, and the percentage of each context in the
+   * @return LinkedHashMap containing the context types as keys, and the percentage of each context in the
    *     campaign.
    */
-  public HashMap<String, BigDecimal> getContextPercentage() {
+  public LinkedHashMap<String, BigDecimal> getContextPercentage() {
     if (cachedContextPercentage != null && !cachedContextPercentage.isEmpty()) {
       return cachedContextPercentage;
     }
 
-    HashMap<String, Integer> countMap = new HashMap<>();
-    HashMap<String, BigDecimal> outMap = new HashMap<>();
-    int total = 0;
+    LinkedHashMap<String, SumWithCount> contextMap = new LinkedHashMap<>();
+
+    contextMap.put("Blog", new SumWithCount());
+    contextMap.put("News", new SumWithCount());
+    contextMap.put("Shopping", new SumWithCount());
+    contextMap.put("Social Media", new SumWithCount());
+
     for (ImpressionData impressionData : impressionDataList) {
       switch (impressionData.getContext()) {
         case 0:
-          incrementPercentageCounter(countMap, "Blog");
+          contextMap.get("Blog").incrementCount();
           break;
         case 1:
-          incrementPercentageCounter(countMap, "News");
+          contextMap.get("News").incrementCount();
           break;
         case 2:
-          incrementPercentageCounter(countMap, "Shopping");
+          contextMap.get("Shopping").incrementCount();
           break;
         case 3:
-          incrementPercentageCounter(countMap, "Social Media");
+          contextMap.get("Social Media").incrementCount();
           break;
       }
-      total++;
-    }
-    for (String key : countMap.keySet()) {
-      outMap.put(key, percentageDivider(countMap, key, total));
     }
 
     cachedContextPercentage.clear();
-    cachedContextPercentage.putAll(outMap);
+    cachedContextPercentage.putAll(percentageMap(contextMap));
     return cachedContextPercentage;
   }
 
-  /**
-   * Helps calculate percentage by tracking the running total and number of times a given key has
-   * been seen.
-   *
-   * @param countMap This is the hash map containing dateString in dd/MM/yyyy with value the total
-   *     number of times the given key has been seen.
-   * @param key The key in countMap to increment.
-   */
-  private void incrementPercentageCounter(HashMap<String, Integer> countMap, String key) {
-    Integer val = countMap.get(key);
-    if (val != null) val++;
-    else val = 1;
-    countMap.put(key, val);
-  }
+  private LinkedHashMap<String, BigDecimal> percentageMap (LinkedHashMap<String, SumWithCount> dataMap) {
+    LinkedHashMap<String, BigDecimal> resultMap = new LinkedHashMap<>();
 
-  private BigDecimal percentageDivider(HashMap<String, Integer> countMap, String key, int total) {
-    if (total == 0) {
-      return BigDecimal.valueOf(countMap.get(key)).multiply(BigDecimal.valueOf(100));
+    for (String key : dataMap.keySet()) {
+      long count = dataMap.get(key).getCount();
+      if(count == 0 || impressionDataCount == 0) {
+        resultMap.put(key, BigDecimal.ZERO);        
+      } else {
+        resultMap.put(key, BigDecimal.valueOf(count).divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)));
+      }
     }
-    return BigDecimal.valueOf(countMap.get(key))
-        .divide(BigDecimal.valueOf(total), 6, RoundingMode.HALF_UP)
-        .multiply(BigDecimal.valueOf(100));
+    return resultMap;
   }
 }
