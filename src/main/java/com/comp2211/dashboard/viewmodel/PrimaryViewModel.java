@@ -5,6 +5,7 @@ import com.comp2211.dashboard.io.DatabaseManager;
 import com.comp2211.dashboard.view.ChartPointLabel;
 import de.saxsys.mvvmfx.ViewModel;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Optional;
 import javafx.beans.property.SimpleStringProperty;
@@ -19,9 +20,6 @@ public class PrimaryViewModel implements ViewModel {
   // TODO: Refactor to service and inject...
   private Campaign campaign;
 
-  // TODO: Allow multiple campaigns
-  private final String campaign1 = "Campaign 1";
-
   private ObservableList<String> averages;
   private ObservableList<String> demographics;
   private ObservableList<String> campaigns;
@@ -29,10 +27,10 @@ public class PrimaryViewModel implements ViewModel {
   private ObservableList<Series<String, Double>> averageLinechartData;
   private ObservableList<Series<String, Double>> demographicsBarchartData;
 
-  private StringProperty totalClickCost = new SimpleStringProperty("500.0");
-  private StringProperty totalImpresCost = new SimpleStringProperty("500.0");
-  private StringProperty totalCost = new SimpleStringProperty("500.0");
-  private StringProperty clickThroughRateText = new SimpleStringProperty("500.0");
+  private StringProperty totalClickCost = new SimpleStringProperty("");
+  private StringProperty totalImpresCost = new SimpleStringProperty("");
+  private StringProperty totalCost = new SimpleStringProperty("");
+  private StringProperty clickThroughRateText = new SimpleStringProperty("");
 
   private StringProperty selectedAverage = new SimpleStringProperty();
   private StringProperty selectedDemographic = new SimpleStringProperty();
@@ -46,6 +44,9 @@ public class PrimaryViewModel implements ViewModel {
   private final String demGender = "Gender";
   private final String demIncome = "Income";
   private final String demContext = "Context";
+
+  // TODO: Allow multiple campaigns
+  private final String campaign1 = "Campaign 1";
 
   public void initialize() {
     averages = FXCollections.observableArrayList();
@@ -67,6 +68,7 @@ public class PrimaryViewModel implements ViewModel {
     campaign = new Campaign("1");
     campaign.cacheData(0);
 
+    updateTotalCosts();
     populateChart(campaign.getDatedAcquisitionCostAverages(), "Acquisition", averageLinechartData);
     populateChart(campaign.getAgePercentage(), "Age", demographicsBarchartData);
   }
@@ -117,6 +119,13 @@ public class PrimaryViewModel implements ViewModel {
 
   public StringProperty clickThroughRateTextProperty() {
     return clickThroughRateText;
+  }
+
+  private void updateTotalCosts() {
+    totalClickCost.setValue("£" + campaign.getTotalClickCost().setScale(2, RoundingMode.CEILING).toString());
+    totalImpresCost.setValue("£" + campaign.getTotalImpressionCost().setScale(2, RoundingMode.CEILING).toString());
+    totalCost.setValue("£" + campaign.getTotalCost().setScale(2, RoundingMode.CEILING).toString());
+    clickThroughRateText.setValue(campaign.getClickThroughRate().setScale(2, RoundingMode.CEILING).toString() + "%");
   }
 
   private void setupAverageSelector() {
