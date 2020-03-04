@@ -1,10 +1,9 @@
 package com.comp2211.dashboard.view;
 
-import com.comp2211.dashboard.Campaign;
-import com.comp2211.dashboard.io.DatabaseManager;
-import com.comp2211.dashboard.viewmodel.PrimaryController;
+import com.comp2211.dashboard.viewmodel.PrimaryViewModel;
+import de.saxsys.mvvmfx.FluentViewLoader;
+import de.saxsys.mvvmfx.ViewTuple;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -15,27 +14,14 @@ import java.io.IOException;
 public class App extends Application {
 
   @Override
-  public void start(Stage primaryStage) throws IOException {
-    DatabaseManager.init();
-    Campaign campaign = new Campaign("1");
-    campaign.cacheData(0);
+  public void start(Stage stage) throws IOException {
+    stage.setTitle("Ad Analytics Dashboard");
 
-    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("primary.fxml"));
-    Parent root = fxmlLoader.load();
-    PrimaryController primaryController = (PrimaryController) fxmlLoader.getController();
+    ViewTuple<PrimaryView, PrimaryViewModel> viewTuple = FluentViewLoader.fxmlView(PrimaryView.class).load();
 
-    primaryController.setCampaign(campaign);
-
-    //primaryController.setGraphValue(campaign.getDateAverages());
-
-    // Parent root2 = FXMLLoader.load(getClass().getResource("testScene1.fxml"));
-    Scene scene = new Scene(root);
-
-    primaryStage.setScene(scene);
-    // primaryStage.initStyle(StageStyle.DECORATED);
-
-    primaryStage.setScene(scene);
-    primaryStage.show();
+    Parent root = viewTuple.getView();
+    stage.setScene(new Scene(root));
+    stage.show();
   }
 
   public static void main() {
