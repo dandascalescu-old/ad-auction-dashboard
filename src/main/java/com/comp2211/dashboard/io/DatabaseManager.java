@@ -5,9 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import com.comp2211.dashboard.data.ClickData;
-import com.comp2211.dashboard.data.ImpressionData;
-import com.comp2211.dashboard.data.ServerData;
+import com.comp2211.dashboard.model.data.ClickData;
+import com.comp2211.dashboard.model.data.ImpressionData;
+import com.comp2211.dashboard.model.data.ServerData;
 
 
 public class DatabaseManager {

@@ -1,4 +1,4 @@
-package com.comp2211.dashboard.data;
+package com.comp2211.dashboard.model.data;
 
 /** Superclass for types of campaign data. Stores properties shared with all types of data. */
 public class CampaignData {

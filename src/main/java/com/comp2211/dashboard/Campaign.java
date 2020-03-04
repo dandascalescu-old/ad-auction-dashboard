@@ -1,6 +1,6 @@
 package com.comp2211.dashboard;
 
-import com.comp2211.dashboard.data.*;
+import com.comp2211.dashboard.model.data.*;
 import com.comp2211.dashboard.io.DatabaseManager;
 
 import java.math.BigDecimal;

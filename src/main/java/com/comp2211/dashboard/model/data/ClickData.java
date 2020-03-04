@@ -1,4 +1,4 @@
-package com.comp2211.dashboard.data;
+package com.comp2211.dashboard.model.data;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
