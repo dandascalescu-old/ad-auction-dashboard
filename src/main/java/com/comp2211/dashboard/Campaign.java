@@ -56,7 +56,7 @@ public class Campaign {
    */
   public boolean isClickDataLoaded() {
     if (initialLoad) {
-      return clickDataList.size() == clickDataCount;
+      return clickDataList.size() == clickDataCount && clickDataCount != 0;
     }
     return false;
   }
@@ -67,7 +67,7 @@ public class Campaign {
    */
   public boolean isImpressionDataLoaded() {
     if (initialLoad) {
-      return impressionDataList.size() == impressionDataCount;
+      return impressionDataList.size() == impressionDataCount && impressionDataCount != 0;
     }
     return false;
   }
@@ -78,7 +78,7 @@ public class Campaign {
    */
   public boolean isServerDataLoaded() {
     if (initialLoad) {
-      return serverDataList.size() == serverDataCount;
+      return serverDataList.size() == serverDataCount && serverDataCount != 0;
     }
     return false;
   }
