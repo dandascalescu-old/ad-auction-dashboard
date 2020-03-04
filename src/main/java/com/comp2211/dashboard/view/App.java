@@ -1,9 +1,9 @@
 package com.comp2211.dashboard.view;
 
 import com.comp2211.dashboard.Campaign;
-import com.comp2211.dashboard.io.DatabaseManager;
 import com.comp2211.dashboard.viewmodel.PrimaryController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -13,18 +13,26 @@ import java.io.IOException;
 
 /** JavaFX App */
 public class App extends Application {
+  private static Campaign campaign;
 
   @Override
   public void start(Stage primaryStage) throws IOException {
-    DatabaseManager.init();
-    Campaign campaign = new Campaign("1");
-    campaign.cacheData(0);
-
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("primary.fxml"));
     Parent root = fxmlLoader.load();
     PrimaryController primaryController = (PrimaryController) fxmlLoader.getController();
 
     primaryController.setCampaign(campaign);
+
+    new Thread() {
+      public void run() {
+        campaign.cacheData(0);
+        Platform.runLater(new Runnable() {
+          public void run() {
+            primaryController.updateAll();
+          }
+        });
+      }
+    }.start();
 
     //primaryController.setGraphValue(campaign.getDateAverages());
 
@@ -38,7 +46,8 @@ public class App extends Application {
     primaryStage.show();
   }
 
-  public static void main() {
+  public static void main(Campaign c) {
+    campaign = c;
     launch();
   }
 }

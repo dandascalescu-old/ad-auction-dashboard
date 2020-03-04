@@ -73,10 +73,10 @@ public class PrimaryController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
 
-    averageCombobox.getItems().addAll(avgCostAcq, avgCostImpr, avgCostClick);
+    averageCombobox.getItems().addAll(avgCostClick,avgCostImpr, avgCostAcq);
     demogCombobox.getItems().addAll(percAge, percGender, percIncome, percContext);
     campaignCombobox.getItems().addAll("Campaign 1", "Campaign 2", "Campaign 3", "Campaign 4");
-    averageCombobox.setPromptText(avgCostAcq);
+    averageCombobox.setPromptText(avgCostClick);
     demogCombobox.setPromptText(percAge);
     campaignCombobox.setPromptText("Campaign 1");
 
@@ -87,15 +87,14 @@ public class PrimaryController implements Initializable {
   //Not called from fxml
   public void setCampaign(Campaign campaign) {
     this.campaign = campaign;
-    populateChart(campaign.getDatedAcquisitionCostAverages(), "Acquisitions", average_linechart);
-    populateChart(campaign.getAgePercentage(), "Age", demographics_barchart);
-    updateAll();
   }
 
   //Not called from fxml
 
   public void updateAll() {
     setTotalCosts();
+    populateChart(campaign.getDatedClickCostAverages(), "Clicks", average_linechart);
+    populateChart(campaign.getAgePercentage(), "Age", demographics_barchart);
     // populateDemogChart();
 
   }
@@ -118,7 +117,6 @@ public class PrimaryController implements Initializable {
       populateChart(campaign.getDatedAcquisitionCostAverages(), "Acquisitions", average_linechart);
     } else if (averageComboboxValue.equals(avgCostImpr)) {
       populateChart(campaign.getDatedImpressionCostAverages(), "Impressions", average_linechart);
-
     } else if (averageComboboxValue.equals(avgCostClick)) {
       populateChart(campaign.getDatedClickCostAverages(), "Clicks", average_linechart);
     }
