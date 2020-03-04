@@ -10,7 +10,7 @@ class ServerDataTest {
   private static final String TEST_ID = "test-id";
   private static final Timestamp TEST_ENTRY_DATE = new Timestamp(System.currentTimeMillis() - 5000);
   private static final Timestamp TEST_EXIT_DATE = new Timestamp(System.currentTimeMillis());
-  private static final int TEST_PAGES_VIEWED = 5;
+  private static final byte TEST_PAGES_VIEWED = 5;
   private static final boolean TEST_CONVERTED = false;
 
   private ServerData serverData;
@@ -64,7 +64,7 @@ class ServerDataTest {
 
   @Test
   void setPagesViewed() {
-    int newPagesViewed = 10;
+    byte newPagesViewed = 10;
     this.serverData.setPagesViewed(newPagesViewed);
     assertEquals(newPagesViewed, this.serverData.getPagesViewed());
   }

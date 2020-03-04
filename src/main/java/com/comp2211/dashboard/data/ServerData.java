@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 /** A type of campaign data. Used to store information about server. */
 public class ServerData extends CampaignData {
   private Timestamp entryDate, exitDate;
-  private int pagesViewed;
+  private byte pagesViewed;
   private boolean converted;
 
   /**
@@ -20,7 +20,7 @@ public class ServerData extends CampaignData {
    * @param converted Boolean denoting if the user click has led to a conversion.
    */
   public ServerData(
-      String id, Timestamp entryDate, Timestamp exitDate, int pagesViewed, boolean converted) {
+      String id, Timestamp entryDate, Timestamp exitDate, byte pagesViewed, boolean converted) {
     super(id);
     this.entryDate = entryDate;
     this.exitDate = exitDate;
@@ -70,7 +70,7 @@ public class ServerData extends CampaignData {
    * @return pagesViewed is the number of pages the user has gone through or accessed within the
    *     server.
    */
-  public int getPagesViewed() {
+  public byte getPagesViewed() {
     return pagesViewed;
   }
 
@@ -79,7 +79,7 @@ public class ServerData extends CampaignData {
    *
    * @param pagesViewed The number of pages the user has gone through or accessed within the server.
    */
-  public void setPagesViewed(int pagesViewed) {
+  public void setPagesViewed(byte pagesViewed) {
     this.pagesViewed = pagesViewed;
   }
 

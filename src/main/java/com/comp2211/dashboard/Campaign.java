@@ -16,9 +16,9 @@ import java.util.LinkedHashMap;
  */
 public class Campaign {
   private String campaignID;
+  private ArrayList<ClickData> clickDataList;
   private ArrayList<ImpressionData> impressionDataList;
   private ArrayList<ServerData> serverDataList;
-  private ArrayList<ClickData> clickDataList;
 
   private BigDecimal totalClickCost = BigDecimal.ZERO;
   private BigDecimal totalImpressionCost = BigDecimal.ZERO;
@@ -34,8 +34,15 @@ public class Campaign {
    */
   public Campaign(String campaignID) {
     this.campaignID = campaignID;
+    clickDataList = new ArrayList<ClickData>();
+    impressionDataList = new ArrayList<ImpressionData>();
+    serverDataList = new ArrayList<ServerData>();
   }
 
+  /**
+   * Check if all clickData are loaded from the database
+   * @return true if loaded
+   */
   public boolean isClickDataLoaded() {
     if (initialLoad) {
       return clickDataList.size() == clickDataCount;
@@ -43,6 +50,10 @@ public class Campaign {
     return false;
   }
 
+  /**
+   * Check if all impressionData are loaded from the database
+   * @return true if loaded
+   */
   public boolean isImpressionDataLoaded() {
     if (initialLoad) {
       return impressionDataList.size() == impressionDataCount;
@@ -50,6 +61,10 @@ public class Campaign {
     return false;
   }
 
+  /**
+   * Check if all serverData are loaded from the database
+   * @return true if loaded
+   */
   public boolean isServerDataLoaded() {
     if (initialLoad) {
       return serverDataList.size() == serverDataCount;
@@ -88,7 +103,8 @@ public class Campaign {
    * @param impressionDataList Premade impression data list to set.
    */
   public void setImpressionDataList(ArrayList<ImpressionData> impressionDataList) {
-    this.impressionDataList = impressionDataList;
+    this.impressionDataList.clear();
+    this.impressionDataList.addAll(impressionDataList);
   }
 
   /**
@@ -107,7 +123,8 @@ public class Campaign {
    * @param serverDataList Premade server data list to set.
    */
   public void setServerDataList(ArrayList<ServerData> serverDataList) {
-    this.serverDataList = serverDataList;
+    this.serverDataList.clear();
+    this.serverDataList.addAll(serverDataList);
   }
 
   /**
@@ -125,48 +142,53 @@ public class Campaign {
    * @param clickDataList Premade click data list to set.
    */
   public void setClickDataList(ArrayList<ClickData> clickDataList) {
-    this.clickDataList = clickDataList;
+    this.clickDataList.clear();
+    this.clickDataList.addAll(clickDataList);
   }
 
   /**
    * Retrieves click data from given ID.
    *
-   * @return Click data with matched ID. If ID not found, will return null.
+   * @return Click data with matched ID. If ID not found, will return an empty ArrayList.
    */
-  public ClickData getClickDataByID(String id) {
-    return (ClickData) getDataByID(getServerDataList(), id);
+  public ArrayList<ClickData> getClickDataByID(String id) {
+    ArrayList<ClickData> dataWithID = new ArrayList<ClickData>();
+    for (ClickData data : getClickDataList()) {
+      if (data.getId().equals(id)) {
+        dataWithID.add(data);
+      }
+    }
+    return dataWithID;
   }
 
   /**
    * Retrieves impression data from given ID.
    *
-   * @return Impression data with matched ID. If ID not found, will return null.
+   * @return Impression data with matched ID. If ID not found, will return an empty ArrayList.
    */
-  public ImpressionData getImpressionDataByID(String id) {
-    return (ImpressionData) getDataByID(getServerDataList(), id);
+  public ArrayList<ImpressionData> getImpressionDataByID(String id) {
+    ArrayList<ImpressionData> dataWithID = new ArrayList<ImpressionData>();
+    for (ImpressionData data : getImpressionDataList()) {
+      if (data.getId().equals(id)) {
+        dataWithID.add(data);
+      }
+    }
+    return dataWithID;
   }
 
   /**
    * Retrieves server data from given ID.
    *
-   * @return Server data with matched ID. If ID not found, will return null.
+   * @return Server data with matched ID. If ID not found, will return an empty ArrayList.
    */
-  public ServerData getServerDataByID(String id) {
-    return (ServerData) getDataByID(getServerDataList(), id);
-  }
-
-  /**
-   * Generic method for grabbing campaign data from given ID.
-   *
-   * @param dataList The data list to scan/query. Must be a subclass of Campaign Data.
-   * @param id The ID to find.
-   * @return Campaign Data with matched ID. If ID not found, will return null.
-   */
-  private CampaignData getDataByID(ArrayList<? extends CampaignData> dataList, String id) {
-    for (CampaignData campaignData : dataList) {
-      if (campaignData.getId().equals(id)) return campaignData;
+  public ArrayList<ServerData> getServerDataByID(String id) {
+    ArrayList<ServerData> dataWithID = new ArrayList<ServerData>();
+    for (ServerData data : getServerDataList()) {
+      if (data.getId().equals(id)) {
+        dataWithID.add(data);
+      }
     }
-    return null;
+    return dataWithID;
   }
 
   /**
@@ -290,13 +312,19 @@ public class Campaign {
    * @return The average cost per acquisition given in pence.
    */
   public BigDecimal getAvgCostPerAcquisition() {
-    ArrayList<ClickData> clist = getClickDataList();
+    ArrayList<String> checked = new ArrayList<String>();
     BigDecimal sum = BigDecimal.valueOf(0);
     long count = 0L;
-    for (ClickData clickData : clist) {
-      if (getServerDataByID(clickData.getId()).hasConverted()) {
-        sum.add(clickData.getClickCost());
-        count++;
+    for (ClickData cd : getClickDataList()) {
+      if(checked.contains(cd.getId())) {
+        continue;
+      }
+      checked.add(cd.getId());
+      for (ServerData sd : getServerDataByID(cd.getId())) {
+        if (sd.hasConverted()) {
+          sum.add(cd.getClickCost());
+          count++;
+        }
       }
     }
     if (count == 0) {
@@ -324,11 +352,18 @@ public class Campaign {
    *     that date as the value.
    */
   public LinkedHashMap<String, BigDecimal> getDatedAcquisitionCostAverages() {
+    ArrayList<String> checked = new ArrayList<String>();
     LinkedHashMap<String, BigDecimal> outMap = new LinkedHashMap<>();
     LinkedHashMap<String, Integer> countMap = new LinkedHashMap<>();
-    for (ClickData clickData : clickDataList) {
-      if (getServerDataByID(clickData.getId()).hasConverted()) {
-        getDatedClickCost(outMap, countMap, clickData);
+    for (ClickData cd : getClickDataList()) {
+      if(checked.contains(cd.getId())) {
+        continue;
+      }
+      checked.add(cd.getId());
+      for (ServerData sd : getServerDataByID(cd.getId())) {
+        if (sd.hasConverted()) {
+          getDatedClickCost(outMap, countMap, cd);
+        }
       }
     }
     return getDatedCostOutput(outMap, countMap);
@@ -405,7 +440,7 @@ public class Campaign {
    * @param clickData The Click Data to add to the maps.
    */
   private void getDatedClickCost(
-      HashMap<String, BigDecimal> outMap, HashMap<String, Integer> countMap, ClickData clickData) {
+    HashMap<String, BigDecimal> outMap, HashMap<String, Integer> countMap, ClickData clickData) {
     String key = sdf.format(clickData.getClickDate());
     BigDecimal oVal = outMap.get(key);
     Integer cVal = countMap.get(key);
