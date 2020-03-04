@@ -31,6 +31,6 @@ class CampaignDataTest {
   void setId() {
     String newId = "new-test-id";
     this.campaignData.setId(newId);
-    assertEquals(this.campaignData.id, newId);
+    assertEquals(this.campaignData.getId(), newId);
   }
 }

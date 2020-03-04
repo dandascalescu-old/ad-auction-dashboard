@@ -7,7 +7,7 @@ public class CampaignData {
    * of data may be linked to other data, i.e Click Data may have the same ID as * Impression Data
    * to show they're linked.
    */
-  String id;
+  private String id;
 
   /**
    * Constructor for storing campaign data.

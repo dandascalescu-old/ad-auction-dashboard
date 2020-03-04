@@ -51,7 +51,7 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     demographicCombobox.valueProperty().bindBidirectional(viewModel.selectedDemographicProperty());
 
     campaignCombobox.setItems(viewModel.campaignsList());
-    demographicCombobox.valueProperty().bindBidirectional(viewModel.selectedCampaignProperty());
+    campaignCombobox.valueProperty().bindBidirectional(viewModel.selectedCampaignProperty());
 
     averageLinechart.setData(viewModel.averageLinechartData());
     demographicsBarchart.setData(viewModel.demographicsBarchartData());

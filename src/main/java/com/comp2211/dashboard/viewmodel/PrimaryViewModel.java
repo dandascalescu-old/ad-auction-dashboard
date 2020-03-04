@@ -1,13 +1,13 @@
 package com.comp2211.dashboard.viewmodel;
 
 import com.comp2211.dashboard.Campaign;
-import com.comp2211.dashboard.io.DatabaseManager;
 import com.comp2211.dashboard.view.ChartPointLabel;
 import de.saxsys.mvvmfx.ViewModel;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Optional;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -18,8 +18,6 @@ import javafx.scene.chart.XYChart.Series;
 public class PrimaryViewModel implements ViewModel {
 
   // TODO: Refactor to service and inject...
-  private Campaign campaign;
-
   private ObservableList<String> averages;
   private ObservableList<String> demographics;
   private ObservableList<String> campaigns;
@@ -46,31 +44,38 @@ public class PrimaryViewModel implements ViewModel {
   private final String demContext = "Context";
 
   // TODO: Allow multiple campaigns
-  private final String campaign1 = "Campaign 1";
+  private Campaign campaign;
 
-  public void initialize() {
+  public void initialize() {    
+    campaign = new Campaign("Demo Campaign");
     averages = FXCollections.observableArrayList();
     demographics = FXCollections.observableArrayList();
     campaigns = FXCollections.observableArrayList();
-
-    averages.addAll(avgCostAcq, avgCostImpr, avgCostClick);
+    
+    averages.addAll(avgCostClick, avgCostImpr, avgCostAcq);
     demographics.addAll(demAge, demGender, demIncome, demContext);
-    campaigns.add(campaign1);
-
+    campaigns.add(campaign.getCampaignID());
+    
+    setupCampaignSelector();
+    
     averageLinechartData = FXCollections.observableArrayList(); // http://www.java2s.com/Code/Java/JavaFX/LineChartfromObservableListXYChartSeriesStringDouble.htm
     demographicsBarchartData = FXCollections.observableArrayList();
+    
+    new Thread() {
+      public void run() {
+        campaign.cacheData(0);
+        Platform.runLater(new Runnable() {
+          public void run() {
+            setupDemographicSelector();
+            setupAverageSelector();
+            updateTotalCosts();
 
-    setupAverageSelector();
-    setupDemographicSelector();
-    setupCampaignSelector();
-
-    DatabaseManager.init();
-    campaign = new Campaign("1");
-    campaign.cacheData(0);
-
-    updateTotalCosts();
-    populateChart(campaign.getDatedAcquisitionCostAverages(), "Acquisition", averageLinechartData);
-    populateChart(campaign.getAgePercentage(), "Age", demographicsBarchartData);
+            populateChart(campaign.getDatedClickCostAverages(), "Clicks", averageLinechartData);
+            populateChart(campaign.getAgePercentage(), "Age", demographicsBarchartData);
+          }
+        });
+      }
+    }.start();
   }
 
   public ObservableList<String> averagesList() {
@@ -129,8 +134,7 @@ public class PrimaryViewModel implements ViewModel {
   }
 
   private void setupAverageSelector() {
-//    String defaultAverage = averages.get(0);
-    String defaultAverage = null;
+    String defaultAverage = averages.get(0);
     selectedAverage.setValue(defaultAverage);
 
     selectedAverage.addListener((obs, oldVal, newVal) -> {
@@ -156,8 +160,7 @@ public class PrimaryViewModel implements ViewModel {
   }
 
   private void setupDemographicSelector() {
-//    String defaultDemographic = demographics.get(0);
-    String defaultDemographic = null;
+    String defaultDemographic = demographics.get(0);
     selectedDemographic.setValue(defaultDemographic);
 
     selectedDemographic.addListener((obs, oldVal, newVal) -> {
@@ -185,8 +188,7 @@ public class PrimaryViewModel implements ViewModel {
   }
 
   private void setupCampaignSelector() {
-//    String defaultCampaign = campaigns.get(0);
-    String defaultCampaign = null;
+    String defaultCampaign = campaigns.get(0);
     selectedCampaign.setValue(defaultCampaign);
   }
 
@@ -199,7 +201,7 @@ public class PrimaryViewModel implements ViewModel {
   private void populateChart(HashMap<String, BigDecimal> hm, String name, ObservableList<Series<String, Double>> chartData) {
     XYChart.Series<String, Double> seriesAverage = new XYChart.Series<>();
 
-    Double previousValue = new Double(0.0);
+    Double previousValue = 0D;
     for (String dateString : hm.keySet()) {
       XYChart.Data<String, Double> data = new XYChart.Data<>(dateString, hm.get(dateString).doubleValue());
 
