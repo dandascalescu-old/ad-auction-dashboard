@@ -77,6 +77,7 @@ public class PrimaryController implements Initializable {
     averageCombobox.getItems().addAll(avgCostAcq, avgCostImpr, avgCostClick);
     demogCombobox.getItems().addAll(percAge, percGender, percIncome, percContext);
     campaignCombobox.getItems().addAll("Campaign 1", "Campaign 2", "Campaign 3", "Campaign 4");
+
     averageCombobox.setPromptText(avgCostAcq);
     demogCombobox.setPromptText(percAge);
     campaignCombobox.setPromptText("Campaign 1");

@@ -24,19 +24,13 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   private JFXButton profileButton;
 
   @FXML
-  private JFXComboBox<String> averageCombobox;
+  private JFXComboBox<String> averageCombobox, demographicCombobox, campaignCombobox;
 
   @FXML
   private LineChart<String, Double> averageLinechart;
 
   @FXML
   private BarChart<String, Double> demographicsBarchart;
-
-  @FXML
-  private JFXComboBox<String> demogCombobox, campaignCombobox;
-
-  @FXML
-  private Text averageCostTitle, totalCostTitle, demographicsTitle;
 
   @FXML
   private Text totalClickCost, totalImpresCost, totalCost, clickThroughRateText;
@@ -53,7 +47,14 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     averageCombobox.setItems(viewModel.averagesList());
     averageCombobox.valueProperty().bindBidirectional(viewModel.selectedAverageProperty());
 
+    demographicCombobox.setItems(viewModel.demographicsList());
+    demographicCombobox.valueProperty().bindBidirectional(viewModel.selectedDemographicProperty());
+
+    campaignCombobox.setItems(viewModel.campaignsList());
+    demographicCombobox.valueProperty().bindBidirectional(viewModel.selectedCampaignProperty());
+
     averageLinechart.setData(viewModel.averageLinechartData());
+    demographicsBarchart.setData(viewModel.demographicsBarchartData());
   }
 
   public void campaignComboboxController() {

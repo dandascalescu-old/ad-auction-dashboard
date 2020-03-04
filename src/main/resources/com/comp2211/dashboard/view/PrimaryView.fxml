@@ -87,7 +87,7 @@
                                           <Pane layoutX="55.0" layoutY="31.0" prefHeight="342.0" prefWidth="1063.0" style="-fx-background-color: #FCFCFC;">
                                              <children>
                                                 <Line endX="962.0" layoutX="100.0" layoutY="43.0" opacity="0.1" startX="-100.0" />
-                                                <Text fx:id="averageCostTitle" fill="#474c49" layoutX="23.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="AVERAGE COST ">
+                                                <Text fill="#474c49" layoutX="23.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="AVERAGE COST ">
                                                    <font>
                                                       <Font name="SansSerif Bold" size="13.0" />
                                                    </font>
@@ -109,7 +109,7 @@
                                           <Pane layoutX="511.0" layoutY="398.0" prefHeight="330.0" prefWidth="607.0" style="-fx-background-color: #FFFFFF;">
                                              <children>
                                                 <Line endX="913.0" layoutX="-306.0" layoutY="53.0" opacity="0.1" startX="306.0" />
-                                                <Text fx:id="demographicsTitle" fill="#474c49" layoutX="22.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DEMOGRAPHICS">
+                                                <Text fill="#474c49" layoutX="22.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DEMOGRAPHICS">
                                                    <font>
                                                       <Font name="SansSerif Bold" size="13.0" />
                                                    </font>
@@ -125,7 +125,7 @@
                                                       <Insets />
                                                    </opaqueInsets>
                                                 </BarChart>
-                                                <JFXComboBox fx:id="demogCombobox" layoutX="333.0" layoutY="17.0" onAction="#demogComboboxController" prefHeight="27.0" prefWidth="180.0" />
+                                                <JFXComboBox fx:id="demographicCombobox" layoutX="333.0" layoutY="17.0" onAction="#demogComboboxController" prefHeight="27.0" prefWidth="180.0" />
                                              </children>
                                              <effect>
                                                 <DropShadow blurType="GAUSSIAN" color="#00000021" height="11.9" offsetX="5.0" offsetY="5.0" radius="4.6899999999999995" width="8.86" />
@@ -134,7 +134,7 @@
                                           <Pane layoutX="55.0" layoutY="398.0" prefHeight="330.0" prefWidth="420.0" style="-fx-background-color: #FFFFFF;">
                                              <children>
                                                 <Line endX="785.0" layoutX="-365.0" layoutY="53.0" opacity="0.1" startX="365.0" />
-                                                <Text fx:id="totalCostTitle" fill="#474c49" layoutX="26.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Total Cost">
+                                                <Text fill="#474c49" layoutX="26.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Total Cost">
                                                    <font>
                                                       <Font name="SansSerif Bold" size="13.0" />
                                                    </font>
