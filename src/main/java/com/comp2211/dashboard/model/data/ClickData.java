@@ -1,11 +1,12 @@
-package soton.comp2211.data;
+package com.comp2211.dashboard.model.data;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 /** A type of campaign data. Used to store information about clicks. */
 public class ClickData extends CampaignData {
-  private Date clickDate;
-  private double clickCost;
+  private Timestamp clickDate;
+  private BigDecimal clickCost;
 
   /**
    * Constructor for storing click data.
@@ -14,7 +15,7 @@ public class ClickData extends CampaignData {
    * @param clickDate Date and time the advert was clicked. Uses Java Date type.
    * @param clickCost The cost of the click given in pence.
    */
-  public ClickData(String id, Date clickDate, double clickCost) {
+  public ClickData(String id, Timestamp clickDate, BigDecimal clickCost) {
     super(id);
     this.clickDate = clickDate;
     this.clickCost = clickCost;
@@ -25,7 +26,7 @@ public class ClickData extends CampaignData {
    *
    * @return clickDate
    */
-  public Date getClickDate() {
+  public Timestamp getClickDate() {
     return clickDate;
   }
 
@@ -34,7 +35,7 @@ public class ClickData extends CampaignData {
    *
    * @param clickDate Must be of using Java Date type.
    */
-  public void setClickDate(Date clickDate) {
+  public void setClickDate(Timestamp clickDate) {
     this.clickDate = clickDate;
   }
 
@@ -43,7 +44,7 @@ public class ClickData extends CampaignData {
    *
    * @return clickCost is the amount of money charged per click in pence.
    */
-  public double getClickCost() {
+  public BigDecimal getClickCost() {
     return clickCost;
   }
 
@@ -52,7 +53,7 @@ public class ClickData extends CampaignData {
    *
    * @param clickCost Click cost in pence.
    */
-  public void setClickCost(double clickCost) {
+  public void setClickCost(BigDecimal clickCost) {
     this.clickCost = clickCost;
   }
 }

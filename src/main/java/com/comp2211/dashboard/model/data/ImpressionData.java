@@ -1,14 +1,21 @@
-package soton.comp2211.data;
+package com.comp2211.dashboard.model.data;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 /** A type of campaign data. Used to store information about impressions. */
 public class ImpressionData extends CampaignData {
-  private Date impressionDate;
+  private Timestamp impressionDate;
   private String age;
-  private int income, context, gender;
-  private double cost;
+  private boolean gender;
+  private byte income, context;
+  private BigDecimal impressionCost;
 
+  public enum Gender { Male, Female };
+  public enum Income { Low, Medium, High };
+  public enum Context { Blog, News, Shopping, Social_Media };
+  
+  
   /**
    * Constructor for storing impression data.
    *
@@ -20,23 +27,23 @@ public class ImpressionData extends CampaignData {
    *     follows: Low=0,Medium=1,High=2.
    * @param context The type of context where the user has seen the impression. E.g.
    *     Blog=0,News=1,Shopping=2,Social Media=3.
-   * @param cost The cost of the impression in pence.
+   * @param impressionCost The cost of the impression in pence.
    * @param gender The gender of the user, given as follows: Male=0,Female=1.
    */
   public ImpressionData(
       String id,
-      Date impressionDate,
+      Timestamp impressionDate,
       String ageRange,
-      int income,
-      int context,
-      double cost,
-      int gender) {
+      byte income,
+      byte context,
+      BigDecimal impressionCost,
+      boolean gender) {
     super(id);
     this.impressionDate = impressionDate;
     this.age = ageRange;
     this.income = income;
     this.context = context;
-    this.cost = cost;
+    this.impressionCost = impressionCost;
     this.gender = gender;
   }
 
@@ -45,11 +52,11 @@ public class ImpressionData extends CampaignData {
    *
    * @return impressionDate is the date/time of the impression returned as a Java Date object.
    */
-  public Date getImpressionDate() {
+  public Timestamp getImpressionDate() {
     return impressionDate;
   }
 
-  public void setImpressionDate(Date impressionDate) {
+  public void setImpressionDate(Timestamp impressionDate) {
     this.impressionDate = impressionDate;
   }
 
@@ -77,7 +84,7 @@ public class ImpressionData extends CampaignData {
    * @return income is the type of income of the user who was given the impression. This is given as
    *     follows: Low=0,Medium=1,High=2.
    */
-  public int getIncome() {
+  public byte getIncome() {
     return income;
   }
 
@@ -86,7 +93,7 @@ public class ImpressionData extends CampaignData {
    *
    * @param income This is given as follows: Low=0,Medium=1,High=2.
    */
-  public void setIncome(int income) {
+  public void setIncome(byte income) {
     this.income = income;
   }
 
@@ -96,7 +103,7 @@ public class ImpressionData extends CampaignData {
    * @return context is the type of context where the user has seen the impression. E.g.
    *     Blog=0,News=1,Shopping=2,Social Media=3.
    */
-  public int getContext() {
+  public byte getContext() {
     return context;
   }
 
@@ -105,26 +112,26 @@ public class ImpressionData extends CampaignData {
    *
    * @param context This is given as follows: Blog=0,News=1,Shopping=2,Social Media=3.
    */
-  public void setContext(int context) {
+  public void setContext(byte context) {
     this.context = context;
   }
 
   /**
    * Returns cost of impression.
    *
-   * @return cost is the cost of the impression in pence.
+   * @return impressionCost is the cost of the impression in pence.
    */
-  public double getCost() {
-    return cost;
+  public BigDecimal getImpressionCost() {
+    return impressionCost;
   }
 
   /**
    * Sets the impression cost.
    *
-   * @param cost Click cost in pence.
+   * @param impressionCost Click cost in pence.
    */
-  public void setCost(double cost) {
-    this.cost = cost;
+  public void setImpressionCost(BigDecimal impressionCost) {
+    this.impressionCost = impressionCost;
   }
 
   /**
@@ -132,7 +139,7 @@ public class ImpressionData extends CampaignData {
    *
    * @return gender is the gender of the user, given as follows: Male=0,Female=1.
    */
-  public int getGender() {
+  public boolean getGender() {
     return gender;
   }
 
@@ -141,7 +148,7 @@ public class ImpressionData extends CampaignData {
    *
    * @param gender This is given as follows: Male=0,Female=1.
    */
-  public void setGender(int gender) {
+  public void setGender(boolean gender) {
     this.gender = gender;
   }
 }
