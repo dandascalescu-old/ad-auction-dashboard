@@ -1,3 +1,5 @@
+[![pipeline status](https://git.soton.ac.uk/fb3g18/seg-2020/badges/master/pipeline.svg)](https://git.soton.ac.uk/fb3g18/seg-2020/-/commits/master)
+
 # Ad Auction Dashboard
 SEG 2020 - Group 23
 
