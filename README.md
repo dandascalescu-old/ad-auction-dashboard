@@ -1,3 +1,5 @@
+[![pipeline status](https://git.soton.ac.uk/fb3g18/seg-2020/badges/master/pipeline.svg)](https://git.soton.ac.uk/fb3g18/seg-2020/-/commits/master)
+
 # Ad Auction Dashboard
 SEG 2020 - Group 23
 
@@ -18,8 +20,8 @@ Go to project source and run:
 ```
 mvn clean install
 ```
-##Usage
-###Maven
+## Usage
+### Maven
 On installation, Maven will create a file called `seg-2020-1.0-jar-with-dependencies.jar`. Run this to launch the dashboard.
 
 CSVs containing campaign data can be imported through the within the Database view of the application, and data will be displayed on the main Dashboard.
