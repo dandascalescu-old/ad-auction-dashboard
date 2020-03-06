@@ -18,8 +18,8 @@ Go to project source and run:
 ```
 mvn clean install
 ```
-##Usage
-###Maven
+## Usage
+### Maven
 On installation, Maven will create a file called `seg-2020-1.0-jar-with-dependencies.jar`. Run this to launch the dashboard.
 
 CSVs containing campaign data can be imported through the within the Database view of the application, and data will be displayed on the main Dashboard.
