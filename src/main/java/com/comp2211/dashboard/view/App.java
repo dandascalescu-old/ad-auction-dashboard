@@ -1,5 +1,6 @@
 package com.comp2211.dashboard.view;
 
+import com.comp2211.dashboard.viewmodel.LoginViewModel;
 import com.comp2211.dashboard.viewmodel.PrimaryViewModel;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.ViewTuple;
@@ -14,10 +15,10 @@ import java.io.IOException;
 public class App extends Application {
 
   @Override
-  public void start(Stage stage) throws IOException {
+  public void start(Stage stage) {
     stage.setTitle("Ad Analytics Dashboard");
 
-    ViewTuple<PrimaryView, PrimaryViewModel> viewTuple = FluentViewLoader.fxmlView(PrimaryView.class).load();
+    ViewTuple<LoginView, LoginViewModel> viewTuple = FluentViewLoader.fxmlView(LoginView.class).load();
 
     Parent root = viewTuple.getView();
     stage.setScene(new Scene(root));
