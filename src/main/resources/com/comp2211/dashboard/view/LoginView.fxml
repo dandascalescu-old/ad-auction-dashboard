@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Ellipse?>
+<?import javafx.scene.shape.Polygon?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="loginPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="849.0" prefWidth="1246.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.LoginView">
+   <children>
+      <Pane fx:id="signinPane" layoutX="630.0" prefHeight="849.0" prefWidth="618.0">
+         <children>
+            <Pane layoutX="64.0" layoutY="76.0" prefHeight="697.0" prefWidth="503.0" style="-fx-background-color: #FCFCFC;">
+               <effect>
+                  <DropShadow color="#00000034" height="84.37" offsetX="5.0" offsetY="5.0" radius="38.667500000000004" width="72.3" />
+               </effect>
+               <children>
+                  <Text fx:id="welcomeText" fill="#1f1b24" layoutX="58.0" layoutY="220.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sign in to Dashboard" wrappingWidth="390.0">
+                     <font>
+                        <Font name="SansSerif Bold" size="38.0" />
+                     </font>
+                  </Text>
+                  <TextField fx:id="usernameLabel" layoutX="137.0" layoutY="266.0" prefHeight="52.0" prefWidth="230.0" promptText="Username" style="-fx-background-radius: 20;" />
+                  <PasswordField fx:id="passwordLabel" layoutX="137.0" layoutY="349.0" prefHeight="50.0" prefWidth="230.0" promptText="Password" style="-fx-background-radius: 20;" />
+                  <Button layoutX="252.0" layoutY="411.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="175.0" style="-fx-background-color: transparent;" text="Forgot password?" underline="true" />
+                  <JFXButton fx:id="loginButton" layoutX="107.0" layoutY="476.0" onAction="#openPrimaryView" prefHeight="52.0" prefWidth="291.0" style="-fx-background-color: #1F1B24; -fx-background-radius: 20;" text="LOGIN" textFill="WHITE">
+                     <font>
+                        <Font name="SansSerif Bold" size="13.0" />
+                     </font>
+                  </JFXButton>
+               </children>
+            </Pane>
+         </children>
+      </Pane>
+      <Pane fx:id="welcomePane" layoutY="-2.0" prefHeight="858.0" prefWidth="630.0" style="-fx-background-color: #1F1B24;">
+         <effect>
+            <DropShadow color="#000000a6" height="51.18" offsetX="5.0" radius="39.425" width="108.52" />
+         </effect>
+         <children>
+            <Text fill="WHITE" layoutX="149.0" layoutY="314.0" stroke="TRANSPARENT" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome Back!">
+               <font>
+                  <Font name="SansSerif Bold" size="45.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="256.0" layoutY="408.0" strokeType="OUTSIDE" strokeWidth="0.0" text="To open dashboard  ">
+               <font>
+                  <Font name="SansSerif Bold" size="20.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="290.0" layoutY="437.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ener your credentials!" wrappingWidth="241.96484375">
+               <font>
+                  <Font name="SansSerif Bold" size="20.0" />
+               </font>
+            </Text>
+            <Button layoutX="170.0" layoutY="534.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="291.0" style="-fx-background-color: transparent; -fx-border-color: #FFFFFF; -fx-border-radius: 20;" text="SIGN UP" textFill="WHITE">
+               <font>
+                  <Font name="SansSerif Bold" size="13.0" />
+               </font>
+            </Button>
+            <Rectangle fx:id="squareShape" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="82.0" layoutX="517.0" layoutY="467.0" opacity="0.2" stroke="TRANSPARENT" strokeType="INSIDE" width="87.0" />
+         </children>
+      </Pane>
+      <Ellipse fx:id="circleShape" fill="WHITE" layoutX="-158.0" layoutY="819.0" opacity="0.2" radiusX="153.0" radiusY="158.0" stroke="TRANSPARENT" strokeType="INSIDE" style="-fx-rotate: 45;" />
+      <Polygon fx:id="triangleShape2" fill="WHITE" layoutX="540.0" layoutY="926.0" opacity="0.2" points="-66.0, -45.72857666015625, 90.0, 26.0, 19.0, -76.72857666015625" stroke="TRANSPARENT" strokeType="INSIDE" />
+      <Polygon fx:id="triangleShape1" fill="WHITE" layoutX="128.0" layoutY="-59.0" opacity="0.2" points="-50.0, 40.0, 90.0, 26.0, 0.0, -60.0" stroke="TRANSPARENT" strokeType="INSIDE" />
+      <Rectangle fx:id="rectangleShape" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="31.0" layoutX="476.0" layoutY="-28.0" opacity="0.2" stroke="#ffffff00" strokeType="INSIDE" width="58.0" />
+   </children>
+</AnchorPane>
