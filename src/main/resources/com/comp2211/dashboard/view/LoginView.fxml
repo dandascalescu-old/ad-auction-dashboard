@@ -7,9 +7,6 @@
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.shape.Ellipse?>
-<?import javafx.scene.shape.Polygon?>
-<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
@@ -30,7 +27,7 @@
                   <TextField fx:id="usernameLabel" layoutX="137.0" layoutY="266.0" prefHeight="52.0" prefWidth="230.0" promptText="Username" style="-fx-background-radius: 20;" />
                   <PasswordField fx:id="passwordLabel" layoutX="137.0" layoutY="349.0" prefHeight="50.0" prefWidth="230.0" promptText="Password" style="-fx-background-radius: 20;" />
                   <Button layoutX="252.0" layoutY="411.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="175.0" style="-fx-background-color: transparent;" text="Forgot password?" underline="true" />
-                  <JFXButton fx:id="loginButton" layoutX="107.0" layoutY="476.0" onAction="#openPrimaryView" prefHeight="52.0" prefWidth="291.0" style="-fx-background-color: #1F1B24; -fx-background-radius: 20;" text="LOGIN" textFill="WHITE">
+                  <JFXButton fx:id="loginButton" layoutX="107.0" layoutY="476.0" onAction="#verifyLogin" prefHeight="52.0" prefWidth="291.0" style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #1f1b24, #332940); -fx-background-radius: 20;" text="LOGIN" textFill="WHITE">
                      <font>
                         <Font name="SansSerif Bold" size="13.0" />
                      </font>
@@ -39,7 +36,7 @@
             </Pane>
          </children>
       </Pane>
-      <Pane fx:id="welcomePane" layoutY="-2.0" prefHeight="858.0" prefWidth="630.0" style="-fx-background-color: #1F1B24;">
+      <Pane fx:id="welcomePane" layoutY="-2.0" prefHeight="858.0" prefWidth="630.0" style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #1f1b24, #332940);">
          <effect>
             <DropShadow color="#000000a6" height="51.18" offsetX="5.0" radius="39.425" width="108.52" />
          </effect>
@@ -64,12 +61,7 @@
                   <Font name="SansSerif Bold" size="13.0" />
                </font>
             </Button>
-            <Rectangle fx:id="squareShape" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="82.0" layoutX="517.0" layoutY="467.0" opacity="0.2" stroke="TRANSPARENT" strokeType="INSIDE" width="87.0" />
          </children>
       </Pane>
-      <Ellipse fx:id="circleShape" fill="WHITE" layoutX="-158.0" layoutY="819.0" opacity="0.2" radiusX="153.0" radiusY="158.0" stroke="TRANSPARENT" strokeType="INSIDE" style="-fx-rotate: 45;" />
-      <Polygon fx:id="triangleShape2" fill="WHITE" layoutX="540.0" layoutY="926.0" opacity="0.2" points="-66.0, -45.72857666015625, 90.0, 26.0, 19.0, -76.72857666015625" stroke="TRANSPARENT" strokeType="INSIDE" />
-      <Polygon fx:id="triangleShape1" fill="WHITE" layoutX="128.0" layoutY="-59.0" opacity="0.2" points="-50.0, 40.0, 90.0, 26.0, 0.0, -60.0" stroke="TRANSPARENT" strokeType="INSIDE" />
-      <Rectangle fx:id="rectangleShape" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="31.0" layoutX="476.0" layoutY="-28.0" opacity="0.2" stroke="#ffffff00" strokeType="INSIDE" width="58.0" />
    </children>
 </AnchorPane>

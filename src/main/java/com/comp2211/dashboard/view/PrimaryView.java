@@ -1,5 +1,6 @@
 package com.comp2211.dashboard.view;
 
+import animatefx.animation.FadeIn;
 import com.comp2211.dashboard.viewmodel.PrimaryViewModel;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
