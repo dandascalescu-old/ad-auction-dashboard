@@ -13,11 +13,14 @@ import java.io.IOException;
 /** JavaFX App */
 public class App extends Application {
 
+  // Storing the tuple to make sure garbage collection doesn't break PrimaryViewModel bindings
+  ViewTuple<PrimaryView, PrimaryViewModel> viewTuple;
+  
   @Override
   public void start(Stage stage) throws IOException {
     stage.setTitle("Ad Analytics Dashboard");
 
-    ViewTuple<PrimaryView, PrimaryViewModel> viewTuple = FluentViewLoader.fxmlView(PrimaryView.class).load();
+    viewTuple = FluentViewLoader.fxmlView(PrimaryView.class).load();
 
     Parent root = viewTuple.getView();
     stage.setScene(new Scene(root));
@@ -26,5 +29,9 @@ public class App extends Application {
 
   public static void main() {
     launch();
+  }
+  
+  public ViewTuple<PrimaryView, PrimaryViewModel> getViewTuple(){
+    return viewTuple;
   }
 }
