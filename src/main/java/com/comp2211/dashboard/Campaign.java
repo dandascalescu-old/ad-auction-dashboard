@@ -240,6 +240,7 @@ public class Campaign {
     return cachedDatedClickCostAverages;
   }
 
+  //todo: Consider making a generic type for values that can return percentages as opposed to just demographics
   /**
    * Calculates the percentage of each group for a given Demographic type
    * @param type the Demographic type to use
@@ -327,5 +328,25 @@ public class Campaign {
       }
     }
     return resultMap;
+  }
+
+  //todo: may benefit from using enum instead of string
+
+  /**
+   * Used for
+   * @param datatype
+   * @return
+   */
+  public HashMap<String, BigDecimal> getLineChartData(String datatype){
+    switch(datatype){
+      case "Average Cost of Click":
+        return getDatedClickCostAverages();
+      case "Average Cost of Impression":
+        return getDatedImpressionCostAverages();
+      case "Average Cost of Acquisition":
+        return getDatedAcquisitionCostAverages();
+      default:
+        return null;
+    }
   }
 }
