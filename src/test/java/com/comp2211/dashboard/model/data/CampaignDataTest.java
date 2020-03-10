@@ -25,12 +25,4 @@ class CampaignDataTest {
   void getId() {
     assertEquals(this.campaignData.getId(), TEST_ID);
   }
-
-  @DisplayName("Test CampaignData.setId()")
-  @Test
-  void setId() {
-    String newId = "new-test-id";
-    this.campaignData.setId(newId);
-    assertEquals(this.campaignData.getId(), newId);
-  }
 }

@@ -38,30 +38,12 @@ public class ServerData extends CampaignData {
   }
 
   /**
-   * Sets entry date, which is the date/time of the initial entry to the server.
-   *
-   * @param entryDate Must be of using Java Date type.
-   */
-  public void setEntryDate(Timestamp entryDate) {
-    this.entryDate = entryDate;
-  }
-
-  /**
    * Returns exit date, which is the date/time when user has exited the server.
    *
    * @return exitDate returned. Not all exits may be logged, so this may be null!
    */
   public Timestamp getExitDate() {
     return exitDate;
-  }
-
-  /**
-   * Sets exit date, which is the date and time an advert is clicked.
-   *
-   * @param exitDate Must be of using Java Date type.
-   */
-  public void setExitDate(Timestamp exitDate) {
-    this.exitDate = exitDate;
   }
 
   /**
@@ -75,29 +57,11 @@ public class ServerData extends CampaignData {
   }
 
   /**
-   * Sets pages viewed.
-   *
-   * @param pagesViewed The number of pages the user has gone through or accessed within the server.
-   */
-  public void setPagesViewed(byte pagesViewed) {
-    this.pagesViewed = pagesViewed;
-  }
-
-  /**
    * Returns if the the particular server entry led to a conversion.
    *
    * @return True if converted. False if not.
    */
   public boolean hasConverted() {
     return converted;
-  }
-
-  /**
-   * Sets conversion boolean.
-   *
-   * @param converted True if converted. False if not.
-   */
-  public void setConversion(boolean converted) {
-    this.converted = converted;
   }
 }

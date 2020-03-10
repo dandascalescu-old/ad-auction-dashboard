@@ -3,10 +3,9 @@ package com.comp2211.dashboard.io;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import com.comp2211.dashboard.util.Logger;
 
 public class Database {
 
@@ -21,17 +20,14 @@ public class Database {
     password = passedPassword;
   }
 
-  public Connection open() {
+  public void open() {
     try {
-      //Class.forName("com.mysql.cj.jdbc.Driver");
       final String url = "jdbc:mysql://" + host + ":" + port + "/" + database;
       connection = DriverManager.getConnection(url, user, password);
-      return connection;
-    } catch (SQLException e) {
-      System.out.println("MYSQL exception during connection.");
+    } catch (final SQLException e) {
+      Logger.log("MYSQL exception during connection.");
       e.printStackTrace();
     }
-    return null;
   }
 
   /**
@@ -40,43 +36,14 @@ public class Database {
    * @return Connection if exists, else null
    */
   public Connection getConnection() {
-    return connection;
-  }
-
-  /**
-   * Close connection to database.
-   */
-  public void close() {
-    if (connection != null) {
-      try {
-        connection.close();
-      }
-      catch (final SQLException e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-  /**
-   * Queries the database, for queries which return results.
-   *
-   * @param query Query to run
-   * @return Result set of ran query
-   */
-  public ResultSet readQuery(final String query) {
     try {
       if (connection == null || connection.isClosed()) {
         open();
       }
-      final PreparedStatement stmt = connection.prepareStatement(query);
-      final ResultSet rs = stmt.executeQuery();
-
-      return rs;
-    }
-    catch (final SQLException e) {
+    } catch (final SQLException e) {
       e.printStackTrace();
-      return null;
     }
+    return connection;
   }
 
   /**
@@ -86,6 +53,7 @@ public class Database {
    * @return true if table exists, else false
    */
   public boolean tableExists(final String table) {
+    boolean exists = false;
     try {
       if (connection == null || connection.isClosed()) {
         open();
@@ -93,26 +61,11 @@ public class Database {
       final DatabaseMetaData dmd = connection.getMetaData();
       final ResultSet rs = dmd.getTables(null, null, table, null);
 
-      return rs.next();
-    }
-    catch (final Exception e) {
-      e.printStackTrace();
-      return false;
-    }
-  }
-
-  public synchronized void doQuery(final String query) {
-    try {
-      if (connection == null || connection.isClosed()) {
-        open();
-      }
-      final PreparedStatement stmt = connection.prepareStatement(query);
-      stmt.execute();
-      stmt.close();
-    }
-    catch (final SQLException e) {
+      exists = rs.next();
+      rs.close();
+    } catch (final SQLException e) {
       e.printStackTrace();
     }
+    return exists;
   }
-
 }

@@ -32,24 +32,8 @@ class ClickDataTest {
   }
 
   @Test
-  @DisplayName("Test ClickData.setClickDate()")
-  void setClickDate() {
-    Timestamp newClickDate = new Timestamp(System.currentTimeMillis() + 5000);
-    this.clickData.setClickDate(newClickDate);
-    assertEquals(this.clickData.getClickDate(), newClickDate);
-  }
-
-  @Test
   @DisplayName("Test ClickData.getClickCost()")
   void getClickCost() {
     assertEquals(this.clickData.getClickCost(), CLICK_COST);
-  }
-
-  @Test
-  @DisplayName("Test ClickData.setClickCost()")
-  void setClickCost() {
-    BigDecimal newClickCost = new BigDecimal("5.93232");
-    this.clickData.setClickCost(newClickCost);
-    assertEquals(this.clickData.getClickCost(), newClickCost);
   }
 }

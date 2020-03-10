@@ -11,7 +11,7 @@
   <properties>
     <maven.compiler.source>13</maven.compiler.source>
     <maven.compiler.target>13</maven.compiler.target>
-    <java.version>1.8</java.version>
+    <java.version>13</java.version>
     <junit-jupiter.version>5.5.2</junit-jupiter.version>
   </properties>
 
@@ -31,16 +31,16 @@
       <artifactId>javafx-fxml</artifactId>
       <version>13</version>
     </dependency>
+    <dependency>
+      <groupId>commons-dbutils</groupId>
+      <artifactId>commons-dbutils</artifactId>
+      <version>1.7</version>
+    </dependency>
     <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>8.0.19</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-controls</artifactId>
-      <version>13</version>
     </dependency>
     <dependency>
       <groupId>com.jfoenix</groupId>

@@ -17,13 +17,7 @@ class ServerDataTest {
 
   @BeforeEach
   void setUp() {
-    this.serverData = new ServerData(
-        TEST_ID,
-        TEST_ENTRY_DATE,
-        TEST_EXIT_DATE,
-        TEST_PAGES_VIEWED,
-        TEST_CONVERTED
-    );
+    this.serverData = new ServerData(TEST_ID, TEST_ENTRY_DATE, TEST_EXIT_DATE, TEST_PAGES_VIEWED, TEST_CONVERTED);
     assertNotNull(this.serverData);
   }
 
@@ -39,22 +33,8 @@ class ServerDataTest {
   }
 
   @Test
-  void setEntryDate() {
-    Timestamp newEntryDate = new Timestamp(System.currentTimeMillis());
-    this.serverData.setEntryDate(newEntryDate);
-    assertEquals(newEntryDate, this.serverData.getEntryDate());
-  }
-
-  @Test
   void getExitDate() {
     assertEquals(TEST_EXIT_DATE, this.serverData.getExitDate());
-  }
-
-  @Test
-  void setExitDate() {
-    Timestamp newExitDate = new Timestamp(System.currentTimeMillis() + 10000);
-    this.serverData.setExitDate(newExitDate);
-    assertEquals(newExitDate, this.serverData.getExitDate());
   }
 
   @Test
@@ -63,21 +43,7 @@ class ServerDataTest {
   }
 
   @Test
-  void setPagesViewed() {
-    byte newPagesViewed = 10;
-    this.serverData.setPagesViewed(newPagesViewed);
-    assertEquals(newPagesViewed, this.serverData.getPagesViewed());
-  }
-
-  @Test
   void hasConverted() {
     assertEquals(TEST_CONVERTED, this.serverData.hasConverted());
-  }
-
-  @Test
-  void setConversion() {
-    boolean newConverted = true;
-    this.serverData.setConversion(newConverted);
-    assertEquals(newConverted, this.serverData.hasConverted());
   }
 }
