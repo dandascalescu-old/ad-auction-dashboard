@@ -1,6 +1,7 @@
 package com.comp2211.dashboard.viewmodel;
 
 import com.comp2211.dashboard.Campaign;
+import com.comp2211.dashboard.view.ChartPointLabel;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
