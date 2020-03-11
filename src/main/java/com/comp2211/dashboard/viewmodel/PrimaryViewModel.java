@@ -3,6 +3,7 @@ package com.comp2211.dashboard.viewmodel;
 import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.model.data.Demographics;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
+import com.comp2211.dashboard.view.ChartPointLabel;
 import de.saxsys.mvvmfx.ViewModel;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -196,31 +197,5 @@ public class PrimaryViewModel implements ViewModel {
       s.getData().add(data);
     }
     averageChartData.add(s);
-  }
-}
-
-final class ChartPointLabel extends StackPane {
-  public ChartPointLabel(String value) {
-    setPrefSize(12, 12);
-
-    final Label label = new Label(value);
-    label.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
-    label.setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
-
-    label.setTextFill(Color.DARKGRAY);
-    label.setMinSize(Label.USE_PREF_SIZE, Label.USE_PREF_SIZE);
-
-    setOnMouseEntered(new EventHandler<MouseEvent>() {
-      @Override public void handle(MouseEvent e) {
-        getChildren().setAll(label);
-        label.setTranslateY(e.getY()+24);
-        toFront();
-      }
-    });
-    setOnMouseExited(new EventHandler<MouseEvent>() {
-      @Override public void handle(MouseEvent e) {
-        getChildren().clear();
-      }
-    });
   }
 }
