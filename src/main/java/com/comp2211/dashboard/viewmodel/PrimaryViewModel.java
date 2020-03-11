@@ -41,6 +41,7 @@ public class PrimaryViewModel implements ViewModel {
   private StringProperty totalImpresCost = new SimpleStringProperty("");
   private StringProperty totalCost = new SimpleStringProperty("");
   private StringProperty clickThroughRateText = new SimpleStringProperty("");
+  private StringProperty bounceRateText = new SimpleStringProperty("");
 
   private StringProperty selectedAverage = new SimpleStringProperty("");
   private ObjectProperty<Demographic> selectedDemographic = new SimpleObjectProperty<Demographic>();
@@ -70,6 +71,7 @@ public class PrimaryViewModel implements ViewModel {
         Platform.runLater(new Runnable() {
           public void run() {
             updateTotalCosts();
+            updateBounceRateDefault();
             setupDemographicSelector();
             setupAverageSelector();
           }
@@ -126,11 +128,27 @@ public class PrimaryViewModel implements ViewModel {
     return clickThroughRateText;
   }
 
+  public StringProperty bounceRateTextProperty() {
+    return bounceRateText;
+  }
+
   private void updateTotalCosts() {
     totalClickCost.setValue("£" + selectedCampaign.getValue().getTotalClickCost().setScale(2, RoundingMode.CEILING).toPlainString());
     totalImpresCost.setValue("£" + selectedCampaign.getValue().getTotalImpressionCost().setScale(2, RoundingMode.CEILING).toPlainString());
     totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost().setScale(2, RoundingMode.CEILING).toPlainString());
     clickThroughRateText.setValue(selectedCampaign.getValue().getClickThroughRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+  }
+
+  private void updateBounceRateDefault() {
+    updateBounceRateByPages((byte) 1);
+  }
+
+  private void updateBounceRateByTime(long maxSeconds, boolean allowInf) {
+    bounceRateText.setValue(selectedCampaign.getValue().getBounceRateByTime(maxSeconds, allowInf).setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+  }
+
+  private void updateBounceRateByPages(byte maxPages) {
+    bounceRateText.setValue(selectedCampaign.getValue().getBounceRateByPages(maxPages).setScale(2, RoundingMode.CEILING).toPlainString() + "%");
   }
 
   private void setupCampaignSelector() {
