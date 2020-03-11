@@ -13,6 +13,7 @@ public abstract class DatabaseManager {
 
   public static enum Table { click_table, impression_table, server_table };
   public static enum Cost { Click_Cost, Impression_Cost };
+  public static enum Bounce { Time_Bounce, Pages_Bounce };
 
   /**
    * Initialise the database connection using info from the configuration file
@@ -82,7 +83,12 @@ public abstract class DatabaseManager {
   /**
    * Retrieve the total cost (Click_Cost or Impression_Cost).
    */
-  public  abstract BigDecimal retrieveTotalCost(Cost type);
+  public abstract BigDecimal retrieveTotalCost(Cost type);
+
+  /**
+   * Retrieve the number of bounces either by time or pages visited
+   */
+  public abstract long retrieveBouncesCount(Bounce calcMethod, long max);
 
   /**
    * Retrieve the average acquisition cost.

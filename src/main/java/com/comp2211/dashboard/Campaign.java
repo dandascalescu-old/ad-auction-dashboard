@@ -24,7 +24,7 @@ public class Campaign {
   private DatabaseManager dbManager;
 
   private BigDecimal totalClickCost, totalImpressionCost, averageAcquisitionCost;
-  private long clickDataCount, impressionDataCount, serverDataCount, uniquesCount;
+  private long clickDataCount, impressionDataCount, serverDataCount, uniquesCount, bouncesCount;
 
   private HashMap<String, BigDecimal> cachedDatedAcquisitionCostAverages, cachedDatedImpressionCostAverages, cachedDatedClickCostAverages;
   private HashMap<String, BigDecimal> cachedAgePercentage, cachedGenderPercentage, cachedIncomePercentage, cachedContextPercentage;
@@ -83,6 +83,7 @@ public class Campaign {
     impressionDataCount = dbManager.retrieveDataCount(dbManager.getImpressionTable());
     serverDataCount = dbManager.retrieveDataCount(dbManager.getServerTable());
     uniquesCount = dbManager.retrieveDataCount(dbManager.getClickTable(), true);
+    bouncesCount = dbManager.retrieveBouncesCount(DatabaseManager.Bounce.Pages_Bounce, 1);
 
     totalClickCost = dbManager.retrieveTotalCost(Cost.Click_Cost);
     totalImpressionCost = dbManager.retrieveTotalCost(Cost.Impression_Cost);
@@ -158,6 +159,20 @@ public class Campaign {
       return BigDecimal.ZERO;
     }
     return BigDecimal.valueOf(clickDataCount).divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+  }
+
+  /**
+   * Calculates the bounce rate as the percentage of server entries that result in a bounce
+   * @param calcMethod the method used for determining a bounce
+   * @param max the maximum value for a bounce to be registered (max time (seconds) or max pages viewed)
+   * @return Bounce rate as a percentage
+   */
+  public BigDecimal getBounceRate(DatabaseManager.Bounce calcMethod, long max) {
+    if (serverDataCount == 0) {
+      return BigDecimal.ZERO;
+    }
+    bouncesCount = dbManager.retrieveBouncesCount(calcMethod, max);
+    return BigDecimal.valueOf(bouncesCount).divide(BigDecimal.valueOf(serverDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
   }
 
   /**

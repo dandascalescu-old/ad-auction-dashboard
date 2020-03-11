@@ -59,6 +59,41 @@ public class MySQLManager extends DatabaseManager {
   }
 
   /**
+   * Retrieve the number of bounces either by time or pages visited
+   * @param calcMethod the method used for determining a bounce
+   * @param max the maximum value for a bounce to be registered (max time (seconds) or max pages viewed)
+   * @return long value of the number of bounces
+   */
+  @Override
+  public long retrieveBouncesCount(Bounce calcMethod, long max) {
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    try {
+      StringBuilder sb = new StringBuilder("SELECT COUNT(*) AS COUNT FROM ");
+      sb.append(server_table);
+      switch (calcMethod) {
+        case Time_Bounce: sb.append(" WHERE (Exit_Date - Entry_Date) <= ").append(String.valueOf(max)).append(" ;");
+          break;
+        case Pages_Bounce: sb.append(" WHERE Pages_Viewed <= ").append(String.valueOf(max)).append(" ;");
+          break;
+        default: sb.append(";");
+          break;
+      }
+      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
+      rs = stmt.executeQuery();
+      if (rs.next()) {
+        return rs.getLong("COUNT");
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      DbUtils.closeQuietly(rs);
+      DbUtils.closeQuietly(stmt);
+    }
+    return 0L;
+  }
+
+  /**
    * Retrieve the average acquisition cost.
    * @return the calculated average acquisition cost
    */
