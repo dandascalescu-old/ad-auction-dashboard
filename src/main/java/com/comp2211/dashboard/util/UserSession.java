@@ -5,9 +5,9 @@ import java.util.List;
 import com.comp2211.dashboard.Campaign;
 
 public class UserSession {
-  protected static List<Campaign> campaigns;
-  protected static boolean fullAccess;
-  protected static String username;
+  protected static List<Campaign> campaigns = new ArrayList<>();
+  protected static boolean fullAccess = false;
+  protected static String username = "";
   protected static boolean valid = false;
 
   /**
@@ -19,7 +19,7 @@ public class UserSession {
   public static void initializeSession(String dbName, String dbCampaigns, boolean dbAccess) {
     username = dbName;
     fullAccess = dbAccess;
-    campaigns = new ArrayList<>();
+    campaigns.clear();
     for(String s : dbCampaigns.split(";")) {
       Campaign c = Campaign.getCampaignByID(s);
       if (c != null) {
@@ -45,6 +45,7 @@ public class UserSession {
   }
 
   public static void clearSession() {
+    username = "";
     campaigns.clear();
     fullAccess = false;
     valid = false;

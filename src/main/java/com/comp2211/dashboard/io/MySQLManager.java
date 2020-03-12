@@ -290,7 +290,7 @@ public class MySQLManager extends DatabaseManager {
       }
       if(Security.matchPassword(password, rs.getBytes("password"), rs.getBytes("salt"))) {
         String campaigns = rs.getString("campaigns");
-        boolean access = rs.getBoolean("full_Access");
+        boolean access = rs.getBoolean("full_access");
         UserSession.initializeSession(username, campaigns, access);
         return true;
       }
