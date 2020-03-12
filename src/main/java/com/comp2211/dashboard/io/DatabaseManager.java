@@ -82,7 +82,17 @@ public abstract class DatabaseManager {
   /**
    * Retrieve the total cost (Click_Cost or Impression_Cost).
    */
-  public  abstract BigDecimal retrieveTotalCost(Cost type);
+  public abstract BigDecimal retrieveTotalCost(Cost type);
+
+  /**
+   * Retrieve the number of bounces by time
+   */
+  public abstract long retrieveBouncesCountByTime(long maxSeconds, boolean allowInf);
+
+  /**
+   * Retrieve the number of bounces by pages visited
+   */
+  public abstract long retrieveBouncesCountByPages(byte maxPages);
 
   /**
    * Retrieve the average acquisition cost.

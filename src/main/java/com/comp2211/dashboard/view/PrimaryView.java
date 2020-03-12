@@ -41,7 +41,7 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   private PieChart demographicsChart;
 
   @FXML
-  private Text totalClickCost, totalImpresCost, totalCost, clickThroughRateText;
+  private Text totalClickCost, totalImpresCost, totalCost, clickThroughRateText, bounceRateText;
 
   @InjectViewModel
   private PrimaryViewModel viewModel;
@@ -51,6 +51,7 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     totalImpresCost.textProperty().bind(viewModel.totalImpresCostProperty());
     totalCost.textProperty().bind(viewModel.totalCostProperty());
     clickThroughRateText.textProperty().bind(viewModel.clickThroughRateTextProperty());
+    bounceRateText.textProperty().bind(viewModel.bounceRateTextProperty());
 
     campaignCombobox.setItems(viewModel.campaignsList());
     campaignCombobox.valueProperty().bindBidirectional(viewModel.selectedCampaignProperty());

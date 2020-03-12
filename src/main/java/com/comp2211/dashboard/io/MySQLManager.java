@@ -59,6 +59,72 @@ public class MySQLManager extends DatabaseManager {
   }
 
   /**
+   * Retrieve the number of bounces by time
+   * @param maxSeconds the maximum time in seconds for which a bounce is registered
+   * @param allowInf whether entries with no exit time will be counted
+   * @return long value of the number of bounces
+   */
+  @Override
+  public long retrieveBouncesCountByTime(long maxSeconds, boolean allowInf) {
+    if (maxSeconds < 0) {
+      System.out.println("Attempted bounce calculation with negative value, returning 0");
+      return 0L;
+    }
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    try {
+      StringBuilder sb = new StringBuilder("SELECT COUNT(*) AS COUNT FROM ");
+      sb.append(server_table);
+      sb.append(" WHERE (Exit_Date - Entry_Date) < ?");
+      if (allowInf) {
+        sb.append(" OR Exit_Date IS NULL");
+      }
+      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
+      stmt.setLong(1, maxSeconds);
+      rs = stmt.executeQuery();
+      if (rs.next()) {
+        return rs.getLong("COUNT");
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      DbUtils.closeQuietly(rs);
+      DbUtils.closeQuietly(stmt);
+    }
+    return 0L;
+  }/**
+   * Retrieve the number of bounces by number of pages visited
+   * @param maxPages the maximum pages visited for which a bounce is registered
+   * @return long value of the number of bounces
+   */
+  @Override
+  public long retrieveBouncesCountByPages(byte maxPages) {
+    if (maxPages < 0) {
+      System.out.println("Attempted bounce calculation with negative value, returning 0");
+      return 0L;
+    }
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    try {
+      StringBuilder sb = new StringBuilder("SELECT COUNT(*) AS COUNT FROM ");
+      sb.append(server_table);
+      sb.append(" WHERE Pages_Viewed < ?");
+      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
+      stmt.setByte(1, maxPages);
+      rs = stmt.executeQuery();
+      if (rs.next()) {
+        return rs.getLong("COUNT");
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      DbUtils.closeQuietly(rs);
+      DbUtils.closeQuietly(stmt);
+    }
+    return 0L;
+  }
+
+  /**
    * Retrieve the average acquisition cost.
    * @return the calculated average acquisition cost
    */

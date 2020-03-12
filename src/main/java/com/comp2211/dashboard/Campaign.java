@@ -24,7 +24,7 @@ public class Campaign {
   private DatabaseManager dbManager;
 
   private BigDecimal totalClickCost, totalImpressionCost, averageAcquisitionCost;
-  private long clickDataCount, impressionDataCount, serverDataCount, uniquesCount;
+  private long clickDataCount, impressionDataCount, serverDataCount, uniquesCount, bouncesCount;
 
   private HashMap<String, BigDecimal> cachedDatedAcquisitionCostAverages, cachedDatedImpressionCostAverages, cachedDatedClickCostAverages;
   private HashMap<String, BigDecimal> cachedAgePercentage, cachedGenderPercentage, cachedIncomePercentage, cachedContextPercentage;
@@ -158,6 +158,41 @@ public class Campaign {
       return BigDecimal.ZERO;
     }
     return BigDecimal.valueOf(clickDataCount).divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+  }
+
+  /**
+   * Calculates the bounce rate as the percentage of server entries that result in a bounce, calculated by time
+   * @param maxSeconds the maximum time in seconds for which a bounce is registered
+   * @param allowInf whether entries with no exit time will be counted
+   * @return Bounce rate as a percentage
+   */
+  public BigDecimal getBounceRateByTime(long maxSeconds, boolean allowInf) {
+    if (maxSeconds < 0) {
+      System.out.println("Attempted bounce calculation with negative value, returning 0");
+      return BigDecimal.ZERO;
+    }
+    if (serverDataCount == 0) {
+      return BigDecimal.ZERO;
+    }
+    bouncesCount = dbManager.retrieveBouncesCountByTime(maxSeconds, allowInf);
+    return BigDecimal.valueOf(bouncesCount).divide(BigDecimal.valueOf(serverDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+  }
+
+  /**
+   * Calculates the bounce rate as the percentage of server entries that result in a bounce, calculated by pages visited
+   * @param maxPages the maximum pages visited for which a bounce is registered
+   * @return Bounce rate as a percentage
+   */
+  public BigDecimal getBounceRateByPages(byte maxPages) {
+    if (maxPages < 0) {
+      System.out.println("Attempted bounce calculation with negative value, returning 0");
+      return BigDecimal.ZERO;
+    }
+    if (serverDataCount == 0) {
+      return BigDecimal.ZERO;
+    }
+    bouncesCount = dbManager.retrieveBouncesCountByPages(maxPages);
+    return BigDecimal.valueOf(bouncesCount).divide(BigDecimal.valueOf(serverDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
   }
 
   /**
