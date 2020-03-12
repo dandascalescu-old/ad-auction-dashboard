@@ -15,10 +15,10 @@ public class Demographics {
    * Constructor for storing demographic data.
    */
   public Demographics(byte gender, byte age, byte income, byte context) {
-    this.gender = byteToString(gender, GenderTypes);
-    this.age = byteToString(age, AgeTypes);
-    this.income = byteToString(income, IncomeTypes);
-    this.context = byteToString(context, ContextTypes);
+    this.gender = getDemographicString(Demographic.Gender, gender);
+    this.age = getDemographicString(Demographic.Age, age);
+    this.income = getDemographicString(Demographic.Income, income);
+    this.context = getDemographicString(Demographic.Context, context);
   }
 
   public String getGender() {
@@ -34,11 +34,18 @@ public class Demographics {
     return context;
   }
 
-  public static String byteToString (byte val, String[] arr) {
-    if (val <0 || val >= arr.length) {
+  /**
+   * Maps byte value to the equivalent string for the specified demographic type.
+   * @param type The type of demographic to use for mapping.
+   * @param index The index to use for mapping.
+   * @return The string value of the mapped demographic byte.
+   */
+  public static String getDemographicString(Demographic type, byte index) {
+    String[] arr = getDemographicArray(type);
+    if (index <0 || index >= arr.length) {
       return arr[0];
     }
-    return arr[val];
+    return arr[index];
   }
 
   public static String[] getDemographicArray(Demographic type) {

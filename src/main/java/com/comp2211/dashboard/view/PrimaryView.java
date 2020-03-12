@@ -51,7 +51,8 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     totalImpresCost.textProperty().bind(viewModel.totalImpresCostProperty());
     totalCost.textProperty().bind(viewModel.totalCostProperty());
     clickThroughRateText.textProperty().bind(viewModel.clickThroughRateTextProperty());
-    bounceRateText.textProperty().bind(viewModel.bounceRateTextProperty());
+    // TODO add bounceRateText in PrimaryView.fxml
+    //bounceRateText.textProperty().bind(viewModel.bounceRateTextProperty());
 
     campaignCombobox.setItems(viewModel.campaignsList());
     campaignCombobox.valueProperty().bindBidirectional(viewModel.selectedCampaignProperty());

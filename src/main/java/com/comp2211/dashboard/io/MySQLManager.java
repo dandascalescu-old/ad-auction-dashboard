@@ -234,7 +234,7 @@ public class MySQLManager extends DatabaseManager {
       stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
       rs = stmt.executeQuery();
       while (rs.next()) {
-        String key = Demographics.byteToString(rs.getByte(type.toString()), Demographics.getDemographicArray(type));
+        String key = Demographics.getDemographicString(type, rs.getByte(type.toString()));
         resultMap.put(key, rs.getLong("COUNT(*)"));
       }
     } catch (SQLException e) {
