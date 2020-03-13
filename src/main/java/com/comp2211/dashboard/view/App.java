@@ -19,13 +19,15 @@ public class App extends Application {
   public void start(Stage stage) throws IOException {
     stage.setTitle("Ad Analytics Dashboard");
 
-    //ViewTuple<LoginView, LoginViewModel> viewTuple = FluentViewLoader.fxmlView(LoginView.class).load();
-    Parent root = FXMLLoader.load(getClass().getResource("LoginView.fxml"));
-    stage.setScene(new Scene(root));
+    ViewTuple<LoginView, LoginViewModel> viewTuple = FluentViewLoader.fxmlView(LoginView.class).load();
+    //Parent root = FXMLLoader.load(getClass().getResource("LoginView.fxml"));
+    stage.setScene(new Scene(viewTuple.getView()));
     stage.show();
   }
 
   public static void main() {
     launch();
   }
+
+
 }

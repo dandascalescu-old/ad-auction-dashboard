@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="849.0" prefWidth="1246.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.MainView">
+    <children>
+        <BorderPane fx:id="mainPane" prefHeight="849.0" prefWidth="1246.0">
+            <top>
+                <Pane prefHeight="74.0" prefWidth="1246.0" style="-fx-background-color: #FCFCFC;" BorderPane.alignment="CENTER">
+                    <children>
+                        <Text fill="#474c49" layoutX="156.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dashboard" wrappingWidth="96.34716796875">
+                            <font>
+                                <Font name="SansSerif Bold" size="17.0" />
+                            </font>
+                        </Text>
+                        <Line endX="-24.0" endY="-18.0" layoutX="109.0" layoutY="91.0" opacity="0.1" startX="-24.0" startY="-92.0" strokeLineCap="BUTT" />
+                        <JFXComboBox fx:id="campaignCombobox" layoutX="929.0" layoutY="24.0" prefHeight="27.0" prefWidth="180.0" />
+                    </children>
+                    <effect>
+                        <DropShadow color="TRANSPARENT" />
+                    </effect>
+                </Pane>
+            </top>
+            <center>
+
+                <Pane prefHeight="775.0" prefWidth="1167.0" style="-fx-background-color: #f0f3fb;" BorderPane.alignment="CENTER">
+                    <children>
+                    </children>
+                </Pane>
+
+            </center>
+            <left>
+                <Pane prefHeight="775.0" prefWidth="86.0" style="-fx-background-color: #FCFCFC;" BorderPane.alignment="CENTER">
+                    <children>
+                        <Text fill="#474c49" layoutX="10.0" layoutY="90.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DASHBOARD" wrappingWidth="66.34716796875">
+                            <font>
+                                <Font name="SansSerif Bold" size="10.0" />
+                            </font>
+                        </Text>
+                        <Line endX="-25.0" endY="644.0" layoutX="110.0" layoutY="131.0" opacity="0.1" startX="-25.0" startY="-131.0" strokeLineCap="BUTT" />
+                        <JFXButton fx:id="dashboardButton" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="23.0" onAction="#openDashboardPane" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
+                            <graphic>
+                                <ImageView>
+                                    <image>
+                                        <Image url="@../img/dashboard3.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic></JFXButton>
+                        <JFXButton fx:id="databaseButton" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="109.0" onAction="#openDatabasePane" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
+                            <graphic>
+                                <ImageView>
+                                    <image>
+                                        <Image url="@../img/database3.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic></JFXButton>
+                        <Text fill="#474c49" layoutX="15.0" layoutY="177.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DATABASE" wrappingWidth="59.34716796875">
+                            <font>
+                                <Font name="SansSerif Bold" size="10.0" />
+                            </font>
+                        </Text>
+                        <JFXButton fx:id="profileButton" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="10.0" layoutY="462.0" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
+                            <graphic>
+                                <ImageView>
+                                    <image>
+                                        <Image url="@../img/profile3.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic></JFXButton>
+                        <JFXButton fx:id="logoffButton" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="649.0" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
+                            <graphic>
+                                <ImageView>
+                                    <image>
+                                        <Image url="@../img/exit.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic></JFXButton>
+                        <JFXButton fx:id="settingsButton" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="10.0" layoutY="556.0" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
+                            <graphic>
+                                <ImageView>
+                                    <image>
+                                        <Image url="@../img/settings.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic></JFXButton>
+                        <Text fill="#474c49" layoutX="22.0" layoutY="721.0" strokeType="OUTSIDE" strokeWidth="0.0" text="LOG OFF" wrappingWidth="45.66503906250006">
+                            <font>
+                                <Font name="SansSerif Bold" size="10.0" />
+                            </font>
+                        </Text>
+                        <Text fill="#474c49" layoutX="19.0" layoutY="626.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SETTINGS" wrappingWidth="51.66503906250006">
+                            <font>
+                                <Font name="SansSerif Bold" size="10.0" />
+                            </font>
+                        </Text>
+                        <Text fill="#474c49" layoutX="22.0" layoutY="529.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PROFILE" wrappingWidth="45.66503906250006">
+                            <font>
+                                <Font name="SansSerif Bold" size="10.0" />
+                            </font>
+                        </Text>
+                    </children>
+                </Pane>
+            </left>
+        </BorderPane>
+        <Text fill="#474c49" layoutX="20.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" text="AD.">
+            <font>
+                <Font name="SansSerif Bold" size="30.0" />
+            </font>
+        </Text>
+    </children>
+</AnchorPane>

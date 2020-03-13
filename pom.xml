@@ -12,6 +12,8 @@
     <maven.compiler.source>13</maven.compiler.source>
     <maven.compiler.target>13</maven.compiler.target>
     <java.version>13</java.version>
+    <source>10</source>
+    <target>10</target>
     <junit-jupiter.version>5.5.2</junit-jupiter.version>
   </properties>
 

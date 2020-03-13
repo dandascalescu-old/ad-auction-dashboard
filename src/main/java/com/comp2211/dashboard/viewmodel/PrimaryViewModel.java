@@ -10,6 +10,7 @@ import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
@@ -24,11 +25,16 @@ public class PrimaryViewModel implements ViewModel {
 
   private ObservableList<Series<String, Double>> averageLinechartData;
   private ObservableList<Series<String, Double>> demographicsBarchartData;
+  private ObservableList<Series<String, Double>> totalMetricBarChartData;
 
   private StringProperty totalClickCost = new SimpleStringProperty("");
   private StringProperty totalImpresCost = new SimpleStringProperty("");
   private StringProperty totalCost = new SimpleStringProperty("");
   private StringProperty clickThroughRateText = new SimpleStringProperty("");
+
+  private StringProperty ctrText = new SimpleStringProperty("");
+  private StringProperty bounceRateText = new SimpleStringProperty("");
+  private StringProperty conversionUniquesText = new SimpleStringProperty("");
 
   private StringProperty selectedAverage = new SimpleStringProperty();
   private StringProperty selectedDemographic = new SimpleStringProperty();
@@ -46,7 +52,7 @@ public class PrimaryViewModel implements ViewModel {
   // TODO: Allow multiple campaigns
   private Campaign campaign;
 
-  public void initialize() {    
+  public void initialize() {
     campaign = new Campaign("Demo Campaign");
     averages = FXCollections.observableArrayList();
     demographics = FXCollections.observableArrayList();
@@ -60,22 +66,19 @@ public class PrimaryViewModel implements ViewModel {
     
     averageLinechartData = FXCollections.observableArrayList(); // http://www.java2s.com/Code/Java/JavaFX/LineChartfromObservableListXYChartSeriesStringDouble.htm
     demographicsBarchartData = FXCollections.observableArrayList();
+    totalMetricBarChartData = FXCollections.observableArrayList();
     
-    new Thread() {
-      public void run() {
-        campaign.cacheData(0);
-        Platform.runLater(new Runnable() {
-          public void run() {
-            setupDemographicSelector();
-            setupAverageSelector();
-            updateTotalCosts();
+    new Thread(() -> {
+      campaign.cacheData(0);
+      Platform.runLater(() -> {
+        setupDemographicSelector();
+        setupAverageSelector();
+        updateTotalCosts();
 
-            populateChart(campaign.getDatedClickCostAverages(), "Clicks", averageLinechartData);
-            populateChart(campaign.getAgePercentage(), "Age", demographicsBarchartData);
-          }
-        });
-      }
-    }.start();
+        populateChart(campaign.getDatedClickCostAverages(), "Clicks", averageLinechartData);
+        populateChart(campaign.getAgePercentage(), "Age", demographicsBarchartData);
+      });
+    }).start();
   }
 
   public ObservableList<String> averagesList() {
@@ -98,6 +101,8 @@ public class PrimaryViewModel implements ViewModel {
     return demographicsBarchartData;
   }
 
+  public ObservableList totalMetricBarChartData() { return totalMetricBarChartData; }
+
   public StringProperty selectedAverageProperty() {
     return selectedAverage;
   }
@@ -110,7 +115,14 @@ public class PrimaryViewModel implements ViewModel {
     return selectedCampaign;
   }
 
+  public StringProperty getCtrText(){return ctrText;}
+
+  public StringProperty getBounceRateText(){return bounceRateText;}
+
+  public StringProperty getConversionUniquesText(){return conversionUniquesText ;}
+
   public StringProperty totalClickCostProperty() {
+
     return totalClickCost;
   }
 
@@ -216,5 +228,6 @@ public class PrimaryViewModel implements ViewModel {
     chartData.clear();
     chartData.add(seriesAverage);
   }
+
 
 }
