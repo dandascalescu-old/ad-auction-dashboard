@@ -26,14 +26,5 @@ public class CampaignData {
   public String getId() {
     return id;
   }
-
-  /**
-   * Sets the campaign data ID. T
-   *
-   * @param id {@link #id}
-   */
-  protected void setId(String id) {
-    this.id = id;
-  }
 }
 

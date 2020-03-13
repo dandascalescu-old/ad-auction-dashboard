@@ -31,29 +31,11 @@ public class ClickData extends CampaignData {
   }
 
   /**
-   * Sets clickDate, which is the date and time an advert is clicked.
-   *
-   * @param clickDate Must be of using Java Date type.
-   */
-  public void setClickDate(Timestamp clickDate) {
-    this.clickDate = clickDate;
-  }
-
-  /**
    * Returns the cost of the click in pence.
    *
    * @return clickCost is the amount of money charged per click in pence.
    */
   public BigDecimal getClickCost() {
     return clickCost;
-  }
-
-  /**
-   * Sets the click cost.
-   *
-   * @param clickCost Click cost in pence.
-   */
-  public void setClickCost(BigDecimal clickCost) {
-    this.clickCost = clickCost;
   }
 }
