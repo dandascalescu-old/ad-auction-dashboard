@@ -7,7 +7,16 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 public class Security {
-  
+
+  /**
+   * Checks if the input text is alphanumeric using a regex pattern
+   * @param input the value to be checked
+   * @return true if input is alphanumeric, false if otherwise
+   */
+  public static boolean validateText(String input) {
+    return (input.matches("[a-zA-Z0-9]+"));
+  }
+
   public static byte[] generateSalt() {
     SecureRandom random = new SecureRandom();
     byte[] salt = new byte[16];

@@ -8,20 +8,13 @@ import com.jfoenix.controls.JFXComboBox;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Button;
 import javafx.scene.chart.PieChart;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
-import java.io.IOException;
-
 public class PrimaryView implements FxmlView<PrimaryViewModel> {
-
-
 
   @FXML
   private Pane databasePane, dashboardPane;
@@ -45,34 +38,26 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   private PieChart demographicsChart;
 
   @FXML
-  private Text totalClickCost, totalImpresCost, totalCost, clickThroughRateText, bounceRateText;
+  private Text totalClickCost, totalImpresCost, totalCost, clickThroughRateText, bounceRateText, ctrText, conversionUniquesText;
 
+  @FXML
+  private Button buttonNextPane;
+  
   @InjectViewModel
   private PrimaryViewModel viewModel;
-
-  @FXML
-  StackPane stackPane;
-
-  @FXML
-  Pane firstPane, secondPane;
-
-  @FXML
-  Button buttonNextPane;
-
-  @FXML
-  Text ctrText, conversionUniquesText;
 
   public void initialize() {
     totalClickCost.textProperty().bind(viewModel.totalClickCostProperty());
     totalImpresCost.textProperty().bind(viewModel.totalImpresCostProperty());
     totalCost.textProperty().bind(viewModel.totalCostProperty());
     clickThroughRateText.textProperty().bind(viewModel.clickThroughRateTextProperty());
-    // TODO add bounceRateText in PrimaryView.fxml
-    //bounceRateText.textProperty().bind(viewModel.bounceRateTextProperty());
-
+    bounceRateText.textProperty().bind(viewModel.bounceRateTextProperty());
     ctrText.textProperty().bind(viewModel.clickThroughRateTextProperty());
-    bounceRateText.textProperty().bind(viewModel.getBounceRateText());
-    conversionUniquesText.textProperty().bind(viewModel.getConversionUniquesText());
+    bounceRateText.textProperty().bind(viewModel.bounceRateTextProperty());
+    conversionUniquesText.textProperty().bind(viewModel.conversionUniquesTextProperty());
+
+    campaignCombobox.setItems(viewModel.campaignsList());
+    campaignCombobox.valueProperty().bindBidirectional(viewModel.selectedCampaignProperty());
 
     averageCombobox.setItems(viewModel.averagesList());
     averageCombobox.valueProperty().bindBidirectional(viewModel.selectedAverageProperty());
@@ -80,40 +65,8 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     demographicCombobox.setItems(viewModel.demographicsList());
     demographicCombobox.valueProperty().bindBidirectional(viewModel.selectedDemographicProperty());
 
-    // TODO: caused a nullpointer before.
-    //campaignCombobox.setItems(viewModel.campaignsList());
-    //campaignCombobox.valueProperty().bindBidirectional(viewModel.selectedCampaignProperty());
-
     averageChart.setData(viewModel.averageChartData());
     demographicsChart.setData(viewModel.demographicsChartData());
-
     demographicsChart.setLegendVisible(false);
   }
-
-  public void firstButton() throws IOException {
-    Parent root = FXMLLoader.load(getClass().getResource("SecondPane.fxml"));
-    stackPane.getChildren().add(root);
-  }
-
-  public void campaignComboboxController() {
-    System.out.println("campaignComboboxController");
-  }
-
-  public void averageComboboxController() {
-    System.out.println("averageComboboxController");
-  }
-
-  public void demogComboboxController() {
-    System.out.println("demogComboboxController");
-  }
-
-  public void openDashboardPane() {
-    System.out.println("openDashboardPane");
-  }
-
-  public void openDatabasePane() {
-
-  }
-
-
 }

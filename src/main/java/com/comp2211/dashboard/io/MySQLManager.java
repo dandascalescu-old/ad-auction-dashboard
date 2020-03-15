@@ -66,10 +66,6 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public long retrieveBouncesCountByTime(long maxSeconds, boolean allowInf) {
-    if (maxSeconds < 0) {
-      System.out.println("Attempted bounce calculation with negative value, returning 0");
-      return 0L;
-    }
     PreparedStatement stmt = null;
     ResultSet rs = null;
     try {
@@ -99,10 +95,6 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public long retrieveBouncesCountByPages(byte maxPages) {
-    if (maxPages < 0) {
-      System.out.println("Attempted bounce calculation with negative value, returning 0");
-      return 0L;
-    }
     PreparedStatement stmt = null;
     ResultSet rs = null;
     try {

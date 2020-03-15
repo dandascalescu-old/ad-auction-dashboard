@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
-import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -29,7 +28,6 @@ import javafx.scene.paint.Color;
 
 public class PrimaryViewModel implements ViewModel {
 
-  // TODO: Refactor to service and inject...
   private ObservableList<String> averages;
   private ObservableList<Demographic> demographics;
   private ObservableList<Campaign> campaigns;
@@ -65,21 +63,10 @@ public class PrimaryViewModel implements ViewModel {
     demographics.addAll(Demographics.Demographic.values());
 
     setupCampaignSelector();
-
-    new Thread() {
-      public void run() {
-        selectedCampaign.getValue().cacheData();
-        //TODO Change to load data over time: check campaign.loadData(limit, offset);
-        Platform.runLater(new Runnable() {
-          public void run() {
-            updateTotalCosts();
-            updateBounceRateDefault();
-            setupDemographicSelector();
-            setupAverageSelector();
-          }
-        });
-      }
-    }.start();
+    updateTotalCosts();
+    updateBounceRateDefault();
+    setupDemographicSelector();
+    setupAverageSelector();
   }
 
   public ObservableList<Campaign> campaignsList() {
@@ -114,12 +101,7 @@ public class PrimaryViewModel implements ViewModel {
     return selectedCampaign;
   }
 
-  public StringProperty getBounceRateText(){return bounceRateText;}
-
-  public StringProperty getConversionUniquesText(){return conversionUniquesText ;}
-
   public StringProperty totalClickCostProperty() {
-
     return totalClickCost;
   }
 
@@ -137,6 +119,10 @@ public class PrimaryViewModel implements ViewModel {
 
   public StringProperty bounceRateTextProperty() {
     return bounceRateText;
+  }
+
+  public StringProperty conversionUniquesTextProperty() {
+    return conversionUniquesText;
   }
 
   private void updateTotalCosts() {
@@ -173,7 +159,6 @@ public class PrimaryViewModel implements ViewModel {
   private void setupAverageSelector() {
     selectedAverage.addListener(
         (obs, oldVal, newVal) -> {
-          System.out.println("selectedAverage listener running");
           if (newVal != null) {
             Optional<String> matchingAverage = averages.stream().filter(newVal::equals).findFirst();
             matchingAverage.ifPresent(avg -> selectedAverage.setValue(avg));
@@ -187,7 +172,6 @@ public class PrimaryViewModel implements ViewModel {
           } else if (selectedAverage.getValue().equals(avgCostAcq)) {
             updateLineChartData(selectedCampaign.getValue().getDatedAcquisitionCostAverages());
           }
-          System.out.println("selectedAverage: " + selectedAverage);
         });
     selectedAverage.setValue(avgCostClick);
   }

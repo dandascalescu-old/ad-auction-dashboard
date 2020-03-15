@@ -19,6 +19,16 @@
 <content>
    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1658.0" prefWidth="1137.0">
       <children>
+      		<Pane prefHeight="74.0" prefWidth="1246.0" style="-fx-background-color: #FCFCFC;">
+            	<children>
+                	<Text fill="#474c49" layoutX="156.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dashboard" wrappingWidth="96.34716796875">
+                    	<font><Font name="SansSerif Bold" size="17.0" /></font>
+                    </Text>
+                    <Line endX="-24.0" endY="-18.0" layoutX="109.0" layoutY="91.0" opacity="0.1" startX="-24.0" startY="-92.0" strokeLineCap="BUTT" />
+                    <JFXComboBox fx:id="campaignCombobox" layoutX="929.0" layoutY="24.0" prefHeight="27.0" prefWidth="180.0" />
+                </children>
+            	<effect><DropShadow color="TRANSPARENT" /></effect>
+            </Pane>
          <Pane layoutX="55.0" layoutY="111.0" prefHeight="342.0" prefWidth="1063.0" style="-fx-background-color: #FCFCFC;">
             <children>
                <Line endX="962.0" layoutX="100.0" layoutY="43.0" opacity="0.1" startX="-100.0" />
@@ -124,18 +134,6 @@
                <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
             </effect>
          </Pane>
-         <StackPane fx:id="stackPane" layoutX="697.0" layoutY="838.0" prefHeight="330.0" prefWidth="421.0">
-            <children>
-               <Pane fx:id="firstPane" prefHeight="330.0" prefWidth="200.0" style="-fx-background-color: #FFFFFF;">
-                  <children>
-                     <Button fx:id="buttonNextPane" layoutX="229.0" layoutY="147.0" mnemonicParsing="false" text="Button" />
-                  </children>
-                  <effect>
-                     <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
-                  </effect>
-               </Pane>
-            </children>
-         </StackPane>
          <Pane layoutX="55.0" layoutY="838.0" prefHeight="330.0" prefWidth="607.0" style="-fx-background-color: #FFFFFF;">
             <children>
                <Line endX="913.0" layoutX="-306.0" layoutY="53.0" opacity="0.1" startX="306.0" />

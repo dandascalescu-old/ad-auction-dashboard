@@ -1,11 +1,9 @@
 package com.comp2211.dashboard.view;
 
 import com.comp2211.dashboard.viewmodel.LoginViewModel;
-import com.comp2211.dashboard.viewmodel.PrimaryViewModel;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.ViewTuple;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -15,9 +13,6 @@ import java.io.IOException;
 /** JavaFX App */
 public class App extends Application {
 
-  // Storing the tuple to make sure garbage collection doesn't break PrimaryViewModel bindings
-  ViewTuple<PrimaryView, PrimaryViewModel> viewTuple;
-  
   @Override
   public void start(Stage stage) throws IOException {
     stage.setTitle("Ad Analytics Dashboard");
@@ -31,9 +26,5 @@ public class App extends Application {
 
   public static void main() {
     launch();
-  }
-  
-  public ViewTuple<PrimaryView, PrimaryViewModel> getViewTuple(){
-    return viewTuple;
   }
 }

@@ -15,29 +15,11 @@
 <AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="849.0" prefWidth="1246.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.MainView">
     <children>
         <BorderPane fx:id="mainPane" prefHeight="849.0" prefWidth="1246.0">
-            <top>
-                <Pane prefHeight="74.0" prefWidth="1246.0" style="-fx-background-color: #FCFCFC;" BorderPane.alignment="CENTER">
-                    <children>
-                        <Text fill="#474c49" layoutX="156.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dashboard" wrappingWidth="96.34716796875">
-                            <font>
-                                <Font name="SansSerif Bold" size="17.0" />
-                            </font>
-                        </Text>
-                        <Line endX="-24.0" endY="-18.0" layoutX="109.0" layoutY="91.0" opacity="0.1" startX="-24.0" startY="-92.0" strokeLineCap="BUTT" />
-                        <JFXComboBox fx:id="campaignCombobox" layoutX="929.0" layoutY="24.0" prefHeight="27.0" prefWidth="180.0" />
-                    </children>
-                    <effect>
-                        <DropShadow color="TRANSPARENT" />
-                    </effect>
-                </Pane>
-            </top>
             <center>
-
                 <Pane prefHeight="775.0" prefWidth="1167.0" style="-fx-background-color: #f0f3fb;" BorderPane.alignment="CENTER">
                     <children>
                     </children>
                 </Pane>
-
             </center>
             <left>
                 <Pane prefHeight="775.0" prefWidth="86.0" style="-fx-background-color: #FCFCFC;" BorderPane.alignment="CENTER">
