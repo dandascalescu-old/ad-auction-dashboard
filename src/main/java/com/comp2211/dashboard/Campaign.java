@@ -168,7 +168,7 @@ public class Campaign {
    */
   public BigDecimal getBounceRateByTime(long maxSeconds, boolean allowInf) {
     if (maxSeconds < 0) {
-      System.out.println("Attempted bounce calculation with negative value, returning 0");
+      Logger.log("Attempted bounce calculation with negative value, returning 0");
       return BigDecimal.ZERO;
     }
     if (serverDataCount == 0) {
@@ -185,7 +185,7 @@ public class Campaign {
    */
   public BigDecimal getBounceRateByPages(byte maxPages) {
     if (maxPages < 0) {
-      System.out.println("Attempted bounce calculation with negative value, returning 0");
+      Logger.log("Attempted bounce calculation with negative value, returning 0");
       return BigDecimal.ZERO;
     }
     if (serverDataCount == 0) {

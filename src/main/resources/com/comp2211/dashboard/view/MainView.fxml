@@ -14,12 +14,10 @@
     <children>
         <BorderPane fx:id="mainPane" prefHeight="849.0" prefWidth="1246.0">
             <center>
-
                 <Pane prefHeight="775.0" prefWidth="1167.0" style="-fx-background-color: #f0f3fb;" BorderPane.alignment="CENTER">
                     <children>
                     </children>
                 </Pane>
-
             </center>
             <left>
                 <Pane prefHeight="775.0" prefWidth="86.0" style="-fx-background-color: #FCFCFC;" BorderPane.alignment="CENTER">
