@@ -13,7 +13,21 @@
 
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="794.0" prefWidth="1141.0">
             <children>
-                <Pane layoutX="27.0" layoutY="31.0" prefHeight="711.0" prefWidth="1082.0" style="-fx-background-color: #FFFFFF;">
+
+                <Pane prefHeight="74.0" prefWidth="1161.0" style="-fx-background-color: #FCFCFC;">
+                    <children>
+                        <Text fill="#474c49" layoutX="26.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Database" wrappingWidth="96.34716796875">
+                            <font>
+                                <Font name="SansSerif Bold" size="17.0" />
+                            </font>
+                        </Text>
+                    </children>
+                    <effect>
+                        <DropShadow color="#0000004a" offsetX="5.0" offsetY="5.0" spread="0.17" />
+                    </effect>
+                </Pane>
+
+                <Pane layoutX="27.0" layoutY="107.0" prefHeight="711.0" prefWidth="1082.0" style="-fx-background-color: #FFFFFF;">
                     <effect>
                         <DropShadow color="#0000004a" offsetX="5.0" offsetY="5.0" spread="0.07" />
                     </effect>
@@ -24,7 +38,10 @@
                                 <Font name="SansSerif Bold" size="26.0" />
                             </font>
                         </Text>
-                        <JFXButton layoutX="891.0" layoutY="69.0" onAction="#importCampaignAction" prefHeight="27.0" prefWidth="161.0" style="-fx-background-color: #9C9C9C;" text="IMPORT CAMPAIGN" />
+                        <JFXButton layoutX="878.0" layoutY="54.0" onAction="#importCampaignAction" prefHeight="42.0" prefWidth="174.0" style="-fx-background-color: #F5F5F5;" text="IMPORT CAMPAIGN" textFill="#474c49">
+                  <font>
+                     <Font name="SansSerif Regular" size="13.0" />
+                  </font></JFXButton>
                     </children>
                 </Pane>
             </children>

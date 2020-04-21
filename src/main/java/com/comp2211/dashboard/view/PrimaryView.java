@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Button;
 import javafx.scene.chart.PieChart;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
@@ -21,7 +22,8 @@ import java.io.IOException;
 
 public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
-
+  @FXML
+  private BorderPane mainPane;
 
   @FXML
   private Pane databasePane, dashboardPane;
@@ -30,10 +32,10 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   private JFXButton profileButton, dashboardButton, databaseButton, logoffButton;
 
   @FXML
-  private JFXComboBox<Campaign>campaignCombobox;
+  private JFXComboBox<Campaign> campaignCombobox;
 
   @FXML
-  private JFXComboBox<String> averageCombobox;
+  private JFXComboBox<String> averageCombobox, totalMetricCombobox;
 
   @FXML
   private JFXComboBox<Demographic> demographicCombobox;
@@ -42,10 +44,13 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   private LineChart<String, Number> averageChart;
 
   @FXML
+  private LineChart<String, Number>  totalMetricsLineChart;
+
+  @FXML
   private PieChart demographicsChart;
 
   @FXML
-  private Text totalClickCost, totalImpresCost, totalCost, clickThroughRateText, bounceRateText;
+  private Text totalClickCost, totalImpresCost, totalCost, bounceRateText, totalImpressions, totalClicks, totalUniques, totalBounces, totalConversions;
 
   @InjectViewModel
   private PrimaryViewModel viewModel;
@@ -66,34 +71,40 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     totalClickCost.textProperty().bind(viewModel.totalClickCostProperty());
     totalImpresCost.textProperty().bind(viewModel.totalImpresCostProperty());
     totalCost.textProperty().bind(viewModel.totalCostProperty());
-    clickThroughRateText.textProperty().bind(viewModel.clickThroughRateTextProperty());
+
     // TODO add bounceRateText in PrimaryView.fxml
     //bounceRateText.textProperty().bind(viewModel.bounceRateTextProperty());
-
     ctrText.textProperty().bind(viewModel.clickThroughRateTextProperty());
     bounceRateText.textProperty().bind(viewModel.getBounceRateText());
     conversionUniquesText.textProperty().bind(viewModel.getConversionUniquesText());
 
+    // TODO: caused a nullpointer before.
+    campaignCombobox.setItems(viewModel.campaignsList());
+    campaignCombobox.valueProperty().bindBidirectional(viewModel.selectedCampaignProperty());
+
     averageCombobox.setItems(viewModel.averagesList());
     averageCombobox.valueProperty().bindBidirectional(viewModel.selectedAverageProperty());
+
+    totalMetricCombobox.setItems(viewModel.totalList());
+    totalMetricCombobox.valueProperty().bindBidirectional(viewModel.selectedTotalMetricProperty());
 
     demographicCombobox.setItems(viewModel.demographicsList());
     demographicCombobox.valueProperty().bindBidirectional(viewModel.selectedDemographicProperty());
 
-    // TODO: caused a nullpointer before.
-    //campaignCombobox.setItems(viewModel.campaignsList());
-    //campaignCombobox.valueProperty().bindBidirectional(viewModel.selectedCampaignProperty());
-
     averageChart.setData(viewModel.averageChartData());
+    averageChart.setLegendVisible(false);
+
     demographicsChart.setData(viewModel.demographicsChartData());
-
     demographicsChart.setLegendVisible(false);
+
+    totalMetricsLineChart.setData(viewModel.totalMetricChartData());
+    totalImpressions.textProperty().bind(viewModel.getTotalImpressionsText());
+    totalClicks.textProperty().bind(viewModel.getTotalClicksText());
+    totalUniques.textProperty().bind(viewModel.getTotalUniquesText());
+    totalBounces.textProperty().bind(viewModel.getTotalBouncesText());
+    totalConversions.textProperty().bind(viewModel.getTotalConversionsText());
   }
 
-  public void firstButton() throws IOException {
-    Parent root = FXMLLoader.load(getClass().getResource("SecondPane.fxml"));
-    stackPane.getChildren().add(root);
-  }
 
   public void campaignComboboxController() {
     System.out.println("campaignComboboxController");

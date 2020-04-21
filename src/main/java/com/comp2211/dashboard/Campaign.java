@@ -356,7 +356,7 @@ public class Campaign {
     for (Entry<String, Long> entry : dataMap.entrySet()) {
       Long count = entry.getValue();
       if(count == null || count == 0 || impressionDataCount == 0) {
-        resultMap.put(entry.getKey(), BigDecimal.ZERO);        
+        resultMap.put(entry.getKey(), BigDecimal.ZERO);
       } else {
         resultMap.put(entry.getKey(), BigDecimal.valueOf(count).divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)));
       }

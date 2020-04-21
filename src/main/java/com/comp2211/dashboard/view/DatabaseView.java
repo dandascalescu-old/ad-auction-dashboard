@@ -34,12 +34,12 @@ public class DatabaseView implements FxmlView<DatabaseViewModel>, Initializable 
     @FXML
     StackPane databasePane;
 
-
-
-
+    static JFXDialog dialog;
 
     @FXML
     JFXTreeTableView<CampaignDatabaseEntry> databaseTreeTable;
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -81,19 +81,14 @@ public class DatabaseView implements FxmlView<DatabaseViewModel>, Initializable 
         databaseTreeTable.getColumns().setAll(titleOfCampaignCol, fileNameCol, progressCol);
     }
 
-    public void importCampaignAction(ActionEvent event){
-
-
-
-    }
+    public void importCampaignAction(ActionEvent event){ }
 
     public void importCampaignAction(javafx.event.ActionEvent actionEvent) throws IOException {
 
         Parent parent = FXMLLoader.load(getClass().getResource("DatabaseDialog.fxml"));
         JFXDialogLayout dialogLayout = new JFXDialogLayout();
         dialogLayout.setBody(parent);
-        JFXDialog dialog = new JFXDialog(databasePane, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
-
+        dialog = new JFXDialog(databasePane, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
 
         dialog.show();
 
@@ -105,10 +100,15 @@ public class DatabaseView implements FxmlView<DatabaseViewModel>, Initializable 
 
 
 
-    @FXML
-    void cancelDialogAction() {
-        //dialog.close();
+    static void cancelDialogAction() {
+        dialog.close();
     }
+
+    public static void createCampaignFromFiles(String impressionFilePath, String serverFilePath, String clickFilePath) {
+        cancelDialogAction();
+
+    }
+
 
     class CampaignDatabaseEntry extends RecursiveTreeObject<CampaignDatabaseEntry>{
 
@@ -123,6 +123,8 @@ public class DatabaseView implements FxmlView<DatabaseViewModel>, Initializable 
             this.progress = new SimpleStringProperty(progress);
         }
     }
+
+
 
 }
 

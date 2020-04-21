@@ -11,7 +11,7 @@ public class ServerData extends CampaignData {
   /**
    * Constructor for storing server data.
    *
-   * @param id {@link CampaignData#id}
+   * @param id {@link CampaignData} //id
    * @param entryDate The date/time of the initial entry to the server. This is given as a  Java Date
    *     object.
    * @param exitDate The date/time when user has exited the server. This is given as a Java Date object.
@@ -20,7 +20,7 @@ public class ServerData extends CampaignData {
    * @param converted Boolean denoting if the user click has led to a conversion.
    */
   public ServerData(
-      String id, Timestamp entryDate, Timestamp exitDate, byte pagesViewed, boolean converted) {
+          String id, Timestamp entryDate, Timestamp exitDate, byte pagesViewed, boolean converted) {
     super(id);
     this.entryDate = entryDate;
     this.exitDate = exitDate;

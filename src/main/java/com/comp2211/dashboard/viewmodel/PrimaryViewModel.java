@@ -11,10 +11,8 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -33,25 +31,40 @@ public class PrimaryViewModel implements ViewModel {
   private ObservableList<String> averages;
   private ObservableList<Demographic> demographics;
   private ObservableList<Campaign> campaigns;
+  private ObservableList<String> totals;
 
   private ObservableList<Series<String, Number>> averageChartData;
   private ObservableList<PieChart.Data> demographicsChartData;
+  private ObservableList<Series<String, Number>> totalMetricChartData;
 
   private StringProperty totalClickCost = new SimpleStringProperty("");
   private StringProperty totalImpresCost = new SimpleStringProperty("");
   private StringProperty totalCost = new SimpleStringProperty("");
   private StringProperty clickThroughRateText = new SimpleStringProperty("");
   private StringProperty bounceRateText = new SimpleStringProperty("");
-
   private StringProperty conversionUniquesText = new SimpleStringProperty("");
 
+  private StringProperty totalImpressionsText = new SimpleStringProperty("");
+  private StringProperty totalClicksText = new SimpleStringProperty("");
+  private StringProperty totalUniquesText = new SimpleStringProperty("");
+  private StringProperty totalBouncesText = new SimpleStringProperty("");
+  private StringProperty totalConversionsText = new SimpleStringProperty("");
+
+
   private StringProperty selectedAverage = new SimpleStringProperty("");
-  private ObjectProperty<Demographic> selectedDemographic = new SimpleObjectProperty<>();
-  private ObjectProperty<Campaign> selectedCampaign = new SimpleObjectProperty<>();
+  private StringProperty selectedTotals = new SimpleStringProperty("");
+  private ObjectProperty<Demographic> selectedDemographic = new SimpleObjectProperty<Demographic>();
+  private ObjectProperty<Campaign> selectedCampaign = new SimpleObjectProperty<Campaign>();
 
   private final String avgCostClick = "Average Cost of Click";
   private final String avgCostImpr = "Average Cost of Impression";
-  private final String avgCostAcq = "Average Cost of Acquisition";  
+  private final String avgCostAcq = "Average Cost of Acquisition";
+
+  private final String totalImpressions = "Impressions";
+  private final String totalClicks = "Clicks";
+  private final String totalUniques = "Uniques";
+  private final String totalBounces = "Bounces";
+  private final String totalConversions = "Conversions";
 
   public void initialize() {
     campaigns = FXCollections.observableArrayList();
@@ -59,10 +72,14 @@ public class PrimaryViewModel implements ViewModel {
     demographics = FXCollections.observableArrayList();
     averageChartData = FXCollections.observableArrayList();
     demographicsChartData = FXCollections.observableArrayList();
+    totals = FXCollections.observableArrayList();
+    totalMetricChartData = FXCollections.observableArrayList();
+
 
     campaigns.addAll(Campaign.getCampaigns());
     averages.addAll(avgCostClick, avgCostImpr, avgCostAcq);
     demographics.addAll(Demographics.Demographic.values());
+    totals.addAll(totalImpressions, totalClicks, totalUniques, totalBounces, totalConversions);
 
     setupCampaignSelector();
 
@@ -72,19 +89,25 @@ public class PrimaryViewModel implements ViewModel {
         //TODO Change to load data over time: check campaign.loadData(limit, offset);
         Platform.runLater(new Runnable() {
           public void run() {
+            updateTotalMetrics();
             updateTotalCosts();
             updateBounceRateDefault();
             setupDemographicSelector();
             setupAverageSelector();
+            setUpTotalsSelector();
           }
         });
       }
     }.start();
   }
 
+
+
   public ObservableList<Campaign> campaignsList() {
     return campaigns;
   }
+
+  public ObservableList<String> totalList() {return totals;}
 
   public ObservableList<String> averagesList() {
     return averages;
@@ -98,6 +121,8 @@ public class PrimaryViewModel implements ViewModel {
     return averageChartData;
   }
 
+  public ObservableList<Series<String, Number>> totalMetricChartData() {return totalMetricChartData;}
+
   public ObservableList<PieChart.Data> demographicsChartData() {
     return demographicsChartData;
   }
@@ -105,6 +130,8 @@ public class PrimaryViewModel implements ViewModel {
   public StringProperty selectedAverageProperty() {
     return selectedAverage;
   }
+
+  public StringProperty selectedTotalMetricProperty() { return selectedTotals;}
 
   public ObjectProperty<Demographic> selectedDemographicProperty() {
     return selectedDemographic;
@@ -114,12 +141,7 @@ public class PrimaryViewModel implements ViewModel {
     return selectedCampaign;
   }
 
-  public StringProperty getBounceRateText(){return bounceRateText;}
-
-  public StringProperty getConversionUniquesText(){return conversionUniquesText ;}
-
   public StringProperty totalClickCostProperty() {
-
     return totalClickCost;
   }
 
@@ -139,11 +161,35 @@ public class PrimaryViewModel implements ViewModel {
     return bounceRateText;
   }
 
+  public StringProperty getBounceRateText(){return bounceRateText;}
+
+  public StringProperty getConversionUniquesText(){return totalConversionsText;}
+
+  public StringProperty getTotalImpressionsText() { return totalImpressionsText; }
+
+  public StringProperty getTotalClicksText() { return totalClicksText;}
+
+  public StringProperty getTotalUniquesText() { return totalUniquesText;}
+
+  public StringProperty getTotalBouncesText() { return totalBouncesText;}
+
+  public StringProperty getTotalConversionsText() { return totalConversionsText;}
+
+
   private void updateTotalCosts() {
     totalClickCost.setValue("£" + selectedCampaign.getValue().getTotalClickCost().setScale(2, RoundingMode.CEILING).toPlainString());
     totalImpresCost.setValue("£" + selectedCampaign.getValue().getTotalImpressionCost().setScale(2, RoundingMode.CEILING).toPlainString());
     totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost().setScale(2, RoundingMode.CEILING).toPlainString());
     clickThroughRateText.setValue(selectedCampaign.getValue().getClickThroughRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+  }
+
+  private void updateTotalMetrics(){
+
+    totalImpressionsText.setValue("32121");
+    totalClicksText.setValue("99833");
+    totalUniquesText.setValue("12002");
+    totalBouncesText.setValue("11143");
+    totalConversionsText.setValue("9733");
   }
 
   private void updateBounceRateDefault() {
@@ -171,25 +217,56 @@ public class PrimaryViewModel implements ViewModel {
   }
 
   private void setupAverageSelector() {
-    selectedAverage.addListener(
-        (obs, oldVal, newVal) -> {
-          System.out.println("selectedAverage listener running");
-          if (newVal != null) {
-            Optional<String> matchingAverage = averages.stream().filter(newVal::equals).findFirst();
-            matchingAverage.ifPresent(avg -> selectedAverage.setValue(avg));
-          } else {
-            selectedAverage.setValue(avgCostClick);
-          }
-          if (selectedAverage.getValue().equals(avgCostClick)) {
-            updateLineChartData(selectedCampaign.getValue().getDatedClickCostAverages());
-          } else if (selectedAverage.getValue().equals(avgCostImpr)) {
-            updateLineChartData(selectedCampaign.getValue().getDatedImpressionCostAverages());
-          } else if (selectedAverage.getValue().equals(avgCostAcq)) {
-            updateLineChartData(selectedCampaign.getValue().getDatedAcquisitionCostAverages());
-          }
-          System.out.println("selectedAverage: " + selectedAverage);
-        });
+    selectedAverage.addListener((obs, oldVal, newVal) -> {
+      if (newVal != null) {
+        Optional<String> matchingAverage = averages.stream().filter(newVal::equals).findFirst();
+        matchingAverage.ifPresent(avg -> selectedAverage.setValue(avg));
+      } else {
+        selectedAverage.setValue(avgCostClick);
+      }
+      if (selectedAverage.getValue().equals(avgCostClick)) {
+        updateLineChartData(selectedCampaign.getValue().getDatedClickCostAverages());
+      } else if (selectedAverage.getValue().equals(avgCostImpr)) {
+        updateLineChartData(selectedCampaign.getValue().getDatedImpressionCostAverages());
+      } else if (selectedAverage.getValue().equals(avgCostAcq)) {
+        updateLineChartData(selectedCampaign.getValue().getDatedAcquisitionCostAverages());
+      }
+    });
     selectedAverage.setValue(avgCostClick);
+  }
+
+  private void setUpTotalsSelector(){
+
+    selectedTotals.addListener((obs, oldVal, newVal) -> {
+      if (newVal != null) {
+        Optional<String> matchingAverage = totals.stream().filter(newVal::equals).findFirst();
+        matchingAverage.ifPresent(avg -> selectedTotals.setValue(avg));
+      } else {
+        selectedTotals.setValue(totalImpressions);
+      }
+      if (selectedAverage.getValue().equals(totalImpressions)) {
+        //Update Total Metrics Graph with total impressions over time
+        //use method updateTotalMetricLineChartData();
+
+      } else if (selectedAverage.getValue().equals(totalClicks)) {
+        //Update Total Metrics Graph with total clicks over time
+        //use method updateTotalMetricLineChartData();
+
+      } else if (selectedAverage.getValue().equals(totalUniques)) {
+        //Update Total Metrics Graph with total uniques over time
+        //use method updateTotalMetricLineChartData();
+
+      } else if (selectedAverage.getValue().equals(totalBounces)) {
+        //Update Total Metrics Graph with total bounces over time
+        //use method updateTotalMetricLineChartData();
+
+      } else if (selectedAverage.getValue().equals(totalConversions)) {
+        //Update Total Metrics Graph with total conversions over time
+        //use method updateTotalMetricLineChartData();
+
+      }
+    });
+    selectedTotals.setValue(totalImpressions);
   }
 
   private void setupDemographicSelector() {
@@ -225,6 +302,12 @@ public class PrimaryViewModel implements ViewModel {
     }
     averageChartData.add(s);
   }
+
+  private void updateTotalMetricLineChartData (HashMap<String, BigDecimal> dataMap) {
+
+  }
+
+
 }
 
 final class ChartPointLabel extends StackPane {
