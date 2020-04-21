@@ -45,4 +45,9 @@ public class Security {
     }
     return false;
   }
+
+  public static boolean validateText(String username) {
+
+    return true;
+  }
 }
