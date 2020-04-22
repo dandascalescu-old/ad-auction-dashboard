@@ -26,12 +26,12 @@ public class UserSession {
         campaigns.add(c);
       }
     }
-    
+
     if (!campaigns.isEmpty()) {
       valid = true;
     }
   }
-  
+
   public static String getUsername() {
     return username;
   }
@@ -50,7 +50,7 @@ public class UserSession {
     fullAccess = false;
     valid = false;
   }
-  
+
   public static boolean isValid() {
     return valid;
   }

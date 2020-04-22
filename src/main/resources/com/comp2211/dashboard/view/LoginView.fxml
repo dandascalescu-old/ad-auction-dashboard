@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="loginPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="849.0" prefWidth="1246.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.LoginView">
+   <children>
+      <Pane fx:id="signinPane" layoutX="630.0" prefHeight="849.0" prefWidth="618.0">
+         <children>
+            <Pane layoutX="64.0" layoutY="76.0" prefHeight="697.0" prefWidth="503.0" style="-fx-background-color: #FCFCFC;">
+               <effect>
+                  <DropShadow color="#00000034" height="78.34" offsetX="5.0" offsetY="5.0" radius="37.16" spread="0.31" width="72.3" />
+               </effect>
+               <children>
+                  <Text fx:id="welcomeText" fill="#1f1b24" layoutX="58.0" layoutY="220.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sign in to Dashboard" wrappingWidth="390.0">
+                     <font>
+                        <Font name="SansSerif Bold" size="38.0" />
+                     </font>
+                  </Text>
+                  <TextField fx:id="usernameLabel" layoutX="137.0" layoutY="266.0" prefHeight="52.0" prefWidth="230.0" promptText="Username" style="-fx-background-radius: 10;" />
+                  <PasswordField fx:id="passwordLabel" layoutX="137.0" layoutY="349.0" prefHeight="50.0" prefWidth="230.0" promptText="Password" style="-fx-background-radius: 10;" />
+                  <Button layoutX="252.0" layoutY="411.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="175.0" style="-fx-background-color: transparent;" text="Forgot password?" underline="true" />
+                  <JFXButton fx:id="loginButton" layoutX="107.0" layoutY="476.0" onAction="#verifyLogin" prefHeight="52.0" prefWidth="291.0" style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #1f1b24, #332940); -fx-background-radius: 20;" text="LOGIN" textFill="WHITE">
+                     <font>
+                        <Font name="SansSerif Bold" size="13.0" />
+                     </font>
+                  </JFXButton>
+               </children>
+            </Pane>
+         </children>
+      </Pane>
+      <Pane fx:id="welcomePane" layoutY="-2.0" prefHeight="858.0" prefWidth="630.0" style="-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #1f1b24, #332940);">
+         <effect>
+            <DropShadow color="#000000a6" height="51.18" offsetX="5.0" radius="39.425" width="108.52" />
+         </effect>
+         <children>
+            <Text fill="WHITE" layoutX="149.0" layoutY="314.0" stroke="TRANSPARENT" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome Back!">
+               <font>
+                  <Font name="SansSerif Bold" size="45.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="256.0" layoutY="408.0" strokeType="OUTSIDE" strokeWidth="0.0" text="To open dashboard  ">
+               <font>
+                  <Font name="SansSerif Bold" size="20.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="290.0" layoutY="437.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ener your credentials!" wrappingWidth="241.96484375">
+               <font>
+                  <Font name="SansSerif Bold" size="20.0" />
+               </font>
+            </Text>
+            <Button layoutX="170.0" layoutY="534.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="291.0" style="-fx-background-color: transparent; -fx-border-color: #FFFFFF; -fx-border-radius: 20;" text="SIGN UP" textFill="WHITE">
+               <font>
+                  <Font name="SansSerif Bold" size="13.0" />
+               </font>
+            </Button>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

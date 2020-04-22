@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDialog?>
+<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<StackPane fx:id="dialogDBStack" prefHeight="349.0" prefWidth="416.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.DatabaseDialog">
+
+    <JFXDialog fx:id="dialogs">
+        <JFXDialogLayout>
+            <heading>
+                <Label>JFoenix Dialog</Label>
+            </heading>
+            <body>
+                <Text text="adasdasd" />
+            </body>
+            <actions>
+                <JFXButton fx:id="acceptButton" styleClass="dialog-accept" text="Button">
+                </JFXButton>
+            </actions>
+        </JFXDialogLayout>
+    </JFXDialog>
+   <Pane prefHeight="343.0" prefWidth="416.0">
+      <children>
+         <JFXButton fx:id="importImpressionButton" buttonType="RAISED" layoutX="109.0" layoutY="126.0" onAction="#importImpressionAction" prefHeight="34.0" prefWidth="133.0" style="-fx-background-color: #FFFFFF;" text="Impression Log" />
+         <JFXButton buttonType="RAISED" layoutX="108.0" layoutY="177.0" onAction="#importClickAction" prefHeight="34.0" prefWidth="133.0" style="-fx-background-color: #FFFFFF;" text="Click Log" />
+         <JFXButton buttonType="RAISED" layoutX="108.0" layoutY="232.0" onAction="#importServerAction" prefHeight="34.0" prefWidth="133.0" style="-fx-background-color: #FFFFFF;" text="Server Log" />
+         <JFXButton buttonType="RAISED" layoutX="186.0" layoutY="289.0" onAction="#createCampaignFromFiles" prefHeight="34.0" prefWidth="88.0" style="-fx-background-color: #FFFFFF;" text="Save" />
+         <JFXButton buttonType="RAISED" layoutX="81.0" layoutY="289.0" onAction="#cancelDialogAction" prefHeight="34.0" prefWidth="88.0" style="-fx-background-color: #FFFFFF;" text="Cancel" />
+         <Text layoutX="112.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="FILE UPLOAD" textAlignment="CENTER">
+            <font>
+               <Font name="SansSerif Bold" size="19.0" />
+            </font>
+         </Text>
+         <TextField layoutX="95.0" layoutY="74.0" promptText="Title" />
+         <Text fx:id="alertAddingText" layoutX="88.0" layoutY="345.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER">
+            <font>
+               <Font name="SansSerif Bold" size="12.0" />
+            </font>
+         </Text>
+      </children>
+   </Pane>
+
+</StackPane>

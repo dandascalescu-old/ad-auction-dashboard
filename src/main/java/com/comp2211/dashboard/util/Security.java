@@ -7,7 +7,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 public class Security {
-  
+
   public static byte[] generateSalt() {
     SecureRandom random = new SecureRandom();
     byte[] salt = new byte[16];
@@ -20,7 +20,7 @@ public class Security {
    * @param passwordToHash password to hash to array of bytes
    * @return hashed password in array of bytes
    */
-  public static byte[] encodePassword(String passwordToHash, byte[] salt) {        
+  public static byte[] encodePassword(String passwordToHash, byte[] salt) {
     KeySpec spec = new PBEKeySpec(passwordToHash.toCharArray(), salt, 128000, 512);
     try {
       SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
@@ -44,5 +44,10 @@ public class Security {
       return true;
     }
     return false;
+  }
+
+  public static boolean validateText(String username) {
+
+    return true;
   }
 }

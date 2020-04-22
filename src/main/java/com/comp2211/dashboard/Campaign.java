@@ -168,7 +168,7 @@ public class Campaign {
    */
   public BigDecimal getBounceRateByTime(long maxSeconds, boolean allowInf) {
     if (maxSeconds < 0) {
-      System.out.println("Attempted bounce calculation with negative value, returning 0");
+      Logger.log("Attempted bounce calculation with negative value, returning 0");
       return BigDecimal.ZERO;
     }
     if (serverDataCount == 0) {
@@ -185,7 +185,7 @@ public class Campaign {
    */
   public BigDecimal getBounceRateByPages(byte maxPages) {
     if (maxPages < 0) {
-      System.out.println("Attempted bounce calculation with negative value, returning 0");
+      Logger.log("Attempted bounce calculation with negative value, returning 0");
       return BigDecimal.ZERO;
     }
     if (serverDataCount == 0) {
@@ -356,7 +356,7 @@ public class Campaign {
     for (Entry<String, Long> entry : dataMap.entrySet()) {
       Long count = entry.getValue();
       if(count == null || count == 0 || impressionDataCount == 0) {
-        resultMap.put(entry.getKey(), BigDecimal.ZERO);        
+        resultMap.put(entry.getKey(), BigDecimal.ZERO);
       } else {
         resultMap.put(entry.getKey(), BigDecimal.valueOf(count).divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)));
       }
