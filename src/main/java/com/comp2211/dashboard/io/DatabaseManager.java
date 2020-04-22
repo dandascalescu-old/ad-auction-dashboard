@@ -95,6 +95,11 @@ public abstract class DatabaseManager {
   public abstract long retrieveBouncesCountByPages(byte maxPages);
 
   /**
+   * Retrieve the total number of acquisitions
+   */
+  public abstract long retrieveAcquisitionCount();
+
+  /**
    * Retrieve the average acquisition cost.
    */
   public abstract BigDecimal retrieveAverageAcquisitionCost();

@@ -71,7 +71,7 @@ public class MySQLManager extends DatabaseManager {
     try {
       StringBuilder sb = new StringBuilder("SELECT COUNT(*) AS COUNT FROM ");
       sb.append(server_table);
-      sb.append(" WHERE (Exit_Date - Entry_Date) < ?");
+      sb.append(" WHERE (Exit_Date - Entry_Date) <= ?");
       if (allowInf) {
         sb.append(" OR Exit_Date IS NULL");
       }
@@ -88,7 +88,9 @@ public class MySQLManager extends DatabaseManager {
       DbUtils.closeQuietly(stmt);
     }
     return 0L;
-  }/**
+  }
+
+  /**
    * Retrieve the number of bounces by number of pages visited
    * @param maxPages the maximum pages visited for which a bounce is registered
    * @return long value of the number of bounces
@@ -100,9 +102,34 @@ public class MySQLManager extends DatabaseManager {
     try {
       StringBuilder sb = new StringBuilder("SELECT COUNT(*) AS COUNT FROM ");
       sb.append(server_table);
-      sb.append(" WHERE Pages_Viewed < ?");
+      sb.append(" WHERE Pages_Viewed <= ?");
       stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
       stmt.setByte(1, maxPages);
+      rs = stmt.executeQuery();
+      if (rs.next()) {
+        return rs.getLong("COUNT");
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      DbUtils.closeQuietly(rs);
+      DbUtils.closeQuietly(stmt);
+    }
+    return 0L;
+  }
+
+  /**
+   * Retrieve the total number of acquisitions
+   * @return total count
+   */
+  public long retrieveAcquisitionCount() {
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    try {
+      StringBuilder sb = new StringBuilder("SELECT COUNT(*) AS COUNT FROM ");
+      sb.append(server_table);
+      sb.append(" WHERE Conversion = 1");
+      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
       rs = stmt.executeQuery();
       if (rs.next()) {
         return rs.getLong("COUNT");

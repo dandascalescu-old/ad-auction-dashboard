@@ -89,9 +89,10 @@ public class PrimaryViewModel implements ViewModel {
         //TODO Change to load data over time: check campaign.loadData(limit, offset);
         Platform.runLater(new Runnable() {
           public void run() {
+            //TODO move all bounce updating to one method
+            updateBouncesCountDefault();//must be run once before anything using bouncesCount
             updateTotalMetrics();
             updateTotalCosts();
-            updateBounceRateDefault();
             setupDemographicSelector();
             setupAverageSelector();
             setUpTotalsSelector();
@@ -161,47 +162,46 @@ public class PrimaryViewModel implements ViewModel {
     return bounceRateText;
   }
 
-  public StringProperty getBounceRateText(){return bounceRateText;}
+  public StringProperty getConversionUniquesProperty(){return conversionUniquesText;}
 
-  public StringProperty getConversionUniquesText(){return totalConversionsText;}
+  public StringProperty getTotalImpressionsProperty() { return totalImpressionsText; }
 
-  public StringProperty getTotalImpressionsText() { return totalImpressionsText; }
+  public StringProperty getTotalClicksProperty() { return totalClicksText;}
 
-  public StringProperty getTotalClicksText() { return totalClicksText;}
+  public StringProperty getTotalUniquesProperty() { return totalUniquesText;}
 
-  public StringProperty getTotalUniquesText() { return totalUniquesText;}
+  public StringProperty getTotalBouncesProperty() { return totalBouncesText;}
 
-  public StringProperty getTotalBouncesText() { return totalBouncesText;}
-
-  public StringProperty getTotalConversionsText() { return totalConversionsText;}
-
+  public StringProperty getTotalConversionsProperty() { return totalConversionsText;}
 
   private void updateTotalCosts() {
     totalClickCost.setValue("£" + selectedCampaign.getValue().getTotalClickCost().setScale(2, RoundingMode.CEILING).toPlainString());
     totalImpresCost.setValue("£" + selectedCampaign.getValue().getTotalImpressionCost().setScale(2, RoundingMode.CEILING).toPlainString());
     totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost().setScale(2, RoundingMode.CEILING).toPlainString());
+    //TODO rename method or move these last ones to another, as they aren't costs
     clickThroughRateText.setValue(selectedCampaign.getValue().getClickThroughRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+    bounceRateText.setValue(selectedCampaign.getValue().getBounceRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+    conversionUniquesText.setValue(selectedCampaign.getValue().getConversionsPerUniques().setScale(2, RoundingMode.CEILING).toPlainString());
   }
 
   private void updateTotalMetrics(){
-
-    totalImpressionsText.setValue("32121");
-    totalClicksText.setValue("99833");
-    totalUniquesText.setValue("12002");
-    totalBouncesText.setValue("11143");
-    totalConversionsText.setValue("9733");
+    totalImpressionsText.setValue(String.valueOf(selectedCampaign.getValue().getImpressionDataCount()));
+    totalClicksText.setValue(String.valueOf(selectedCampaign.getValue().getClickDataCount()));
+    totalUniquesText.setValue(String.valueOf(selectedCampaign.getValue().getUniquesCount()));
+    totalBouncesText.setValue(String.valueOf(selectedCampaign.getValue().getBouncesCount()));
+    totalConversionsText.setValue(String.valueOf(selectedCampaign.getValue().getConversionsCount()));
   }
 
-  private void updateBounceRateDefault() {
-    updateBounceRateByPages((byte) 1);
+  private void updateBouncesCountDefault() {
+    updateBouncesCountByPages((byte) 1);
   }
 
-  private void updateBounceRateByTime(long maxSeconds, boolean allowInf) {
-    bounceRateText.setValue(selectedCampaign.getValue().getBounceRateByTime(maxSeconds, allowInf).setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+  private void updateBouncesCountByTime(long maxSeconds, boolean allowInf) {
+    selectedCampaign.getValue().updateBouncesByTime(maxSeconds, allowInf);
   }
 
-  private void updateBounceRateByPages(byte maxPages) {
-    bounceRateText.setValue(selectedCampaign.getValue().getBounceRateByPages(maxPages).setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+  private void updateBouncesCountByPages(byte maxPages) {
+    selectedCampaign.getValue().updateBouncesByPages(maxPages);
   }
 
   private void setupCampaignSelector() {

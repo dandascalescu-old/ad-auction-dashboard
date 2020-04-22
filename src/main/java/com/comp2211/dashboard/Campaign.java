@@ -24,7 +24,7 @@ public class Campaign {
   private DatabaseManager dbManager;
 
   private BigDecimal totalClickCost, totalImpressionCost, averageAcquisitionCost;
-  private long clickDataCount, impressionDataCount, serverDataCount, uniquesCount, bouncesCount;
+  private long clickDataCount, impressionDataCount, serverDataCount, uniquesCount, bouncesCount, conversionsCount;
 
   private HashMap<String, BigDecimal> cachedDatedAcquisitionCostAverages, cachedDatedImpressionCostAverages, cachedDatedClickCostAverages;
   private HashMap<String, BigDecimal> cachedAgePercentage, cachedGenderPercentage, cachedIncomePercentage, cachedContextPercentage;
@@ -83,6 +83,7 @@ public class Campaign {
     impressionDataCount = dbManager.retrieveDataCount(dbManager.getImpressionTable());
     serverDataCount = dbManager.retrieveDataCount(dbManager.getServerTable());
     uniquesCount = dbManager.retrieveDataCount(dbManager.getClickTable(), true);
+    conversionsCount = dbManager.retrieveAcquisitionCount();
 
     totalClickCost = dbManager.retrieveTotalCost(Cost.Click_Cost);
     totalImpressionCost = dbManager.retrieveTotalCost(Cost.Impression_Cost);
@@ -115,6 +116,14 @@ public class Campaign {
 
   public long getUniquesCount() {
     return uniquesCount;
+  }
+
+  public long getBouncesCount() {
+    return bouncesCount;
+  }
+
+  public long getConversionsCount() {
+    return conversionsCount;
   }
 
   /**
@@ -160,39 +169,38 @@ public class Campaign {
     return BigDecimal.valueOf(clickDataCount).divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
   }
 
-  /**
-   * Calculates the bounce rate as the percentage of server entries that result in a bounce, calculated by time
-   * @param maxSeconds the maximum time in seconds for which a bounce is registered
-   * @param allowInf whether entries with no exit time will be counted
-   * @return Bounce rate as a percentage
-   */
-  public BigDecimal getBounceRateByTime(long maxSeconds, boolean allowInf) {
+  public void updateBouncesByTime(long maxSeconds, boolean allowInf) {
     if (maxSeconds < 0) {
-      Logger.log("Attempted bounce calculation with negative value, returning 0");
-      return BigDecimal.ZERO;
+      Logger.log("Attempted bounce calculation with negative value");
+      return;
     }
     if (serverDataCount == 0) {
-      return BigDecimal.ZERO;
+      return;
     }
     bouncesCount = dbManager.retrieveBouncesCountByTime(maxSeconds, allowInf);
-    return BigDecimal.valueOf(bouncesCount).divide(BigDecimal.valueOf(serverDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+  }
+
+  public void updateBouncesByPages(byte maxPages) {
+    if (maxPages < 0) {
+      Logger.log("Attempted bounce calculation with negative value, returning 0");
+      return;
+    }
+    if (serverDataCount == 0) {
+      return;
+    }
+    bouncesCount = dbManager.retrieveBouncesCountByPages(maxPages);
   }
 
   /**
-   * Calculates the bounce rate as the percentage of server entries that result in a bounce, calculated by pages visited
-   * @param maxPages the maximum pages visited for which a bounce is registered
+   * Calculates the bounce rate as the percentage of server entries that result in a bounce
    * @return Bounce rate as a percentage
    */
-  public BigDecimal getBounceRateByPages(byte maxPages) {
-    if (maxPages < 0) {
-      Logger.log("Attempted bounce calculation with negative value, returning 0");
-      return BigDecimal.ZERO;
-    }
-    if (serverDataCount == 0) {
-      return BigDecimal.ZERO;
-    }
-    bouncesCount = dbManager.retrieveBouncesCountByPages(maxPages);
+  public BigDecimal getBounceRate() {
     return BigDecimal.valueOf(bouncesCount).divide(BigDecimal.valueOf(serverDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+  }
+
+  public BigDecimal getConversionsPerUniques() {
+    return BigDecimal.valueOf(conversionsCount).divide(BigDecimal.valueOf(uniquesCount), 6, RoundingMode.HALF_UP);
   }
 
   /**
