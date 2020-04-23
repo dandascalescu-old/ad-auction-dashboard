@@ -4,8 +4,9 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.*;
+
+import com.comp2211.dashboard.util.Logger;
 import org.apache.commons.dbutils.DbUtils;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import com.comp2211.dashboard.model.data.Demographics;
@@ -24,6 +25,58 @@ public class MySQLManager extends DatabaseManager {
 
   public MySQLManager(final String host, final String port, final String db, final String user, final String pw, final String c_table, final String i_table, final String s_table) {
     super(host, port, db, user, pw, c_table, i_table, s_table);
+  }
+
+  public List<List<String>> retrieve(SelectSmnt[] selectSmnts, String from, String where, String groupBy, String[] resultColumns) {
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    //TODO test none are null, result is in selects
+    List<List<String>> results = new ArrayList<>();
+    try {
+      StringBuilder sb = new StringBuilder();
+      sb.append("SELECT ");
+      for (int i = 0; i < selectSmnts.length; i++) {
+        SelectSmnt smnt = selectSmnts[i];
+        sb.append(smnt.select);
+        if (!smnt.as.isEmpty())
+          sb.append(" AS ").append(smnt.as);
+        if (i != selectSmnts.length-1)
+          sb.append(",");
+      }
+      sb.append(" FROM ").append(from);
+      if (!where.isEmpty())
+        sb.append(" WHERE").append(where);
+      if (!groupBy.isEmpty())
+        sb.append(" GROUP BY ").append(groupBy);
+      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
+      rs = stmt.executeQuery();
+      while (rs.next()) {
+        List<String> result = new ArrayList<>();
+        for (String col : resultColumns)
+          result.add(rs.getString(col));
+        results.add(result);
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      DbUtils.closeQuietly(rs);
+      DbUtils.closeQuietly(stmt);
+    }
+    return results;
+  }
+
+  private HashMap<String, Long> toLongMap(List<List<String>> resultsList) {
+    HashMap<String, Long> resultMap = new LinkedHashMap<>();
+    for (List<String> result : resultsList)
+      if (result.size() != 2)
+        Logger.log("Invalid result returned"); //TODO better message
+      else
+        try {
+          resultMap.put(result.get(0), Long.valueOf(result.get(1)));
+        } catch (NumberFormatException e) {
+          Logger.log("Invalid result returned");
+        }
+    return resultMap;
   }
 
   /**
@@ -233,11 +286,29 @@ public class MySQLManager extends DatabaseManager {
     return resultMap;
   }
 
+
   /**
    * Retrieve the total number of impressions for each date.
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
+  public HashMap<String, Long> retrieveDatedImpressionTotals() {
+    return toLongMap(
+            retrieve(
+                    new SelectSmnt[]{
+                            new SelectSmnt("DATE(Date)","DateOnly"),
+                            new SelectSmnt("COUNT(*)","COUNT")
+                    },
+                    impression_table,
+                    "",
+                    "DateOnly",
+                    new String[]{
+                            "DateOnly",
+                            "COUNT"
+                    })
+    );
+  }
+  /*@Override
   public HashMap<String, Long> retrieveDatedImpressionTotals() {
     PreparedStatement stmt = null;
     ResultSet rs = null;
@@ -258,7 +329,8 @@ public class MySQLManager extends DatabaseManager {
       DbUtils.closeQuietly(stmt);
     }
     return resultMap;
-  }
+  }*/
+
 
   /**
    * Retrieve the total number of clicks for each date.
