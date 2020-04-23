@@ -76,7 +76,6 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     bounceRateText.textProperty().bind(viewModel.bounceRateTextProperty());
     conversionUniquesText.textProperty().bind(viewModel.getConversionUniquesProperty());
 
-    // TODO: caused a nullpointer before.
     campaignCombobox.setItems(viewModel.campaignsList());
     campaignCombobox.valueProperty().bindBidirectional(viewModel.selectedCampaignProperty());
 

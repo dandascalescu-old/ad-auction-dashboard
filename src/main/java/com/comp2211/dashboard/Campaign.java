@@ -27,6 +27,7 @@ public class Campaign {
   private long clickDataCount, impressionDataCount, serverDataCount, uniquesCount, bouncesCount, conversionsCount;
 
   private HashMap<String, BigDecimal> cachedDatedAcquisitionCostAverages, cachedDatedImpressionCostAverages, cachedDatedClickCostAverages;
+  private HashMap<String, Long> cachedDatedImpressionTotals, cachedDatedClickTotals, cachedDatedUniqueTotals, cachedDatedBounceTotals, cachedDatedAcquisitionTotals;
   private HashMap<String, BigDecimal> cachedAgePercentage, cachedGenderPercentage, cachedIncomePercentage, cachedContextPercentage;
 
   public static List<Campaign> getCampaigns(){
@@ -54,6 +55,13 @@ public class Campaign {
     cachedDatedAcquisitionCostAverages = new LinkedHashMap<String, BigDecimal>();
     cachedDatedImpressionCostAverages = new LinkedHashMap<String, BigDecimal>();
     cachedDatedClickCostAverages = new LinkedHashMap<String, BigDecimal>();
+
+    cachedDatedImpressionTotals = new LinkedHashMap<String, Long>();
+    cachedDatedClickTotals = new LinkedHashMap<String, Long>();
+    cachedDatedUniqueTotals = new LinkedHashMap<String, Long>();
+    cachedDatedBounceTotals = new LinkedHashMap<String, Long>();
+    cachedDatedAcquisitionTotals = new LinkedHashMap<String, Long>();
+
     cachedAgePercentage = new LinkedHashMap<String, BigDecimal>();
     cachedGenderPercentage = new LinkedHashMap<String, BigDecimal>();
     cachedIncomePercentage = new LinkedHashMap<String, BigDecimal>();
@@ -96,6 +104,13 @@ public class Campaign {
     cachedDatedClickCostAverages.clear();
     cachedDatedImpressionCostAverages.clear();
     cachedDatedAcquisitionCostAverages.clear();
+
+    cachedDatedImpressionTotals.clear();
+    cachedDatedClickTotals.clear();
+    cachedDatedUniqueTotals.clear();
+    cachedDatedBounceTotals.clear();
+    cachedDatedAcquisitionTotals.clear();
+
     cachedAgePercentage.clear();
     cachedGenderPercentage.clear();
     cachedIncomePercentage.clear();
@@ -178,6 +193,8 @@ public class Campaign {
       return;
     }
     bouncesCount = dbManager.retrieveBouncesCountByTime(maxSeconds, allowInf);
+    cachedDatedBounceTotals.clear();
+    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByTime(maxSeconds, allowInf));
   }
 
   public void updateBouncesByPages(byte maxPages) {
@@ -189,6 +206,8 @@ public class Campaign {
       return;
     }
     bouncesCount = dbManager.retrieveBouncesCountByPages(maxPages);
+    cachedDatedBounceTotals.clear();
+    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(maxPages));
   }
 
   /**
@@ -281,6 +300,86 @@ public class Campaign {
     cachedDatedClickCostAverages.clear();
     cachedDatedClickCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Click_Cost));
     return cachedDatedClickCostAverages;
+  }
+
+  /**
+   * Calculates the total impressions for each date.
+   *
+   * @return Hash Map containing the date in dd/MM/yyyy format as the key with the total for
+   *     that date as the value.
+   */
+  public HashMap<String, Long> getDatedImpressionTotals() {
+    if (cachedDatedImpressionTotals != null && !cachedDatedImpressionTotals.isEmpty()) {
+      return cachedDatedImpressionTotals;
+    }
+
+    cachedDatedImpressionTotals.clear();
+    cachedDatedImpressionTotals.putAll(dbManager.retrieveDatedImpressionTotals());
+    return cachedDatedImpressionTotals;
+  }
+
+  /**
+   * Calculates the total clicks for each date.
+   *
+   * @return Hash Map containing the date in dd/MM/yyyy format as the key with the total for
+   *     that date as the value.
+   */
+  public HashMap<String, Long> getDatedClickTotals() {
+    if (cachedDatedClickTotals != null && !cachedDatedClickTotals.isEmpty()) {
+      return cachedDatedClickTotals;
+    }
+
+    cachedDatedClickTotals.clear();
+    cachedDatedClickTotals.putAll(dbManager.retrieveDatedClickTotals());
+    return cachedDatedClickTotals;
+  }
+
+  /**
+   * Calculates the total uniques for each date.
+   *
+   * @return Hash Map containing the date in dd/MM/yyyy format as the key with the total for
+   *     that date as the value.
+   */
+  public HashMap<String, Long> getDatedUniqueTotals() {
+    if (cachedDatedUniqueTotals != null && !cachedDatedUniqueTotals.isEmpty()) {
+      return cachedDatedUniqueTotals;
+    }
+
+    cachedDatedUniqueTotals.clear();
+    cachedDatedUniqueTotals.putAll(dbManager.retrieveDatedUniqueTotals());
+    return cachedDatedUniqueTotals;
+  }
+
+  /**
+   * Calculates the total bounces for each date.
+   *
+   * @return Hash Map containing the date in dd/MM/yyyy format as the key with the total for
+   *     that date as the value.
+   */
+  public HashMap<String, Long> getDatedBounceTotals() {
+    if (cachedDatedBounceTotals != null && !cachedDatedBounceTotals.isEmpty()) {
+      return cachedDatedBounceTotals;
+    }
+
+    cachedDatedBounceTotals.clear();
+    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages((byte) 1));
+    return cachedDatedBounceTotals;
+  }
+
+  /**
+   * Calculates the total conversions for each date.
+   *
+   * @return Hash Map containing the date in dd/MM/yyyy format as the key with the total for
+   *     that date as the value.
+   */
+  public HashMap<String, Long> getDatedAcquisitionTotals() {
+    if (cachedDatedAcquisitionTotals != null && !cachedDatedAcquisitionTotals.isEmpty()) {
+      return cachedDatedAcquisitionTotals;
+    }
+
+    cachedDatedAcquisitionTotals.clear();
+    cachedDatedAcquisitionTotals.putAll(dbManager.retrieveDatedAcquisitionTotals());
+    return cachedDatedAcquisitionTotals;
   }
 
   /**

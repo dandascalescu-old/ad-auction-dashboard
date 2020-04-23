@@ -115,6 +115,36 @@ public abstract class DatabaseManager {
   public abstract HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost();
 
   /**
+   * Retrieve the total number of impressions for each date.
+   */
+  public abstract HashMap<String, Long> retrieveDatedImpressionTotals();
+
+  /**
+   * Retrieve the total number of clicks for each date.
+   */
+  public abstract HashMap<String, Long> retrieveDatedClickTotals();
+
+  /**
+   * Retrieve the total number of uniques for each date.
+   */
+  public abstract HashMap<String, Long> retrieveDatedUniqueTotals();
+
+  /**
+   * Retrieve the total number of bounces (by time) for each date.
+   */
+  public abstract HashMap<String, Long> retrieveDatedBounceTotalsByTime(long maxSeconds, boolean allowInf);
+
+  /**
+   * Retrieve the total number of bounces (by pages visited) for each date.
+   */
+  public abstract HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte maxPages);
+
+  /**
+   * Retrieve the total number of acquisitions for each date.
+   */
+  public abstract HashMap<String, Long> retrieveDatedAcquisitionTotals();
+
+  /**
    * Retrieve demographic info
    */
   public abstract HashMap<String, Long> retrieveDemographics(Demographic type);

@@ -234,6 +234,179 @@ public class MySQLManager extends DatabaseManager {
   }
 
   /**
+   * Retrieve the total number of impressions for each date.
+   * @return a map with each date as keys and the total for that date as a value
+   */
+  @Override
+  public HashMap<String, Long> retrieveDatedImpressionTotals() {
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    HashMap<String, Long> resultMap = new LinkedHashMap<>();
+    try {
+      StringBuilder sb = new StringBuilder("SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT FROM ");
+      sb.append(impression_table);
+      sb.append(" GROUP BY DateOnly");
+      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
+      rs = stmt.executeQuery();
+      while (rs.next()) {
+        resultMap.put(rs.getString("DateOnly"), rs.getLong("COUNT"));
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      DbUtils.closeQuietly(rs);
+      DbUtils.closeQuietly(stmt);
+    }
+    return resultMap;
+  }
+
+  /**
+   * Retrieve the total number of clicks for each date.
+   * @return a map with each date as keys and the total for that date as a value
+   */
+  @Override
+  public HashMap<String, Long> retrieveDatedClickTotals() {
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    HashMap<String, Long> resultMap = new LinkedHashMap<>();
+    try {
+      StringBuilder sb = new StringBuilder("SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT FROM ");
+      sb.append(click_table);
+      sb.append(" GROUP BY DateOnly");
+      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
+      rs = stmt.executeQuery();
+      while (rs.next()) {
+        resultMap.put(rs.getString("DateOnly"), rs.getLong("COUNT"));
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      DbUtils.closeQuietly(rs);
+      DbUtils.closeQuietly(stmt);
+    }
+    return resultMap;
+  }
+
+  /**
+   * Retrieve the total number of uniques for each date.
+   * @return a map with each date as keys and the total for that date as a value
+   */
+  @Override
+  public HashMap<String, Long> retrieveDatedUniqueTotals() {
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    HashMap<String, Long> resultMap = new LinkedHashMap<>();
+    try {
+      StringBuilder sb = new StringBuilder("SELECT DATE(Date) AS DateOnly, COUNT(DISTINCT ID) AS COUNT FROM ");
+      sb.append(click_table);
+      sb.append(" GROUP BY DateOnly");
+      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
+      rs = stmt.executeQuery();
+      while (rs.next()) {
+        resultMap.put(rs.getString("DateOnly"), rs.getLong("COUNT"));
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      DbUtils.closeQuietly(rs);
+      DbUtils.closeQuietly(stmt);
+    }
+    return resultMap;
+  }
+
+  /**
+   * Retrieve the total number of bounces (by time) for each date.
+   * @param maxSeconds the maximum time in seconds for which a bounce is registered
+   * @param allowInf whether entries with no exit time will be counted
+   * @return a map with each date as keys and the total for that date as a value
+   */
+  @Override
+  public HashMap<String, Long> retrieveDatedBounceTotalsByTime(long maxSeconds, boolean allowInf) {
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    HashMap<String, Long> resultMap = new LinkedHashMap<>();
+    try {
+      StringBuilder sb = new StringBuilder("SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT FROM ");
+      sb.append(server_table);
+      sb.append(" WHERE (Exit_Date - Entry_Date) <= ?");
+      if (allowInf) {
+        sb.append(" OR Exit_Date IS NULL");
+      }
+      sb.append(" GROUP BY DateOnly");
+      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
+      stmt.setLong(1, maxSeconds);
+      rs = stmt.executeQuery();
+      while (rs.next()) {
+        resultMap.put(rs.getString("DateOnly"), rs.getLong("COUNT"));
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      DbUtils.closeQuietly(rs);
+      DbUtils.closeQuietly(stmt);
+    }
+    return resultMap;
+  }
+
+  /**
+   * Retrieve the total number of bounces (by pages visited) for each date.
+   * @param maxPages the maximum pages visited for which a bounce is registered
+   * @return a map with each date as keys and the total for that date as a value
+   */
+  @Override
+  public HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte maxPages) {
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    HashMap<String, Long> resultMap = new LinkedHashMap<>();
+    try {
+      StringBuilder sb = new StringBuilder("SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT FROM ");
+      sb.append(server_table);
+      sb.append(" WHERE Pages_Viewed <= ?");
+      sb.append(" GROUP BY DateOnly");
+      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
+      stmt.setByte(1, maxPages);
+      rs = stmt.executeQuery();
+      while (rs.next()) {
+        resultMap.put(rs.getString("DateOnly"), rs.getLong("COUNT"));
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      DbUtils.closeQuietly(rs);
+      DbUtils.closeQuietly(stmt);
+    }
+    return resultMap;
+  }
+
+  /**
+   * Retrieve the total number of acquisitions for each date.
+   * @return a map with each date as keys and the total for that date as a value
+   */
+  @Override
+  public HashMap<String, Long> retrieveDatedAcquisitionTotals() {
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    HashMap<String, Long> resultMap = new LinkedHashMap<>();
+    try {
+      StringBuilder sb = new StringBuilder("SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT FROM ");
+      sb.append(server_table);
+      sb.append(" WHERE Conversion = 1");
+      sb.append(" GROUP BY DateOnly");
+      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
+      rs = stmt.executeQuery();
+      while (rs.next()) {
+        resultMap.put(rs.getString("DateOnly"), rs.getLong("COUNT"));
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      DbUtils.closeQuietly(rs);
+      DbUtils.closeQuietly(stmt);
+    }
+    return resultMap;
+  }
+
+  /**
    * Retrieve demographics with count
    * @param type the type of demographics to retrieve
    * @return a map with each demographic as keys and the count for that demographic as a value
