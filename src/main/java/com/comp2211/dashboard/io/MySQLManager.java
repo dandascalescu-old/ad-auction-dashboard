@@ -1,6 +1,7 @@
 package com.comp2211.dashboard.io;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,7 +28,7 @@ public class MySQLManager extends DatabaseManager {
     super(host, port, db, user, pw, c_table, i_table, s_table);
   }
 
-  public List<List<String>> retrieve(SelectSmnt[] selectSmnts, String from, String where, String groupBy, String[] resultColumns) {
+  public List<List<String>> retrieve(SelectSmnt[] selectSmnts, String from, String where, String groupBy, Object[] params, String[] resultColumns) {
     PreparedStatement stmt = null;
     ResultSet rs = null;
     //TODO test none are null, result is in selects
@@ -41,14 +42,30 @@ public class MySQLManager extends DatabaseManager {
         if (!smnt.as.isEmpty())
           sb.append(" AS ").append(smnt.as);
         if (i != selectSmnts.length-1)
-          sb.append(",");
+          sb.append(", ");
       }
       sb.append(" FROM ").append(from);
       if (!where.isEmpty())
-        sb.append(" WHERE").append(where);
+        sb.append(" WHERE ").append(where);
       if (!groupBy.isEmpty())
         sb.append(" GROUP BY ").append(groupBy);
+
       stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
+      System.out.println(sb.toString());
+
+      for (int i = 0; i < params.length; i++) {
+        if (params[i] instanceof Byte)
+          stmt.setByte(i+1, (byte) params[i]);
+        else if (params[i] instanceof Long)
+          stmt.setLong(i+1, (long) params[i]);
+        else if (params[i] instanceof String)
+          stmt.setString(i+1, (String) params[i]);
+        else if (params[i] instanceof java.sql.Date)
+          stmt.setDate(i+1, (Date) params[i]);
+        else
+          System.err.println("Type not accounted for");
+      }
+
       rs = stmt.executeQuery();
       while (rs.next()) {
         List<String> result = new ArrayList<>();
@@ -77,6 +94,20 @@ public class MySQLManager extends DatabaseManager {
           Logger.log("Invalid result returned");
         }
     return resultMap;
+  }
+
+  private long toLong(List<List<String>> resultsList) {
+    if (resultsList.size() != 1)
+      Logger.log("Invalid result returned");
+    else if (resultsList.get(0).size() != 1)
+      Logger.log("Invalid result returned");
+    else
+      try {
+        return Long.parseLong(resultsList.get(0).get(0));
+      } catch (NumberFormatException e) {
+        Logger.log("Invalid result returned");
+      }
+    return 0L;
   }
 
   /**
@@ -150,6 +181,25 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public long retrieveBouncesCountByPages(byte maxPages) {
+    return toLong(
+            retrieve(
+                    new SelectSmnt[]{
+                            new SelectSmnt("COUNT(*)", "COUNT")
+                    },
+                    server_table,
+                    "Pages_Viewed <= ?",
+                    "",
+                    new Object[]{
+                            maxPages
+                    },
+                    new String[]{
+                            "COUNT"
+                    }
+            )
+    );
+  }
+  /*@Override
+  public long retrieveBouncesCountByPages(byte maxPages) {
     PreparedStatement stmt = null;
     ResultSet rs = null;
     try {
@@ -169,7 +219,7 @@ public class MySQLManager extends DatabaseManager {
       DbUtils.closeQuietly(stmt);
     }
     return 0L;
-  }
+  }*/
 
   /**
    * Retrieve the total number of acquisitions
@@ -302,6 +352,7 @@ public class MySQLManager extends DatabaseManager {
                     impression_table,
                     "",
                     "DateOnly",
+                    new Object[]{},
                     new String[]{
                             "DateOnly",
                             "COUNT"
