@@ -163,13 +163,3 @@ public abstract class DatabaseManager {
    */
   public abstract boolean attemptUserLogin(String username, String password);
 }
-
-class SelectSmnt {
-  String select;
-  String as;
-
-  public SelectSmnt(String select, String as) {
-    this.select = select;
-    this.as = as;
-  }
-}

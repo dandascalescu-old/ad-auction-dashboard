@@ -28,30 +28,13 @@ public class MySQLManager extends DatabaseManager {
     super(host, port, db, user, pw, c_table, i_table, s_table);
   }
 
-  public List<List<String>> retrieve(SelectSmnt[] selectSmnts, String from, String where, String groupBy, Object[] params, String[] resultColumns) {
+  public List<List<String>> retrieve(String statement, Object[] params, String[] resultColumns) {
     PreparedStatement stmt = null;
     ResultSet rs = null;
-    //TODO test none are null, result is in selects
     List<List<String>> results = new ArrayList<>();
     try {
-      StringBuilder sb = new StringBuilder();
-      sb.append("SELECT ");
-      for (int i = 0; i < selectSmnts.length; i++) {
-        SelectSmnt smnt = selectSmnts[i];
-        sb.append(smnt.select);
-        if (!smnt.as.isEmpty())
-          sb.append(" AS ").append(smnt.as);
-        if (i != selectSmnts.length-1)
-          sb.append(", ");
-      }
-      sb.append(" FROM ").append(from);
-      if (!where.isEmpty())
-        sb.append(" WHERE ").append(where);
-      if (!groupBy.isEmpty())
-        sb.append(" GROUP BY ").append(groupBy);
-
-      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
-      System.out.println(sb.toString());
+      stmt = sqlDatabase.getConnection().prepareStatement(statement);
+      //System.out.println(sb.toString());//test
 
       for (int i = 0; i < params.length; i++) {
         if (params[i] instanceof Byte)
@@ -86,28 +69,56 @@ public class MySQLManager extends DatabaseManager {
     HashMap<String, Long> resultMap = new LinkedHashMap<>();
     for (List<String> result : resultsList)
       if (result.size() != 2)
-        Logger.log("Invalid result returned"); //TODO better message
+        Logger.log("[ERROR] Invalid result returned from SQL query. Expected 2 columns, received " + result.size() + ".");
       else
         try {
           resultMap.put(result.get(0), Long.valueOf(result.get(1)));
         } catch (NumberFormatException e) {
-          Logger.log("Invalid result returned");
+          Logger.log("[ERROR] Invalid result returned from SQL query. Long conversion failed on value <" + result.get(1) + ">.");
+        }
+    return resultMap;
+  }
+
+  private HashMap<String, BigDecimal> toBigDecimalMap(List<List<String>> resultsList) {
+    HashMap<String, BigDecimal> resultMap = new LinkedHashMap<>();
+    for (List<String> result : resultsList)
+      if (result.size() != 2)
+        Logger.log("[ERROR] Invalid result returned from SQL query. Expected 2 columns, received " + result.size() + ".");
+      else
+        try {
+          resultMap.put(result.get(0), BigDecimal.valueOf(Double.parseDouble(result.get(1))));
+        } catch (NumberFormatException e) {
+          Logger.log("[ERROR] Invalid result returned from SQL query. Double conversion failed on value <" + result.get(1) + ">.");
         }
     return resultMap;
   }
 
   private long toLong(List<List<String>> resultsList) {
     if (resultsList.size() != 1)
-      Logger.log("Invalid result returned");
+      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 columns, received " + resultsList.size() + ".");
     else if (resultsList.get(0).size() != 1)
-      Logger.log("Invalid result returned");
+      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 result, received " + resultsList.get(0).size() + ".");
     else
       try {
         return Long.parseLong(resultsList.get(0).get(0));
       } catch (NumberFormatException e) {
-        Logger.log("Invalid result returned");
+        Logger.log("[ERROR] Invalid result returned from SQL query. Long conversion failed on value <" + resultsList.get(0).get(0) + ">.");
       }
     return 0L;
+  }
+
+  private BigDecimal toBigDecimal(List<List<String>> resultsList) {
+    if (resultsList.size() != 1)
+      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 columns, received " + resultsList.size() + ".");
+    else if (resultsList.get(0).size() != 1)
+      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 result, received " + resultsList.get(0).size() + ".");
+    else
+      try {
+        return BigDecimal.valueOf(Double.parseDouble(resultsList.get(0).get(0)));
+      } catch (NumberFormatException e) {
+        Logger.log("[ERROR] Invalid result returned from SQL query. Double conversion failed on value <" + resultsList.get(0).get(0) + ">.");
+      }
+    return BigDecimal.ZERO;
   }
 
   /**
@@ -117,29 +128,11 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public BigDecimal retrieveTotalCost(Cost type) {
-    PreparedStatement stmt = null;
-    ResultSet rs = null;
-    try {
-      StringBuilder sb = new StringBuilder("SELECT SUM(");
-      sb.append(type.toString());
-      sb.append(") AS SUM FROM ");
-      if (type.equals(Cost.Click_Cost)) {
-        sb.append(click_table);
-      } else {
-        sb.append(impression_table);
-      }
-      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
-      rs = stmt.executeQuery();
-      if (rs.next()) {
-        return rs.getBigDecimal("SUM");
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    } finally {
-      DbUtils.closeQuietly(rs);
-      DbUtils.closeQuietly(stmt);
-    }
-    return BigDecimal.ZERO;
+    String statement = "SELECT SUM(" + type.toString() + ") AS SUM " +
+            "FROM " + (type.equals(Cost.Click_Cost) ? click_table : impression_table);
+    return toBigDecimal(
+            retrieve(statement, new Object[]{}, new String[]{"SUM"})
+    );
   }
 
   /**
@@ -150,28 +143,12 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public long retrieveBouncesCountByTime(long maxSeconds, boolean allowInf) {
-    PreparedStatement stmt = null;
-    ResultSet rs = null;
-    try {
-      StringBuilder sb = new StringBuilder("SELECT COUNT(*) AS COUNT FROM ");
-      sb.append(server_table);
-      sb.append(" WHERE (Exit_Date - Entry_Date) <= ?");
-      if (allowInf) {
-        sb.append(" OR Exit_Date IS NULL");
-      }
-      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
-      stmt.setLong(1, maxSeconds);
-      rs = stmt.executeQuery();
-      if (rs.next()) {
-        return rs.getLong("COUNT");
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    } finally {
-      DbUtils.closeQuietly(rs);
-      DbUtils.closeQuietly(stmt);
-    }
-    return 0L;
+    String statement = "SELECT COUNT(*) AS COUNT " +
+            "FROM " + server_table +
+            "WHERE (Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL" : "");
+    return toLong(
+            retrieve(statement, new Object[]{maxSeconds}, new String[]{"COUNT"})
+    );
   }
 
   /**
@@ -181,69 +158,25 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public long retrieveBouncesCountByPages(byte maxPages) {
+    String statement = "SELECT COUNT(*) AS COUNT " +
+            "FROM " + server_table +
+            " WHERE Pages_Viewed <= ?";
     return toLong(
-            retrieve(
-                    new SelectSmnt[]{
-                            new SelectSmnt("COUNT(*)", "COUNT")
-                    },
-                    server_table,
-                    "Pages_Viewed <= ?",
-                    "",
-                    new Object[]{
-                            maxPages
-                    },
-                    new String[]{
-                            "COUNT"
-                    }
-            )
+            retrieve(statement, new Object[]{maxPages}, new String[]{"COUNT"})
     );
   }
-  /*@Override
-  public long retrieveBouncesCountByPages(byte maxPages) {
-    PreparedStatement stmt = null;
-    ResultSet rs = null;
-    try {
-      StringBuilder sb = new StringBuilder("SELECT COUNT(*) AS COUNT FROM ");
-      sb.append(server_table);
-      sb.append(" WHERE Pages_Viewed <= ?");
-      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
-      stmt.setByte(1, maxPages);
-      rs = stmt.executeQuery();
-      if (rs.next()) {
-        return rs.getLong("COUNT");
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    } finally {
-      DbUtils.closeQuietly(rs);
-      DbUtils.closeQuietly(stmt);
-    }
-    return 0L;
-  }*/
 
   /**
    * Retrieve the total number of acquisitions
    * @return total count
    */
   public long retrieveAcquisitionCount() {
-    PreparedStatement stmt = null;
-    ResultSet rs = null;
-    try {
-      StringBuilder sb = new StringBuilder("SELECT COUNT(*) AS COUNT FROM ");
-      sb.append(server_table);
-      sb.append(" WHERE Conversion = 1");
-      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
-      rs = stmt.executeQuery();
-      if (rs.next()) {
-        return rs.getLong("COUNT");
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    } finally {
-      DbUtils.closeQuietly(rs);
-      DbUtils.closeQuietly(stmt);
-    }
-    return 0L;
+    String statement = "SELECT COUNT(*) AS COUNT " +
+            "FROM " + server_table +
+            " WHERE Conversion = 1";
+    return toLong(
+            retrieve(statement, new Object[]{}, new String[]{"COUNT"})
+    );
   }
 
   /**
@@ -252,26 +185,12 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public BigDecimal retrieveAverageAcquisitionCost() {
-    PreparedStatement stmt = null;
-    ResultSet rs = null;
-    try {
-      StringBuilder sb = new StringBuilder("SELECT AVG(Click_Cost) AS AVG FROM ");
-      sb.append(click_table);
-      sb.append(" WHERE ID IN (SELECT DISTINCT ID FROM ");
-      sb.append(server_table);
-      sb.append(" WHERE Conversion = 1)");
-      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
-      rs = stmt.executeQuery();
-      if (rs.next()) {
-        return rs.getBigDecimal("AVG");
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    } finally {
-      DbUtils.closeQuietly(rs);
-      DbUtils.closeQuietly(stmt);
-    }
-    return BigDecimal.ZERO;
+    String statement = "SELECT AVG(Click_Cost) AS AVG " +
+            "FROM " + click_table +
+            " WHERE ID IN (SELECT DISTINCT ID FROM " + server_table + " WHERE Conversion = 1)";
+    return toBigDecimal(
+            retrieve(statement, new Object[]{}, new String[]{"AVG"})
+    );
   }
 
   /**
@@ -280,31 +199,12 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type) {
-    PreparedStatement stmt = null;
-    ResultSet rs = null;
-    HashMap<String, BigDecimal> resultMap = new LinkedHashMap<>();
-    try {
-      StringBuilder sb = new StringBuilder("SELECT DATE(Date) AS DateOnly, AVG(");
-      sb.append(type.toString());
-      sb.append(") AS AVG FROM ");
-      if (type.equals(Cost.Click_Cost)) {
-        sb.append(click_table);
-      } else {
-        sb.append(impression_table);
-      }
-      sb.append(" GROUP BY DateOnly");
-      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
-      rs = stmt.executeQuery();
-      while (rs.next()) {
-        resultMap.put(rs.getString("DateOnly"), rs.getBigDecimal("AVG"));
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    } finally {
-      DbUtils.closeQuietly(rs);
-      DbUtils.closeQuietly(stmt);
-    }
-    return resultMap;
+    String statement = "SELECT DATE(Date) AS DateOnly, AVG(" + type.toString() + ") AS AVG " +
+            "FROM " + (type.equals(Cost.Click_Cost) ? click_table : impression_table) +
+            " GROUP BY DateOnly";
+    return toBigDecimalMap(
+            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "AVG"})
+    );
   }
 
   /**
@@ -313,27 +213,13 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost() {
-    PreparedStatement stmt = null;
-    ResultSet rs = null;
-    HashMap<String, BigDecimal> resultMap = new LinkedHashMap<>();
-    try {
-      StringBuilder sb = new StringBuilder("SELECT DATE(Date) AS DateOnly, AVG(Click_Cost) AS AVG FROM ");
-      sb.append(click_table);
-      sb.append(" WHERE ID IN (SELECT DISTINCT ID FROM ");
-      sb.append(server_table);
-      sb.append(" WHERE Conversion = 1) GROUP BY DateOnly");
-      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
-      rs = stmt.executeQuery();
-      while (rs.next()) {
-        resultMap.put(rs.getString("DateOnly"), rs.getBigDecimal("AVG"));
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    } finally {
-      DbUtils.closeQuietly(rs);
-      DbUtils.closeQuietly(stmt);
-    }
-    return resultMap;
+    String statement = "SELECT DATE(Date) AS DateOnly, AVG(Click_Cost) AS AVG " +
+            "FROM " + click_table +
+            " WHERE ID IN (SELECT DISTINCT ID FROM " + server_table + " WHERE Conversion = 1) " +
+            "GROUP BY DateOnly";
+    return toBigDecimalMap(
+            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "AVG"})
+    );
   }
 
 
@@ -343,45 +229,13 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public HashMap<String, Long> retrieveDatedImpressionTotals() {
+    String statement = "SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT " +
+            "FROM " + impression_table +
+            " GROUP BY DateOnly";
     return toLongMap(
-            retrieve(
-                    new SelectSmnt[]{
-                            new SelectSmnt("DATE(Date)","DateOnly"),
-                            new SelectSmnt("COUNT(*)","COUNT")
-                    },
-                    impression_table,
-                    "",
-                    "DateOnly",
-                    new Object[]{},
-                    new String[]{
-                            "DateOnly",
-                            "COUNT"
-                    })
+            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
     );
   }
-  /*@Override
-  public HashMap<String, Long> retrieveDatedImpressionTotals() {
-    PreparedStatement stmt = null;
-    ResultSet rs = null;
-    HashMap<String, Long> resultMap = new LinkedHashMap<>();
-    try {
-      StringBuilder sb = new StringBuilder("SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT FROM ");
-      sb.append(impression_table);
-      sb.append(" GROUP BY DateOnly");
-      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
-      rs = stmt.executeQuery();
-      while (rs.next()) {
-        resultMap.put(rs.getString("DateOnly"), rs.getLong("COUNT"));
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    } finally {
-      DbUtils.closeQuietly(rs);
-      DbUtils.closeQuietly(stmt);
-    }
-    return resultMap;
-  }*/
-
 
   /**
    * Retrieve the total number of clicks for each date.
@@ -389,25 +243,12 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public HashMap<String, Long> retrieveDatedClickTotals() {
-    PreparedStatement stmt = null;
-    ResultSet rs = null;
-    HashMap<String, Long> resultMap = new LinkedHashMap<>();
-    try {
-      StringBuilder sb = new StringBuilder("SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT FROM ");
-      sb.append(click_table);
-      sb.append(" GROUP BY DateOnly");
-      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
-      rs = stmt.executeQuery();
-      while (rs.next()) {
-        resultMap.put(rs.getString("DateOnly"), rs.getLong("COUNT"));
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    } finally {
-      DbUtils.closeQuietly(rs);
-      DbUtils.closeQuietly(stmt);
-    }
-    return resultMap;
+    String statement = "SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT " +
+            "FROM " + click_table +
+            " GROUP BY DateOnly";
+    return toLongMap(
+            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
+    );
   }
 
   /**
@@ -416,25 +257,12 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public HashMap<String, Long> retrieveDatedUniqueTotals() {
-    PreparedStatement stmt = null;
-    ResultSet rs = null;
-    HashMap<String, Long> resultMap = new LinkedHashMap<>();
-    try {
-      StringBuilder sb = new StringBuilder("SELECT DATE(Date) AS DateOnly, COUNT(DISTINCT ID) AS COUNT FROM ");
-      sb.append(click_table);
-      sb.append(" GROUP BY DateOnly");
-      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
-      rs = stmt.executeQuery();
-      while (rs.next()) {
-        resultMap.put(rs.getString("DateOnly"), rs.getLong("COUNT"));
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    } finally {
-      DbUtils.closeQuietly(rs);
-      DbUtils.closeQuietly(stmt);
-    }
-    return resultMap;
+    String statement = "SELECT DATE(Date) AS DateOnly, COUNT(DISTINCT ID) AS COUNT " +
+            "FROM " + click_table +
+            " GROUP BY DateOnly";
+    return toLongMap(
+            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
+    );
   }
 
   /**
@@ -445,30 +273,13 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public HashMap<String, Long> retrieveDatedBounceTotalsByTime(long maxSeconds, boolean allowInf) {
-    PreparedStatement stmt = null;
-    ResultSet rs = null;
-    HashMap<String, Long> resultMap = new LinkedHashMap<>();
-    try {
-      StringBuilder sb = new StringBuilder("SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT FROM ");
-      sb.append(server_table);
-      sb.append(" WHERE (Exit_Date - Entry_Date) <= ?");
-      if (allowInf) {
-        sb.append(" OR Exit_Date IS NULL");
-      }
-      sb.append(" GROUP BY DateOnly");
-      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
-      stmt.setLong(1, maxSeconds);
-      rs = stmt.executeQuery();
-      while (rs.next()) {
-        resultMap.put(rs.getString("DateOnly"), rs.getLong("COUNT"));
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    } finally {
-      DbUtils.closeQuietly(rs);
-      DbUtils.closeQuietly(stmt);
-    }
-    return resultMap;
+    String statement = "SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT " +
+            "FROM " + server_table +
+            " WHERE (Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL" : "") +
+            " GROUP BY DateOnly";
+    return toLongMap(
+            retrieve(statement, new Object[]{maxSeconds}, new String[]{"DateOnly", "COUNT"})
+    );
   }
 
   /**
@@ -478,27 +289,13 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte maxPages) {
-    PreparedStatement stmt = null;
-    ResultSet rs = null;
-    HashMap<String, Long> resultMap = new LinkedHashMap<>();
-    try {
-      StringBuilder sb = new StringBuilder("SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT FROM ");
-      sb.append(server_table);
-      sb.append(" WHERE Pages_Viewed <= ?");
-      sb.append(" GROUP BY DateOnly");
-      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
-      stmt.setByte(1, maxPages);
-      rs = stmt.executeQuery();
-      while (rs.next()) {
-        resultMap.put(rs.getString("DateOnly"), rs.getLong("COUNT"));
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    } finally {
-      DbUtils.closeQuietly(rs);
-      DbUtils.closeQuietly(stmt);
-    }
-    return resultMap;
+    String statement = "SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT " +
+            "FROM " + server_table +
+            " WHERE Pages_Viewed <= ?" +
+            " GROUP BY DateOnly";
+    return toLongMap(
+            retrieve(statement, new Object[]{maxPages}, new String[]{"DateOnly", "COUNT"})
+    );
   }
 
   /**
@@ -507,26 +304,13 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public HashMap<String, Long> retrieveDatedAcquisitionTotals() {
-    PreparedStatement stmt = null;
-    ResultSet rs = null;
-    HashMap<String, Long> resultMap = new LinkedHashMap<>();
-    try {
-      StringBuilder sb = new StringBuilder("SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT FROM ");
-      sb.append(server_table);
-      sb.append(" WHERE Conversion = 1");
-      sb.append(" GROUP BY DateOnly");
-      stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
-      rs = stmt.executeQuery();
-      while (rs.next()) {
-        resultMap.put(rs.getString("DateOnly"), rs.getLong("COUNT"));
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    } finally {
-      DbUtils.closeQuietly(rs);
-      DbUtils.closeQuietly(stmt);
-    }
-    return resultMap;
+    String statement = "SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT " +
+            "FROM " + server_table +
+            " WHERE Conversion = 1" +
+            " GROUP BY DateOnly";
+    return toLongMap(
+            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
+    );
   }
 
   /**
@@ -568,22 +352,11 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public long retrieveDataCount(String table, boolean unique) {
-    PreparedStatement stmt = null;
-    ResultSet rs = null;
-    try {
-      String query = unique ? "SELECT COUNT(DISTINCT ID) AS COUNT FROM " : "SELECT COUNT(*) AS COUNT FROM ";
-      stmt = sqlDatabase.getConnection().prepareStatement(query + table);
-      rs = stmt.executeQuery();
-      if (rs.next()) {
-        return rs.getLong("COUNT");
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    } finally {
-      DbUtils.closeQuietly(rs);
-      DbUtils.closeQuietly(stmt);
-    }
-    return 0L;
+    String statement = "SELECT COUNT(" + (unique ? "DISTINCT ID" : "*") + ") AS COUNT " +
+            "FROM " + table;
+    return toLong(
+            retrieve(statement, new Object[]{}, new String[]{"COUNT"})
+    );
   }
 
   /**
