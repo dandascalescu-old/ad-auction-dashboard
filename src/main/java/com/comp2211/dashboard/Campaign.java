@@ -261,11 +261,10 @@ public class Campaign {
    *     that date as the value.
    */
   public HashMap<String, BigDecimal> getDatedAcquisitionCostAverages() {
-    if (cachedDatedAcquisitionCostAverages != null && !cachedDatedAcquisitionCostAverages.isEmpty()) {
+    if (!cachedDatedAcquisitionCostAverages.isEmpty()) {
       return cachedDatedAcquisitionCostAverages;
     }
 
-    cachedDatedAcquisitionCostAverages.clear();
     cachedDatedAcquisitionCostAverages.putAll(dbManager.retrieveDatedAverageAcquisitionCost());
     return cachedDatedAcquisitionCostAverages;
   }
@@ -277,11 +276,10 @@ public class Campaign {
    *     that date as the value.
    */
   public HashMap<String, BigDecimal> getDatedImpressionCostAverages() {
-    if (cachedDatedImpressionCostAverages != null && !cachedDatedImpressionCostAverages.isEmpty()) {
+    if (!cachedDatedImpressionCostAverages.isEmpty()) {
       return cachedDatedImpressionCostAverages;
     }
 
-    cachedDatedImpressionCostAverages.clear();
     cachedDatedImpressionCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Impression_Cost));
     return cachedDatedImpressionCostAverages;
   }
@@ -293,11 +291,10 @@ public class Campaign {
    *     that date as the value.
    */
   public HashMap<String, BigDecimal> getDatedClickCostAverages() {
-    if (cachedDatedClickCostAverages != null && !cachedDatedClickCostAverages.isEmpty()) {
+    if (!cachedDatedClickCostAverages.isEmpty()) {
       return cachedDatedClickCostAverages;
     }
 
-    cachedDatedClickCostAverages.clear();
     cachedDatedClickCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Click_Cost));
     return cachedDatedClickCostAverages;
   }
@@ -309,11 +306,10 @@ public class Campaign {
    *     that date as the value.
    */
   public HashMap<String, Long> getDatedImpressionTotals() {
-    if (cachedDatedImpressionTotals != null && !cachedDatedImpressionTotals.isEmpty()) {
+    if (!cachedDatedImpressionTotals.isEmpty()) {
       return cachedDatedImpressionTotals;
     }
 
-    cachedDatedImpressionTotals.clear();
     cachedDatedImpressionTotals.putAll(dbManager.retrieveDatedImpressionTotals());
     return cachedDatedImpressionTotals;
   }
@@ -325,11 +321,10 @@ public class Campaign {
    *     that date as the value.
    */
   public HashMap<String, Long> getDatedClickTotals() {
-    if (cachedDatedClickTotals != null && !cachedDatedClickTotals.isEmpty()) {
+    if (!cachedDatedClickTotals.isEmpty()) {
       return cachedDatedClickTotals;
     }
 
-    cachedDatedClickTotals.clear();
     cachedDatedClickTotals.putAll(dbManager.retrieveDatedClickTotals());
     return cachedDatedClickTotals;
   }
@@ -341,11 +336,10 @@ public class Campaign {
    *     that date as the value.
    */
   public HashMap<String, Long> getDatedUniqueTotals() {
-    if (cachedDatedUniqueTotals != null && !cachedDatedUniqueTotals.isEmpty()) {
+    if (!cachedDatedUniqueTotals.isEmpty()) {
       return cachedDatedUniqueTotals;
     }
 
-    cachedDatedUniqueTotals.clear();
     cachedDatedUniqueTotals.putAll(dbManager.retrieveDatedUniqueTotals());
     return cachedDatedUniqueTotals;
   }
@@ -357,11 +351,10 @@ public class Campaign {
    *     that date as the value.
    */
   public HashMap<String, Long> getDatedBounceTotals() {
-    if (cachedDatedBounceTotals != null && !cachedDatedBounceTotals.isEmpty()) {
+    if (!cachedDatedBounceTotals.isEmpty()) {
       return cachedDatedBounceTotals;
     }
 
-    cachedDatedBounceTotals.clear();
     cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages((byte) 1));
     return cachedDatedBounceTotals;
   }
@@ -373,11 +366,10 @@ public class Campaign {
    *     that date as the value.
    */
   public HashMap<String, Long> getDatedAcquisitionTotals() {
-    if (cachedDatedAcquisitionTotals != null && !cachedDatedAcquisitionTotals.isEmpty()) {
+    if (!cachedDatedAcquisitionTotals.isEmpty()) {
       return cachedDatedAcquisitionTotals;
     }
 
-    cachedDatedAcquisitionTotals.clear();
     cachedDatedAcquisitionTotals.putAll(dbManager.retrieveDatedAcquisitionTotals());
     return cachedDatedAcquisitionTotals;
   }
@@ -407,11 +399,10 @@ public class Campaign {
    * @return HashMap containing the age groups as keys, and the percentage of each group in the campaign.
    */
   private HashMap<String, BigDecimal> getAgePercentage() {
-    if (cachedAgePercentage != null && !cachedAgePercentage.isEmpty()) {
+    if (!cachedAgePercentage.isEmpty()) {
       return cachedAgePercentage;
     }
 
-    cachedAgePercentage.clear();
     cachedAgePercentage.putAll(percentageMap(Demographic.Age, dbManager.retrieveDemographics(Demographic.Age)));
     return cachedAgePercentage;
   }
@@ -421,11 +412,10 @@ public class Campaign {
    * @return HashMap containing the gender groups as keys, and the percentage of each gender in the campaign.
    */
   private HashMap<String, BigDecimal> getGenderPercentage() {
-    if (cachedGenderPercentage != null && !cachedGenderPercentage.isEmpty()) {
+    if (!cachedGenderPercentage.isEmpty()) {
       return cachedGenderPercentage;
     }
 
-    cachedGenderPercentage.clear();
     cachedGenderPercentage.putAll(percentageMap(Demographic.Gender, dbManager.retrieveDemographics(Demographic.Gender)));
     return cachedGenderPercentage;
   }
@@ -435,11 +425,10 @@ public class Campaign {
    * @return HashMap containing the income groups as keys, and the percentage of each group in the campaign.
    */
   private HashMap<String, BigDecimal> getIncomePercentage() {
-    if (cachedIncomePercentage != null && !cachedIncomePercentage.isEmpty()) {
+    if (!cachedIncomePercentage.isEmpty()) {
       return cachedIncomePercentage;
     }
 
-    cachedIncomePercentage.clear();
     cachedIncomePercentage.putAll(percentageMap(Demographic.Income, dbManager.retrieveDemographics(Demographic.Income)));
     return cachedIncomePercentage;
   }
@@ -449,11 +438,10 @@ public class Campaign {
    * @return HashMap containing the context types as keys, and the percentage of each context in the campaign.
    */
   private HashMap<String, BigDecimal> getContextPercentage() {
-    if (cachedContextPercentage != null && !cachedContextPercentage.isEmpty()) {
+    if (!cachedContextPercentage.isEmpty()) {
       return cachedContextPercentage;
     }
 
-    cachedContextPercentage.clear();
     cachedContextPercentage.putAll(percentageMap(Demographic.Context, dbManager.retrieveDemographics(Demographic.Context)));
     return cachedContextPercentage;
   }
