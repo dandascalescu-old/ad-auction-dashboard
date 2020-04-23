@@ -4,6 +4,9 @@ import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.model.data.Demographics;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import de.saxsys.mvvmfx.ViewModel;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
@@ -16,14 +19,19 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.chart.Chart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javax.imageio.ImageIO;
 
 public class PrimaryViewModel implements ViewModel {
 
@@ -305,6 +313,22 @@ public class PrimaryViewModel implements ViewModel {
 
   private void updateTotalMetricLineChartData (HashMap<String, BigDecimal> dataMap) {
 
+  }
+
+  public void saveChart(Chart chart) {
+
+    WritableImage image = chart.snapshot(new SnapshotParameters(), null);
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG (*.png)", "*.png"));
+    File file = fileChooser.showSaveDialog(null);
+    if (file == null) {
+      return;
+    }
+    try {
+      ImageIO.write(javafx.embed.swing.SwingFXUtils.fromFXImage(image, null), "png", file);
+    } catch (IOException e) {
+      System.out.println(e);
+    }
   }
 
 

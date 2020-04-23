@@ -126,5 +126,8 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
   }
 
+  public void saveDemo() {
+    viewModel.saveChart(demographicsChart);
+  }
 
 }
