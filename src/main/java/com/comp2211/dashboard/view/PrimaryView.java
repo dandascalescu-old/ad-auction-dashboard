@@ -2,17 +2,24 @@ package com.comp2211.dashboard.view;
 
 import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
+import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel;
 import com.comp2211.dashboard.viewmodel.PrimaryViewModel;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
+import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
+import de.saxsys.mvvmfx.ViewTuple;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Button;
 import javafx.scene.chart.PieChart;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -24,6 +31,9 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
   @FXML
   private BorderPane mainPane;
+
+  @FXML
+  private StackPane stackPane2;
 
   @FXML
   private Pane databasePane, dashboardPane;
@@ -66,6 +76,10 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
   @FXML
   Text ctrText, conversionUniquesText;
+
+  ViewTuple<PrimaryFilterDialog, PrimaryFilterDialogModel> primaryDialogView;
+
+  static JFXDialog dialog;
 
   public void initialize() {
     totalClickCost.textProperty().bind(viewModel.totalClickCostProperty());
@@ -124,4 +138,17 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   }
 
 
+  public void openFilterDialog(ActionEvent event) {
+    primaryDialogView = FluentViewLoader.fxmlView(PrimaryFilterDialog.class).load();
+    JFXDialogLayout dialogLayout = new JFXDialogLayout();
+    dialogLayout.setBody(primaryDialogView.getView());
+    dialog = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
+    dialog.setTranslateY(-200);
+    dialog.show();
+  }
+
+
+  static void cancelDialogAction() {
+    dialog.close();
+  }
 }
