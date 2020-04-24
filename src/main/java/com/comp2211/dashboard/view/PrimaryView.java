@@ -7,6 +7,8 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
+import java.io.File;
+import java.util.Arrays;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -128,6 +130,7 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
   public void saveDemo() {
     viewModel.saveChart(demographicsChart);
+//  viewModel.saveChartAsPDF(Arrays.asList(demographicsChart,averageChart,totalMetricsLineChart), new File("test.pdf")); //Save all as PDF, need to add file chooser
   }
 
 }

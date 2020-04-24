@@ -3,13 +3,27 @@ package com.comp2211.dashboard.viewmodel;
 import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.model.data.Demographics;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfDocument;
+import com.itextpdf.text.pdf.PdfWriter;
 import de.saxsys.mvvmfx.ViewModel;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -26,11 +40,13 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javax.imageio.ImageIO;
 
 public class PrimaryViewModel implements ViewModel {
@@ -316,19 +332,78 @@ public class PrimaryViewModel implements ViewModel {
   }
 
   public void saveChart(Chart chart) {
+    ExtensionFilter pngFilter = new ExtensionFilter("PNG File (*.png)", "*.png");
+    ExtensionFilter pdfFilter = new ExtensionFilter("PDF File (*.pdf)","*.pdf");
 
-    WritableImage image = chart.snapshot(new SnapshotParameters(), null);
     FileChooser fileChooser = new FileChooser();
-    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG (*.png)", "*.png"));
+    fileChooser.getExtensionFilters().addAll(pngFilter, pdfFilter);
     File file = fileChooser.showSaveDialog(null);
+
     if (file == null) {
       return;
     }
-    try {
-      ImageIO.write(javafx.embed.swing.SwingFXUtils.fromFXImage(image, null), "png", file);
-    } catch (IOException e) {
-      System.out.println(e);
+
+    if (fileChooser
+        .getSelectedExtensionFilter()
+        .getDescription()
+        .equals(pngFilter.getDescription())) {
+      saveChartAsJPG(chart, file);
     }
+    else if (fileChooser.getSelectedExtensionFilter().getDescription().equals((pdfFilter.getDescription()))){
+      saveChartAsPDF(chart, file);
+    }
+  }
+
+  private void saveChartAsJPG(Chart chart, File file){
+    WritableImage writableImage = chart.snapshot(new SnapshotParameters(), null);
+    BufferedImage bufferedImage = javafx.embed.swing.SwingFXUtils.fromFXImage(writableImage, null );
+    try {
+      ImageIO.write(bufferedImage, "png", file);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public boolean saveChartAsPDF(List<Chart> charts, File file) {
+    Document doc = new Document();
+    PdfWriter pdfWriter = null;
+    PdfContentByte pdfContentByte = null;
+
+    try{
+      if (!file.getName().endsWith(".pdf")) {
+        file = new File(file, file.getName() + ".pdf");
+      }
+      pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(file));
+      pdfContentByte = new PdfContentByte(pdfWriter);
+    }catch (FileNotFoundException | DocumentException e){
+      e.printStackTrace();
+    }
+
+    if(pdfWriter == null | pdfContentByte == null){
+      return false;
+    }
+
+    pdfWriter.open();
+    doc.open();
+    for (Chart chart : charts) {
+      WritableImage writableImage = chart.snapshot(new SnapshotParameters(), null);
+      BufferedImage bufferedImage =
+          javafx.embed.swing.SwingFXUtils.fromFXImage(writableImage, null);
+      try {
+        Image image = com.itextpdf.text.Image.getInstance(pdfContentByte, bufferedImage, 1);
+        image.scaleToFit(PageSize.A5);
+        doc.add(image);
+      } catch (DocumentException | IOException e) {
+        e.printStackTrace();
+      }
+    }
+    doc.close();
+    pdfWriter.close();
+    return true;
+    }
+
+  private boolean saveChartAsPDF(Chart chart, File file){
+    return saveChartAsPDF(Arrays.asList(chart), file);
   }
 
 
