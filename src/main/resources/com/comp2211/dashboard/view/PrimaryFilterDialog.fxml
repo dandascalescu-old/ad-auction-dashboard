@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXDialog?>
+<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<StackPane fx:id="dialogDBStack" prefHeight="349.0" prefWidth="416.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.PrimaryFilterDialog">
+
+    <JFXDialog fx:id="dialogs" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="394.0" prefWidth="416.0">
+        <JFXDialogLayout>
+            <heading>
+                <Label>JFoenix Dialog</Label>
+            </heading>
+            <body>
+                <Text text="adasdasd" />
+            </body>
+            <actions>
+                <JFXButton fx:id="acceptButton" styleClass="dialog-accept" text="Button">
+                </JFXButton>
+            </actions>
+        </JFXDialogLayout>
+    </JFXDialog>
+    <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="421.0" prefWidth="482.0">
+        <children>
+            <JFXButton fx:id="saveButton" buttonType="RAISED" layoutX="284.0" layoutY="336.0" onAction="#saveFilter" prefHeight="42.0" prefWidth="100.0" style="-fx-background-color: #FFFFFF;" text="Save" />
+            <JFXButton fx:id="cancelButton" buttonType="RAISED" layoutX="89.0" layoutY="336.0" onAction="#cancelDialog" prefHeight="42.0" prefWidth="100.0" style="-fx-background-color: #FFFFFF;" text="Cancel" />
+            <Text layoutX="139.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DASHBOARD FILTER" textAlignment="CENTER">
+                <font>
+                    <Font name="SansSerif Bold" size="19.0" />
+                </font>
+            </Text>
+            <Text fx:id="alertAddingText" layoutX="88.0" layoutY="345.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER">
+                <font>
+                    <Font name="SansSerif Bold" size="12.0" />
+                </font>
+            </Text>
+         <DatePicker fx:id="startDatePicker" layoutX="50.0" layoutY="97.0" prefHeight="34.0" prefWidth="187.0" promptText="Select Date" />
+         <Text layoutX="44.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Start date" textAlignment="CENTER">
+            <font>
+               <Font name="SansSerif Bold" size="14.0" />
+            </font>
+         </Text>
+         <Text layoutX="383.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="End date " textAlignment="CENTER">
+            <font>
+               <Font name="SansSerif Bold" size="14.0" />
+            </font>
+         </Text>
+         <DatePicker fx:id="endDatePicker" layoutX="252.0" layoutY="97.0" prefHeight="34.0" prefWidth="187.0" promptText="Select Date" />
+         <JFXComboBox fx:id="genderComboBox" layoutX="58.0" layoutY="188.0" prefHeight="27.0" prefWidth="171.0" />
+         <Text layoutX="48.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Gender" textAlignment="CENTER">
+            <font>
+               <Font name="SansSerif Bold" size="14.0" />
+            </font>
+         </Text>
+         <Text layoutX="252.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" text="income" textAlignment="CENTER">
+            <font>
+               <Font name="SansSerif Bold" size="14.0" />
+            </font>
+         </Text>
+         <Text layoutX="45.0" layoutY="253.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Age" textAlignment="CENTER">
+            <font>
+               <Font name="SansSerif Bold" size="14.0" />
+            </font>
+         </Text>
+         <Text layoutX="250.0" layoutY="253.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Context" textAlignment="CENTER">
+            <font>
+               <Font name="SansSerif Bold" size="14.0" />
+            </font>
+         </Text>
+         <JFXComboBox fx:id="ageComboBox" layoutX="58.0" layoutY="273.0" prefHeight="27.0" prefWidth="171.0" />
+         <JFXComboBox fx:id="incomeComboBox" layoutX="260.0" layoutY="188.0" prefHeight="27.0" prefWidth="171.0" />
+         <JFXComboBox fx:id="contextComboBox" layoutX="260.0" layoutY="273.0" prefHeight="27.0" prefWidth="171.0" />
+        </children>
+    </Pane>
+
+</StackPane>

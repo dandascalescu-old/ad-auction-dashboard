@@ -50,4 +50,8 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
 
     }
 
+    public void openFilterDialog(){
+
+    }
+
 }
