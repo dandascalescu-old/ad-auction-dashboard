@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
@@ -7,14 +8,19 @@
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<ScrollPane prefHeight="778.0" prefWidth="1158.0" style="outline: none; -fx-background-color: transparent;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.PrimaryView">
+<ScrollPane fx:id="scrollPane" prefHeight="778.0" prefWidth="1158.0" style="outline: none; -fx-background-color: transparent;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.PrimaryView">
 <content>
+   <StackPane fx:id="stackPane2" minHeight="0.0" minWidth="0.0" prefHeight="1278.0" prefWidth="1137.0">
+
    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1278.0" prefWidth="1137.0">
       <children>
 
@@ -25,8 +31,17 @@
                         <Font name="SansSerif Bold" size="17.0" />
                      </font>
                   </Text>
-                  <JFXComboBox fx:id="campaignCombobox" layoutX="929.0" layoutY="24.0" prefHeight="27.0" prefWidth="180.0" />
+                  <JFXComboBox fx:id="campaignCombobox" layoutX="854.0" layoutY="24.0" prefHeight="27.0" prefWidth="180.0" />
                   <Line endX="-129.0" endY="-120.0" layoutX="129.0" layoutY="194.0" opacity="0.1" startX="1009.0" startY="-120.0" strokeLineCap="BUTT" />
+                  <JFXButton layoutX="1060.0" layoutY="18.0" maxWidth="-Infinity" minWidth="-Infinity" onAction="#openFilterDialog" prefHeight="40.0" prefWidth="50.0">
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/filter.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </JFXButton>
                </children>
             </Pane>
 
@@ -266,5 +281,7 @@
             </Pane>
       </children>
    </AnchorPane>
+
+   </StackPane>
 </content>
 </ScrollPane>
