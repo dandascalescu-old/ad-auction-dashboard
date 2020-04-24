@@ -7,20 +7,16 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfDocument;
 import com.itextpdf.text.pdf.PdfWriter;
 import de.saxsys.mvvmfx.ViewModel;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +25,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -40,7 +35,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -89,6 +83,9 @@ public class PrimaryViewModel implements ViewModel {
   private final String totalUniques = "Uniques";
   private final String totalBounces = "Bounces";
   private final String totalConversions = "Conversions";
+
+  private final ExtensionFilter pngFilter = new ExtensionFilter("PNG File (*.png)", "*.png");
+  private final ExtensionFilter pdfFilter = new ExtensionFilter("PDF File (*.pdf)","*.pdf");
 
   public void initialize() {
     campaigns = FXCollections.observableArrayList();
@@ -331,39 +328,76 @@ public class PrimaryViewModel implements ViewModel {
 
   }
 
-  public void saveChart(Chart chart) {
-    ExtensionFilter pngFilter = new ExtensionFilter("PNG File (*.png)", "*.png");
-    ExtensionFilter pdfFilter = new ExtensionFilter("PDF File (*.pdf)","*.pdf");
+  /**
+   * Saves given list of charts into pdf file
+   * @param charts list of charts to save
+   * @return true if save successful, false if fail
+   */
+  public boolean saveCharts(List<Chart> charts){
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.getExtensionFilters().addAll(pdfFilter);
+    File file = fileChooser.showSaveDialog(null);
+
+    if (file == null) {
+      return false;
+    }
+    saveChartAsPDF(charts, file);
+
+    return true;
+  }
+
+  /**
+   * Saves a single chart to either pdf or png (user chooses)
+   * @param chart chart to save
+   * @return true if save successful, false if fail
+   */
+  public boolean saveChart(Chart chart) {
 
     FileChooser fileChooser = new FileChooser();
     fileChooser.getExtensionFilters().addAll(pngFilter, pdfFilter);
     File file = fileChooser.showSaveDialog(null);
 
     if (file == null) {
-      return;
+      return false;
     }
 
     if (fileChooser
         .getSelectedExtensionFilter()
         .getDescription()
         .equals(pngFilter.getDescription())) {
-      saveChartAsJPG(chart, file);
+      saveChartAsPNG(chart, file);
     }
     else if (fileChooser.getSelectedExtensionFilter().getDescription().equals((pdfFilter.getDescription()))){
       saveChartAsPDF(chart, file);
     }
+    return true;
   }
 
-  private void saveChartAsJPG(Chart chart, File file){
+
+  /**
+   * Method for saving as png
+   * @param chart chart to save
+   * @param file file name/location
+   * @return true if save successful, false if fail
+   */
+  private boolean saveChartAsPNG(Chart chart, File file){
     WritableImage writableImage = chart.snapshot(new SnapshotParameters(), null);
     BufferedImage bufferedImage = javafx.embed.swing.SwingFXUtils.fromFXImage(writableImage, null );
     try {
       ImageIO.write(bufferedImage, "png", file);
     } catch (IOException e) {
       e.printStackTrace();
+      return false;
     }
+    return true;
   }
 
+  /**
+   * Method for saving given list of charts as pdf
+   * @param charts list of charts to save
+   * @param file file name/location
+   * @return true if save successful, false if fail
+   */
   public boolean saveChartAsPDF(List<Chart> charts, File file) {
     Document doc = new Document();
     PdfWriter pdfWriter = null;
@@ -377,6 +411,7 @@ public class PrimaryViewModel implements ViewModel {
       pdfContentByte = new PdfContentByte(pdfWriter);
     }catch (FileNotFoundException | DocumentException e){
       e.printStackTrace();
+      return false;
     }
 
     if(pdfWriter == null | pdfContentByte == null){
@@ -395,6 +430,7 @@ public class PrimaryViewModel implements ViewModel {
         doc.add(image);
       } catch (DocumentException | IOException e) {
         e.printStackTrace();
+        return false;
       }
     }
     doc.close();
@@ -402,6 +438,12 @@ public class PrimaryViewModel implements ViewModel {
     return true;
     }
 
+  /**
+   * Method for saving a given chart as pdf
+   * @param chart chart to save
+   * @param file file name/location
+   * @return true if save successful, false if fail
+   */
   private boolean saveChartAsPDF(Chart chart, File file){
     return saveChartAsPDF(Arrays.asList(chart), file);
   }
