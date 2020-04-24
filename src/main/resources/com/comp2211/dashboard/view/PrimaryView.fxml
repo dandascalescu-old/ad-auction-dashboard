@@ -201,7 +201,7 @@
                <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
             </effect>
             <children>
-               <Text fill="#474c49" layoutX="14.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Conversion/Uniques" wrappingWidth="106.5830078125">
+               <Text fill="#474c49" layoutX="14.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Conversions/Unique" wrappingWidth="106.5830078125">
                   <font>
                      <Font name="SansSerif Bold" size="18.0" />
                   </font>
