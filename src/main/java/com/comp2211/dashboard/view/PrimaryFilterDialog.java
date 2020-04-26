@@ -11,7 +11,6 @@ import java.time.LocalDate;
 
 public class PrimaryFilterDialog implements FxmlView<PrimaryFilterDialogModel> {
 
-
     @FXML
     private DatePicker startDatePicker, endDatePicker;
 
@@ -45,7 +44,6 @@ public class PrimaryFilterDialog implements FxmlView<PrimaryFilterDialogModel> {
         String pickedAge = ageComboBox.getValue();
         String pickedIncome = incomeComboBox.getValue();
         String pickedContext = contextComboBox.getValue();
-
 
         PrimaryView.cancelDialogAction();
     }

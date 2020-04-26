@@ -44,6 +44,7 @@ public class PrimaryViewModel implements ViewModel {
   private StringProperty clickThroughRateText = new SimpleStringProperty("");
   private StringProperty bounceRateText = new SimpleStringProperty("");
   private StringProperty conversionUniquesText = new SimpleStringProperty("");
+  private StringProperty bounceConversionText = new SimpleStringProperty("");
 
   private StringProperty totalImpressionsText = new SimpleStringProperty("");
   private StringProperty totalClicksText = new SimpleStringProperty("");
@@ -162,6 +163,8 @@ public class PrimaryViewModel implements ViewModel {
     return clickThroughRateText;
   }
 
+  public StringProperty bounceConversionTextProperty() { return bounceConversionText; }
+
   public StringProperty bounceRateTextProperty() {
     return bounceRateText;
   }
@@ -196,6 +199,10 @@ public class PrimaryViewModel implements ViewModel {
     totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost().setScale(2, RoundingMode.CEILING).toPlainString());
 
     clickThroughRateText.setValue(selectedCampaign.getValue().getClickThroughRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+    
+    //TODO:: Need to set value for bounceConversionText;
+    bounceConversionText.setValue("0.404");
+    
     conversionUniquesText.setValue(selectedCampaign.getValue().getConversionsPerUniques().setScale(2, RoundingMode.CEILING).toPlainString());
   }
 

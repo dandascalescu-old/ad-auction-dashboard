@@ -60,7 +60,7 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   private PieChart demographicsChart;
 
   @FXML
-  private Text totalClickCost, totalImpresCost, totalCost, bounceRateText, totalImpressions, totalClicks, totalUniques, totalBounces, totalConversions;
+  private Text totalClickCost, totalImpresCost, totalCost, bounceRateText, totalImpressions, totalClicks, totalUniques, totalBounces, totalConversions, bounceConversionText;
 
   @InjectViewModel
   private PrimaryViewModel viewModel;
@@ -79,7 +79,7 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
   ViewTuple<PrimaryFilterDialog, PrimaryFilterDialogModel> primaryDialogView;
 
-  static JFXDialog dialog;
+  static JFXDialog dialogFilter, dialogExport;
 
   public void initialize() {
     totalClickCost.textProperty().bind(viewModel.totalClickCostProperty());
@@ -109,6 +109,8 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     demographicsChart.setLegendVisible(false);
 
     totalMetricsLineChart.setData(viewModel.totalMetricChartData());
+
+    bounceConversionText.textProperty().bind(viewModel.bounceConversionTextProperty());
     totalImpressions.textProperty().bind(viewModel.getTotalImpressionsProperty());
     totalClicks.textProperty().bind(viewModel.getTotalClicksProperty());
     totalUniques.textProperty().bind(viewModel.getTotalUniquesProperty());
@@ -142,13 +144,27 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     primaryDialogView = FluentViewLoader.fxmlView(PrimaryFilterDialog.class).load();
     JFXDialogLayout dialogLayout = new JFXDialogLayout();
     dialogLayout.setBody(primaryDialogView.getView());
-    dialog = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
-    dialog.setTranslateY(-200);
-    dialog.show();
+    dialogFilter = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
+    dialogFilter.setTranslateY(-200);
+    dialogFilter.show();
+  }
+
+  public void openExportDataWindow(ActionEvent event) throws IOException {
+
+    Parent parent = FXMLLoader.load(getClass().getResource("ExportDialog.fxml"));
+    JFXDialogLayout dialogLayout = new JFXDialogLayout();
+    dialogLayout.setBody(parent);
+    dialogExport = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
+    dialogExport.setTranslateY(-200);
+    dialogExport.show();
   }
 
 
   static void cancelDialogAction() {
-    dialog.close();
+    dialogFilter.close();
+  }
+
+  static void cancelExportDialogAction(){
+    dialogExport.close();
   }
 }
