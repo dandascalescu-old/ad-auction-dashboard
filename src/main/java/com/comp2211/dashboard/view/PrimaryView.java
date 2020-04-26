@@ -86,13 +86,10 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     totalImpresCost.textProperty().bind(viewModel.totalImpresCostProperty());
     totalCost.textProperty().bind(viewModel.totalCostProperty());
 
-    // TODO add bounceRateText in PrimaryView.fxml
-    //bounceRateText.textProperty().bind(viewModel.bounceRateTextProperty());
     ctrText.textProperty().bind(viewModel.clickThroughRateTextProperty());
-    bounceRateText.textProperty().bind(viewModel.getBounceRateText());
-    conversionUniquesText.textProperty().bind(viewModel.getConversionUniquesText());
+    bounceRateText.textProperty().bind(viewModel.bounceRateTextProperty());
+    conversionUniquesText.textProperty().bind(viewModel.getConversionUniquesProperty());
 
-    // TODO: caused a nullpointer before.
     campaignCombobox.setItems(viewModel.campaignsList());
     campaignCombobox.valueProperty().bindBidirectional(viewModel.selectedCampaignProperty());
 
@@ -112,13 +109,13 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     demographicsChart.setLegendVisible(false);
 
     totalMetricsLineChart.setData(viewModel.totalMetricChartData());
-    totalImpressions.textProperty().bind(viewModel.getTotalImpressionsText());
-    totalClicks.textProperty().bind(viewModel.getTotalClicksText());
-    totalUniques.textProperty().bind(viewModel.getTotalUniquesText());
-    totalBounces.textProperty().bind(viewModel.getTotalBouncesText());
-    totalConversions.textProperty().bind(viewModel.getTotalConversionsText());
 
     bounceConversionText.textProperty().bind(viewModel.bounceConversionTextProperty());
+    totalImpressions.textProperty().bind(viewModel.getTotalImpressionsProperty());
+    totalClicks.textProperty().bind(viewModel.getTotalClicksProperty());
+    totalUniques.textProperty().bind(viewModel.getTotalUniquesProperty());
+    totalBounces.textProperty().bind(viewModel.getTotalBouncesProperty());
+    totalConversions.textProperty().bind(viewModel.getTotalConversionsProperty());
   }
 
 

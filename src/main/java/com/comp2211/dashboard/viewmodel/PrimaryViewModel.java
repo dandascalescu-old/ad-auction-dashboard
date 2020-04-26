@@ -77,7 +77,6 @@ public class PrimaryViewModel implements ViewModel {
     totals = FXCollections.observableArrayList();
     totalMetricChartData = FXCollections.observableArrayList();
 
-
     campaigns.addAll(Campaign.getCampaigns());
     averages.addAll(avgCostClick, avgCostImpr, avgCostAcq);
     demographics.addAll(Demographics.Demographic.values());
@@ -91,9 +90,10 @@ public class PrimaryViewModel implements ViewModel {
         //TODO Change to load data over time: check campaign.loadData(limit, offset);
         Platform.runLater(new Runnable() {
           public void run() {
+            //TODO move all updates to single method?
             updateTotalMetrics();
             updateTotalCosts();
-            updateBounceRateDefault();
+            updateBouncesCountDefault();
             setupDemographicSelector();
             setupAverageSelector();
             setUpTotalsSelector();
@@ -107,7 +107,9 @@ public class PrimaryViewModel implements ViewModel {
     return campaigns;
   }
 
-  public ObservableList<String> totalList() {return totals;}
+  public ObservableList<String> totalList() {
+    return totals;
+  }
 
   public ObservableList<String> averagesList() {
     return averages;
@@ -121,7 +123,9 @@ public class PrimaryViewModel implements ViewModel {
     return averageChartData;
   }
 
-  public ObservableList<Series<String, Number>> totalMetricChartData() {return totalMetricChartData;}
+  public ObservableList<Series<String, Number>> totalMetricChartData() {
+    return totalMetricChartData;
+  }
 
   public ObservableList<PieChart.Data> demographicsChartData() {
     return demographicsChartData;
@@ -131,7 +135,9 @@ public class PrimaryViewModel implements ViewModel {
     return selectedAverage;
   }
 
-  public StringProperty selectedTotalMetricProperty() { return selectedTotals;}
+  public StringProperty selectedTotalMetricProperty() {
+    return selectedTotals;
+  }
 
   public ObjectProperty<Demographic> selectedDemographicProperty() {
     return selectedDemographic;
@@ -163,50 +169,68 @@ public class PrimaryViewModel implements ViewModel {
     return bounceRateText;
   }
 
-  public StringProperty getBounceRateText(){return bounceRateText;}
+  public StringProperty getConversionUniquesProperty() {
+    return conversionUniquesText;
+  }
 
-  public StringProperty getConversionUniquesText(){return totalConversionsText;}
+  public StringProperty getTotalImpressionsProperty() {
+    return totalImpressionsText;
+  }
 
-  public StringProperty getTotalImpressionsText() { return totalImpressionsText; }
+  public StringProperty getTotalClicksProperty() {
+    return totalClicksText;
+  }
 
-  public StringProperty getTotalClicksText() { return totalClicksText;}
+  public StringProperty getTotalUniquesProperty() {
+    return totalUniquesText;
+  }
 
-  public StringProperty getTotalUniquesText() { return totalUniquesText;}
+  public StringProperty getTotalBouncesProperty() {
+    return totalBouncesText;
+  }
 
-  public StringProperty getTotalBouncesText() { return totalBouncesText;}
-
-  public StringProperty getTotalConversionsText() { return totalConversionsText;}
-
+  public StringProperty getTotalConversionsProperty() {
+    return totalConversionsText;
+  }
 
   private void updateTotalCosts() {
     totalClickCost.setValue("£" + selectedCampaign.getValue().getTotalClickCost().setScale(2, RoundingMode.CEILING).toPlainString());
     totalImpresCost.setValue("£" + selectedCampaign.getValue().getTotalImpressionCost().setScale(2, RoundingMode.CEILING).toPlainString());
     totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost().setScale(2, RoundingMode.CEILING).toPlainString());
-    clickThroughRateText.setValue(selectedCampaign.getValue().getClickThroughRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
 
+    clickThroughRateText.setValue(selectedCampaign.getValue().getClickThroughRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+    
     //TODO:: Need to set value for bounceConversionText;
     bounceConversionText.setValue("0.404");
+    
+    conversionUniquesText.setValue(selectedCampaign.getValue().getConversionsPerUniques().setScale(2, RoundingMode.CEILING).toPlainString());
   }
 
-  private void updateTotalMetrics(){
-
-    totalImpressionsText.setValue("32121");
-    totalClicksText.setValue("99833");
-    totalUniquesText.setValue("12002");
-    totalBouncesText.setValue("11143");
-    totalConversionsText.setValue("9737");
+  private void updateTotalMetrics() {
+    totalImpressionsText.setValue(String.valueOf(selectedCampaign.getValue().getImpressionDataCount()));
+    totalClicksText.setValue(String.valueOf(selectedCampaign.getValue().getClickDataCount()));
+    totalUniquesText.setValue(String.valueOf(selectedCampaign.getValue().getUniquesCount()));
+    totalConversionsText.setValue(String.valueOf(selectedCampaign.getValue().getConversionsCount()));
   }
 
-  private void updateBounceRateDefault() {
-    updateBounceRateByPages((byte) 1);
+  private void updateBouncesCountDefault() {
+    updateBouncesCountByPages((byte) 1);
   }
 
-  private void updateBounceRateByTime(long maxSeconds, boolean allowInf) {
-    bounceRateText.setValue(selectedCampaign.getValue().getBounceRateByTime(maxSeconds, allowInf).setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+  private void updateBouncesCountByTime(long maxSeconds, boolean allowInf) {
+    selectedCampaign.getValue().updateBouncesByTime(maxSeconds, allowInf);
+    totalBouncesText.setValue(String.valueOf(selectedCampaign.getValue().getBouncesCount()));
+    bounceRateText.setValue(selectedCampaign.getValue().getBounceRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+    if (selectedTotals.getValue().equals(totalBounces))
+      updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedBounceTotals());
   }
 
-  private void updateBounceRateByPages(byte maxPages) {
-    bounceRateText.setValue(selectedCampaign.getValue().getBounceRateByPages(maxPages).setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+  private void updateBouncesCountByPages(byte maxPages) {
+    selectedCampaign.getValue().updateBouncesByPages(maxPages);
+    totalBouncesText.setValue(String.valueOf(selectedCampaign.getValue().getBouncesCount()));
+    bounceRateText.setValue(selectedCampaign.getValue().getBounceRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+    if (selectedTotals.getValue().equals(totalBounces))
+      updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedBounceTotals());
   }
 
   private void setupCampaignSelector() {
@@ -249,26 +273,16 @@ public class PrimaryViewModel implements ViewModel {
       } else {
         selectedTotals.setValue(totalImpressions);
       }
-      if (selectedAverage.getValue().equals(totalImpressions)) {
-        //Update Total Metrics Graph with total impressions over time
-        //use method updateTotalMetricLineChartData();
-
-      } else if (selectedAverage.getValue().equals(totalClicks)) {
-        //Update Total Metrics Graph with total clicks over time
-        //use method updateTotalMetricLineChartData();
-
-      } else if (selectedAverage.getValue().equals(totalUniques)) {
-        //Update Total Metrics Graph with total uniques over time
-        //use method updateTotalMetricLineChartData();
-
-      } else if (selectedAverage.getValue().equals(totalBounces)) {
-        //Update Total Metrics Graph with total bounces over time
-        //use method updateTotalMetricLineChartData();
-
-      } else if (selectedAverage.getValue().equals(totalConversions)) {
-        //Update Total Metrics Graph with total conversions over time
-        //use method updateTotalMetricLineChartData();
-
+      if (selectedTotals.getValue().equals(totalImpressions)) {
+        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedImpressionTotals());
+      } else if (selectedTotals.getValue().equals(totalClicks)) {
+        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedClickTotals());
+      } else if (selectedTotals.getValue().equals(totalUniques)) {
+        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedUniqueTotals());
+      } else if (selectedTotals.getValue().equals(totalBounces)) {
+        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedBounceTotals());
+      } else if (selectedTotals.getValue().equals(totalConversions)) {
+        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedAcquisitionTotals());
       }
     });
     selectedTotals.setValue(totalImpressions);
@@ -308,8 +322,16 @@ public class PrimaryViewModel implements ViewModel {
     averageChartData.add(s);
   }
 
-  private void updateTotalMetricLineChartData (HashMap<String, BigDecimal> dataMap) {
-
+  private void updateTotalMetricLineChartData(HashMap<String, Long> dataMap) {
+    totalMetricChartData.clear();
+    Series<String, Number> s = new Series<>();
+    s.setName(selectedCampaign.getValue().toString());
+    for (Entry<String, Long> entry : dataMap.entrySet()) {
+      Data<String, Number> data = new XYChart.Data<>(entry.getKey(), entry.getValue());
+      data.setNode(new ChartPointLabel(data.getYValue().toString()));
+      s.getData().add(data);
+    }
+    totalMetricChartData.add(s);
   }
 
 
