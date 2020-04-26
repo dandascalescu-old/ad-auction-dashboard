@@ -2,19 +2,25 @@ package com.comp2211.dashboard.view;
 
 import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
+import com.comp2211.dashboard.viewmodel.ExportDialogViewModel;
+import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel;
 import com.comp2211.dashboard.viewmodel.PrimaryViewModel;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
+import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
-import java.io.File;
-import java.util.Arrays;
+import de.saxsys.mvvmfx.ViewTuple;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Button;
 import javafx.scene.chart.PieChart;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -25,7 +31,31 @@ import java.io.IOException;
 public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
   @FXML
+  public Pane totalMetricsOverTimePane;
+
+  @FXML
+  public Pane totalMetricsPane;
+
+  @FXML
+  public Pane averageCostPane;
+
+  @FXML
+  public Pane demographicsPane;
+
+  @FXML
+  public Pane totalCostPane;
+
+  @FXML
+  public Pane conversionsUniquesPane;
+
+  @FXML
+  public Pane ctrPane;
+
+  @FXML
   private BorderPane mainPane;
+
+  @FXML
+  private StackPane stackPane2;
 
   @FXML
   private Pane databasePane, dashboardPane;
@@ -52,10 +82,12 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   private PieChart demographicsChart;
 
   @FXML
-  private Text totalClickCost, totalImpresCost, totalCost, bounceRateText, totalImpressions, totalClicks, totalUniques, totalBounces, totalConversions;
+  private Text totalClickCost, totalImpresCost, totalCost, bounceRateText, totalImpressions, totalClicks, totalUniques, totalBounces, totalConversions, bounceConversionText;
 
   @InjectViewModel
   private PrimaryViewModel viewModel;
+
+
 
   @FXML
   StackPane stackPane;
@@ -69,18 +101,21 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   @FXML
   Text ctrText, conversionUniquesText;
 
+  ViewTuple<ExportDialog, ExportDialogViewModel> exportDialogView;
+
+  ViewTuple<PrimaryFilterDialog, PrimaryFilterDialogModel> primaryDialogView;
+
+  static JFXDialog dialogFilter, dialogExport;
+
   public void initialize() {
     totalClickCost.textProperty().bind(viewModel.totalClickCostProperty());
     totalImpresCost.textProperty().bind(viewModel.totalImpresCostProperty());
     totalCost.textProperty().bind(viewModel.totalCostProperty());
 
-    // TODO add bounceRateText in PrimaryView.fxml
-    //bounceRateText.textProperty().bind(viewModel.bounceRateTextProperty());
     ctrText.textProperty().bind(viewModel.clickThroughRateTextProperty());
-    bounceRateText.textProperty().bind(viewModel.getBounceRateText());
-    conversionUniquesText.textProperty().bind(viewModel.getConversionUniquesText());
+    bounceRateText.textProperty().bind(viewModel.bounceRateTextProperty());
+    conversionUniquesText.textProperty().bind(viewModel.getConversionUniquesProperty());
 
-    // TODO: caused a nullpointer before.
     campaignCombobox.setItems(viewModel.campaignsList());
     campaignCombobox.valueProperty().bindBidirectional(viewModel.selectedCampaignProperty());
 
@@ -100,11 +135,13 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     demographicsChart.setLegendVisible(false);
 
     totalMetricsLineChart.setData(viewModel.totalMetricChartData());
-    totalImpressions.textProperty().bind(viewModel.getTotalImpressionsText());
-    totalClicks.textProperty().bind(viewModel.getTotalClicksText());
-    totalUniques.textProperty().bind(viewModel.getTotalUniquesText());
-    totalBounces.textProperty().bind(viewModel.getTotalBouncesText());
-    totalConversions.textProperty().bind(viewModel.getTotalConversionsText());
+
+    bounceConversionText.textProperty().bind(viewModel.bounceConversionTextProperty());
+    totalImpressions.textProperty().bind(viewModel.getTotalImpressionsProperty());
+    totalClicks.textProperty().bind(viewModel.getTotalClicksProperty());
+    totalUniques.textProperty().bind(viewModel.getTotalUniquesProperty());
+    totalBounces.textProperty().bind(viewModel.getTotalBouncesProperty());
+    totalConversions.textProperty().bind(viewModel.getTotalConversionsProperty());
   }
 
 
@@ -128,9 +165,31 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
   }
 
-  public void saveDemo() {
-    viewModel.saveChart(demographicsChart);
-//  viewModel.saveChartAsPDF(Arrays.asList(demographicsChart,averageChart,totalMetricsLineChart), new File("test.pdf")); //Save all as PDF, need to add file chooser
+
+  public void openFilterDialog(ActionEvent event) {
+    primaryDialogView = FluentViewLoader.fxmlView(PrimaryFilterDialog.class).load();
+    JFXDialogLayout dialogLayout = new JFXDialogLayout();
+    dialogLayout.setBody(primaryDialogView.getView());
+    dialogFilter = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
+    dialogFilter.setTranslateY(-200);
+    dialogFilter.show();
   }
 
+  public void openExportDataWindow(ActionEvent event) throws IOException {
+    exportDialogView = FluentViewLoader.fxmlView(ExportDialog.class).load();
+    exportDialogView.getCodeBehind().setPrimaryView(this);
+    JFXDialogLayout dialogLayout = new JFXDialogLayout();
+    dialogLayout.setBody(exportDialogView.getView());
+    dialogExport = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
+    dialogExport.setTranslateY(-200);
+    dialogExport.show();
+  }
+
+  static void cancelDialogAction() {
+    dialogFilter.close();
+  }
+
+  static void cancelExportDialogAction(){
+    dialogExport.close();
+  }
 }

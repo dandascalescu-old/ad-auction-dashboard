@@ -27,6 +27,7 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.Chart;
@@ -61,6 +62,7 @@ public class PrimaryViewModel implements ViewModel {
   private StringProperty clickThroughRateText = new SimpleStringProperty("");
   private StringProperty bounceRateText = new SimpleStringProperty("");
   private StringProperty conversionUniquesText = new SimpleStringProperty("");
+  private StringProperty bounceConversionText = new SimpleStringProperty("");
 
   private StringProperty totalImpressionsText = new SimpleStringProperty("");
   private StringProperty totalClicksText = new SimpleStringProperty("");
@@ -84,8 +86,6 @@ public class PrimaryViewModel implements ViewModel {
   private final String totalBounces = "Bounces";
   private final String totalConversions = "Conversions";
 
-  private final ExtensionFilter pngFilter = new ExtensionFilter("PNG File (*.png)", "*.png");
-  private final ExtensionFilter pdfFilter = new ExtensionFilter("PDF File (*.pdf)","*.pdf");
 
   public void initialize() {
     campaigns = FXCollections.observableArrayList();
@@ -95,7 +95,6 @@ public class PrimaryViewModel implements ViewModel {
     demographicsChartData = FXCollections.observableArrayList();
     totals = FXCollections.observableArrayList();
     totalMetricChartData = FXCollections.observableArrayList();
-
 
     campaigns.addAll(Campaign.getCampaigns());
     averages.addAll(avgCostClick, avgCostImpr, avgCostAcq);
@@ -110,9 +109,10 @@ public class PrimaryViewModel implements ViewModel {
         //TODO Change to load data over time: check campaign.loadData(limit, offset);
         Platform.runLater(new Runnable() {
           public void run() {
+            //TODO move all updates to single method?
             updateTotalMetrics();
             updateTotalCosts();
-            updateBounceRateDefault();
+            updateBouncesCountDefault();
             setupDemographicSelector();
             setupAverageSelector();
             setUpTotalsSelector();
@@ -122,13 +122,13 @@ public class PrimaryViewModel implements ViewModel {
     }.start();
   }
 
-
-
   public ObservableList<Campaign> campaignsList() {
     return campaigns;
   }
 
-  public ObservableList<String> totalList() {return totals;}
+  public ObservableList<String> totalList() {
+    return totals;
+  }
 
   public ObservableList<String> averagesList() {
     return averages;
@@ -142,7 +142,9 @@ public class PrimaryViewModel implements ViewModel {
     return averageChartData;
   }
 
-  public ObservableList<Series<String, Number>> totalMetricChartData() {return totalMetricChartData;}
+  public ObservableList<Series<String, Number>> totalMetricChartData() {
+    return totalMetricChartData;
+  }
 
   public ObservableList<PieChart.Data> demographicsChartData() {
     return demographicsChartData;
@@ -152,7 +154,9 @@ public class PrimaryViewModel implements ViewModel {
     return selectedAverage;
   }
 
-  public StringProperty selectedTotalMetricProperty() { return selectedTotals;}
+  public StringProperty selectedTotalMetricProperty() {
+    return selectedTotals;
+  }
 
   public ObjectProperty<Demographic> selectedDemographicProperty() {
     return selectedDemographic;
@@ -178,51 +182,74 @@ public class PrimaryViewModel implements ViewModel {
     return clickThroughRateText;
   }
 
+  public StringProperty bounceConversionTextProperty() { return bounceConversionText; }
+
   public StringProperty bounceRateTextProperty() {
     return bounceRateText;
   }
 
-  public StringProperty getBounceRateText(){return bounceRateText;}
+  public StringProperty getConversionUniquesProperty() {
+    return conversionUniquesText;
+  }
 
-  public StringProperty getConversionUniquesText(){return totalConversionsText;}
+  public StringProperty getTotalImpressionsProperty() {
+    return totalImpressionsText;
+  }
 
-  public StringProperty getTotalImpressionsText() { return totalImpressionsText; }
+  public StringProperty getTotalClicksProperty() {
+    return totalClicksText;
+  }
 
-  public StringProperty getTotalClicksText() { return totalClicksText;}
+  public StringProperty getTotalUniquesProperty() {
+    return totalUniquesText;
+  }
 
-  public StringProperty getTotalUniquesText() { return totalUniquesText;}
+  public StringProperty getTotalBouncesProperty() {
+    return totalBouncesText;
+  }
 
-  public StringProperty getTotalBouncesText() { return totalBouncesText;}
-
-  public StringProperty getTotalConversionsText() { return totalConversionsText;}
-
+  public StringProperty getTotalConversionsProperty() {
+    return totalConversionsText;
+  }
 
   private void updateTotalCosts() {
     totalClickCost.setValue("£" + selectedCampaign.getValue().getTotalClickCost().setScale(2, RoundingMode.CEILING).toPlainString());
     totalImpresCost.setValue("£" + selectedCampaign.getValue().getTotalImpressionCost().setScale(2, RoundingMode.CEILING).toPlainString());
     totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost().setScale(2, RoundingMode.CEILING).toPlainString());
+
     clickThroughRateText.setValue(selectedCampaign.getValue().getClickThroughRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+    
+    //TODO:: Need to set value for bounceConversionText;
+    bounceConversionText.setValue("0.404");
+    
+    conversionUniquesText.setValue(selectedCampaign.getValue().getConversionsPerUniques().setScale(2, RoundingMode.CEILING).toPlainString());
   }
 
-  private void updateTotalMetrics(){
-
-    totalImpressionsText.setValue("32121");
-    totalClicksText.setValue("99833");
-    totalUniquesText.setValue("12002");
-    totalBouncesText.setValue("11143");
-    totalConversionsText.setValue("9733");
+  private void updateTotalMetrics() {
+    totalImpressionsText.setValue(String.valueOf(selectedCampaign.getValue().getImpressionDataCount()));
+    totalClicksText.setValue(String.valueOf(selectedCampaign.getValue().getClickDataCount()));
+    totalUniquesText.setValue(String.valueOf(selectedCampaign.getValue().getUniquesCount()));
+    totalConversionsText.setValue(String.valueOf(selectedCampaign.getValue().getConversionsCount()));
   }
 
-  private void updateBounceRateDefault() {
-    updateBounceRateByPages((byte) 1);
+  private void updateBouncesCountDefault() {
+    updateBouncesCountByPages((byte) 1);
   }
 
-  private void updateBounceRateByTime(long maxSeconds, boolean allowInf) {
-    bounceRateText.setValue(selectedCampaign.getValue().getBounceRateByTime(maxSeconds, allowInf).setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+  private void updateBouncesCountByTime(long maxSeconds, boolean allowInf) {
+    selectedCampaign.getValue().updateBouncesByTime(maxSeconds, allowInf);
+    totalBouncesText.setValue(String.valueOf(selectedCampaign.getValue().getBouncesCount()));
+    bounceRateText.setValue(selectedCampaign.getValue().getBounceRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+    if (selectedTotals.getValue().equals(totalBounces))
+      updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedBounceTotals());
   }
 
-  private void updateBounceRateByPages(byte maxPages) {
-    bounceRateText.setValue(selectedCampaign.getValue().getBounceRateByPages(maxPages).setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+  private void updateBouncesCountByPages(byte maxPages) {
+    selectedCampaign.getValue().updateBouncesByPages(maxPages);
+    totalBouncesText.setValue(String.valueOf(selectedCampaign.getValue().getBouncesCount()));
+    bounceRateText.setValue(selectedCampaign.getValue().getBounceRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+    if (selectedTotals.getValue().equals(totalBounces))
+      updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedBounceTotals());
   }
 
   private void setupCampaignSelector() {
@@ -265,26 +292,16 @@ public class PrimaryViewModel implements ViewModel {
       } else {
         selectedTotals.setValue(totalImpressions);
       }
-      if (selectedAverage.getValue().equals(totalImpressions)) {
-        //Update Total Metrics Graph with total impressions over time
-        //use method updateTotalMetricLineChartData();
-
-      } else if (selectedAverage.getValue().equals(totalClicks)) {
-        //Update Total Metrics Graph with total clicks over time
-        //use method updateTotalMetricLineChartData();
-
-      } else if (selectedAverage.getValue().equals(totalUniques)) {
-        //Update Total Metrics Graph with total uniques over time
-        //use method updateTotalMetricLineChartData();
-
-      } else if (selectedAverage.getValue().equals(totalBounces)) {
-        //Update Total Metrics Graph with total bounces over time
-        //use method updateTotalMetricLineChartData();
-
-      } else if (selectedAverage.getValue().equals(totalConversions)) {
-        //Update Total Metrics Graph with total conversions over time
-        //use method updateTotalMetricLineChartData();
-
+      if (selectedTotals.getValue().equals(totalImpressions)) {
+        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedImpressionTotals());
+      } else if (selectedTotals.getValue().equals(totalClicks)) {
+        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedClickTotals());
+      } else if (selectedTotals.getValue().equals(totalUniques)) {
+        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedUniqueTotals());
+      } else if (selectedTotals.getValue().equals(totalBounces)) {
+        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedBounceTotals());
+      } else if (selectedTotals.getValue().equals(totalConversions)) {
+        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedAcquisitionTotals());
       }
     });
     selectedTotals.setValue(totalImpressions);
@@ -324,130 +341,17 @@ public class PrimaryViewModel implements ViewModel {
     averageChartData.add(s);
   }
 
-  private void updateTotalMetricLineChartData (HashMap<String, BigDecimal> dataMap) {
-
+  private void updateTotalMetricLineChartData(HashMap<String, Long> dataMap) {
+    totalMetricChartData.clear();
+    Series<String, Number> s = new Series<>();
+    s.setName(selectedCampaign.getValue().toString());
+    for (Entry<String, Long> entry : dataMap.entrySet()) {
+      Data<String, Number> data = new XYChart.Data<>(entry.getKey(), entry.getValue());
+      data.setNode(new ChartPointLabel(data.getYValue().toString()));
+      s.getData().add(data);
+    }
+    totalMetricChartData.add(s);
   }
-
-  /**
-   * Saves given list of charts into pdf file
-   * @param charts list of charts to save
-   * @return true if save successful, false if fail
-   */
-  public boolean saveCharts(List<Chart> charts){
-    FileChooser fileChooser = new FileChooser();
-    fileChooser.getExtensionFilters().addAll(pdfFilter);
-    File file = fileChooser.showSaveDialog(null);
-
-    if (file == null) {
-      return false;
-    }
-    saveChartAsPDF(charts, file);
-
-    return true;
-  }
-
-  /**
-   * Saves a single chart to either pdf or png (user chooses)
-   * @param chart chart to save
-   * @return true if save successful, false if fail
-   */
-  public boolean saveChart(Chart chart) {
-
-    FileChooser fileChooser = new FileChooser();
-    fileChooser.getExtensionFilters().addAll(pngFilter, pdfFilter);
-    File file = fileChooser.showSaveDialog(null);
-
-    if (file == null) {
-      return false;
-    }
-
-    if (fileChooser
-        .getSelectedExtensionFilter()
-        .getDescription()
-        .equals(pngFilter.getDescription())) {
-      saveChartAsPNG(chart, file);
-    }
-    else if (fileChooser.getSelectedExtensionFilter().getDescription().equals((pdfFilter.getDescription()))){
-      saveChartAsPDF(chart, file);
-    }
-    return true;
-  }
-
-
-  /**
-   * Method for saving as png
-   * @param chart chart to save
-   * @param file file name/location
-   * @return true if save successful, false if fail
-   */
-  private boolean saveChartAsPNG(Chart chart, File file){
-    WritableImage writableImage = chart.snapshot(new SnapshotParameters(), null);
-    BufferedImage bufferedImage = javafx.embed.swing.SwingFXUtils.fromFXImage(writableImage, null );
-    try {
-      ImageIO.write(bufferedImage, "png", file);
-    } catch (IOException e) {
-      e.printStackTrace();
-      return false;
-    }
-    return true;
-  }
-
-  /**
-   * Method for saving given list of charts as pdf
-   * @param charts list of charts to save
-   * @param file file name/location
-   * @return true if save successful, false if fail
-   */
-  public boolean saveChartAsPDF(List<Chart> charts, File file) {
-    Document doc = new Document();
-    PdfWriter pdfWriter = null;
-    PdfContentByte pdfContentByte = null;
-
-    try{
-      if (!file.getName().endsWith(".pdf")) {
-        file = new File(file, file.getName() + ".pdf");
-      }
-      pdfWriter = PdfWriter.getInstance(doc, new FileOutputStream(file));
-      pdfContentByte = new PdfContentByte(pdfWriter);
-    }catch (FileNotFoundException | DocumentException e){
-      e.printStackTrace();
-      return false;
-    }
-
-    if(pdfWriter == null | pdfContentByte == null){
-      return false;
-    }
-
-    pdfWriter.open();
-    doc.open();
-    for (Chart chart : charts) {
-      WritableImage writableImage = chart.snapshot(new SnapshotParameters(), null);
-      BufferedImage bufferedImage =
-          javafx.embed.swing.SwingFXUtils.fromFXImage(writableImage, null);
-      try {
-        Image image = com.itextpdf.text.Image.getInstance(pdfContentByte, bufferedImage, 1);
-        image.scaleToFit(PageSize.A5);
-        doc.add(image);
-      } catch (DocumentException | IOException e) {
-        e.printStackTrace();
-        return false;
-      }
-    }
-    doc.close();
-    pdfWriter.close();
-    return true;
-    }
-
-  /**
-   * Method for saving a given chart as pdf
-   * @param chart chart to save
-   * @param file file name/location
-   * @return true if save successful, false if fail
-   */
-  private boolean saveChartAsPDF(Chart chart, File file){
-    return saveChartAsPDF(Arrays.asList(chart), file);
-  }
-
 
 }
 
