@@ -36,36 +36,12 @@ public abstract class DatabaseManager {
   /**
    * Verifies and prints if any database tables aren't available
    */
-  public void verifyDatabaseTables() {
-    Logger.log("Verifying database tables...");
-    boolean valid = true;
-    if (!sqlDatabase.tableExists("credentials")) {
-      Logger.log("Credentials table doesn't exist.");
-      valid = false;
-    }
-    if (!sqlDatabase.tableExists(click_table)) {
-      Logger.log("Click table doesn't exist.");
-      valid = false;
-    }
-    if (!sqlDatabase.tableExists(impression_table)) {
-      Logger.log("Impression table doesn't exist.");
-      valid = false;
-    }
-    if (!sqlDatabase.tableExists(server_table)) {
-      Logger.log("Server table doesn't exist.");
-      valid = false;
-    }
-    if(valid) {
-      Logger.log("Verification complete.");
-    }
-  }
+  public abstract void verifyDatabaseTables();
 
   /**
    * @return whether the database connection was opened successfully
    */
-  public boolean isOpen() {
-    return open;
-  }
+  public abstract boolean isOpen();
 
   public String getClickTable() {
     return click_table;
