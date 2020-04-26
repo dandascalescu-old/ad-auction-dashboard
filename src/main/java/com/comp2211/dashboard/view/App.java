@@ -25,7 +25,6 @@ public class App extends Application {
     stage.setTitle("Ad Analytics Dashboard");
 
     viewTuple = FluentViewLoader.fxmlView(LoginView.class).load();
-     //viewTuple = FluentViewLoader.fxmlView(PrimaryView.class).load();
     Parent root = viewTuple.getView();
     stage.setScene(new Scene(root));
     stage.show();
