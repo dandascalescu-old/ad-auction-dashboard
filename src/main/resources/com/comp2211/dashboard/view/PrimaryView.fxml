@@ -3,7 +3,6 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.ScrollPane?>
@@ -17,6 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import com.comp2211.dashboard.view.HoverLineChart?>
 <ScrollPane fx:id="scrollPane" prefHeight="778.0" prefWidth="1158.0" style="outline: none; -fx-background-color: transparent;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.PrimaryView">
 <content>
    <StackPane fx:id="stackPane2" minHeight="0.0" minWidth="0.0" prefHeight="1278.0" prefWidth="1137.0">
@@ -65,14 +65,14 @@
                   </font>
                </Text>
                <JFXComboBox fx:id="averageCombobox" layoutX="787.0" layoutY="10.0" prefHeight="27.0" prefWidth="180.0" />
-               <LineChart fx:id="averageChart" animated="false" layoutX="114.0" layoutY="55.0" prefHeight="276.0" prefWidth="834.0">
+               <HoverLineChart fx:id="averageChart" animated="false" layoutX="114.0" layoutY="55.0" prefHeight="276.0" prefWidth="834.0">
                   <xAxis>
                      <CategoryAxis label="Date" side="BOTTOM" fx:id="xLineAxis" />
                   </xAxis>
                   <yAxis>
                      <NumberAxis fx:id="yAxisLine" label="Cost (£)" side="LEFT" />
                   </yAxis>
-               </LineChart>
+               </HoverLineChart>
             </children>
             <effect>
                <DropShadow color="#00000022" height="10.38" offsetX="5.0" offsetY="5.0" radius="4.3100000000000005" width="8.86" />
@@ -158,14 +158,14 @@
                   <!--</opaqueInsets>-->
                <!--</BarChart>-->
                <JFXComboBox fx:id="totalMetricCombobox" layoutX="333.0" layoutY="17.0" prefHeight="27.0" prefWidth="180.0" />
-                  <LineChart fx:id="totalMetricsLineChart" layoutX="11.0" layoutY="58.0" prefHeight="258.0" prefWidth="585.0">
+                  <HoverLineChart fx:id="totalMetricsLineChart" layoutX="11.0" layoutY="58.0" prefHeight="258.0" prefWidth="585.0">
                     <xAxis>
                       <CategoryAxis side="BOTTOM" />
                     </xAxis>
                     <yAxis>
                       <NumberAxis side="LEFT" />
                     </yAxis>
-                  </LineChart>
+                  </HoverLineChart>
             </children>
             <effect>
                <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />

@@ -16,10 +16,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.chart.LineChart;
 import javafx.scene.control.Button;
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -51,10 +49,10 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   private JFXComboBox<Demographic> demographicCombobox;
 
   @FXML
-  private LineChart<String, Number> averageChart;
+  private HoverLineChart<String, Number> averageChart;
 
   @FXML
-  private LineChart<String, Number>  totalMetricsLineChart;
+  private HoverLineChart<String, Number>  totalMetricsLineChart;
 
   @FXML
   private PieChart demographicsChart;
