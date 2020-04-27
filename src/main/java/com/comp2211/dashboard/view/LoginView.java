@@ -1,9 +1,5 @@
 package com.comp2211.dashboard.view;
 
-import com.comp2211.dashboard.Campaign;
-import com.comp2211.dashboard.GUIStarter;
-import com.comp2211.dashboard.util.Logger;
-import com.comp2211.dashboard.util.Security;
 import com.comp2211.dashboard.viewmodel.LoginViewModel;
 import com.comp2211.dashboard.viewmodel.MainViewModel;
 import com.jfoenix.controls.JFXButton;
@@ -48,38 +44,27 @@ public class LoginView implements FxmlView<LoginViewModel> {
   @InjectViewModel
   private LoginViewModel viewModel;
 
-  public void verifyLogin(ActionEvent actionEvent) {
-    String username = usernameLabel.getText().trim();
-    String password = passwordLabel.getText().trim();
-    
-    if(!Security.validateText(username)) {
-      Logger.log("Username can only alphanumeric characters, try again.");
-      return;
-    }
-    
-    if(!GUIStarter.getDatabaseManager().attemptUserLogin(username, password)) {
-      Logger.log("Credentials not recognized, try again.");
-      return;
-    }
-    // TODO get campaigns from UserSession
-    Campaign c = new Campaign("Demo Campaign", GUIStarter.getDatabaseManager());
-    new Thread() {
-      public void run() {
-        c.cacheData();
-      }
-    }.start();
+  public void initialize() {
+    usernameLabel.textProperty().bindBidirectional(viewModel.usernameStringProperty());
+    passwordLabel.textProperty().bindBidirectional(viewModel.passwordStringProperty());
 
-    new FadeOut(signinPane).play();
-    AnimationFX newAnimation = new FadeOutLeft(welcomePane);
-    newAnimation.setOnFinished(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent actionEvent) {
-        ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.fxmlView(MainView.class).load();
-        Stage appStage = (Stage) loginButton.getScene().getWindow();
-        appStage.setScene(new Scene(viewTuple.getView()));
-      }
+    viewModel.subscribe(LoginViewModel.SHOW_AUTHENTICATED_VIEW, (key, payload) -> {
+      new FadeOut(signinPane).play();
+      AnimationFX newAnimation = new FadeOutLeft(welcomePane);
+      newAnimation.setOnFinished(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent actionEvent) {
+          ViewTuple<MainView, MainViewModel> viewTuple = FluentViewLoader.fxmlView(MainView.class).load();
+          Stage appStage = (Stage) loginButton.getScene().getWindow();
+          appStage.setScene(new Scene(viewTuple.getView()));
+        }
+      });
+
+      newAnimation.play();
     });
+  }
 
-    newAnimation.play();
+  public void verifyLogin(ActionEvent actionEvent) {
+    viewModel.getLoginCommand().execute();
   }
 }
