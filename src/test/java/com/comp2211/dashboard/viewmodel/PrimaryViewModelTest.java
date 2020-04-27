@@ -1,0 +1,129 @@
+package com.comp2211.dashboard.viewmodel;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import com.comp2211.dashboard.Campaign;
+import com.comp2211.dashboard.GUIStarter;
+import com.comp2211.dashboard.io.DatabaseManager;
+import com.comp2211.dashboard.io.MockDatabaseManager;
+import com.comp2211.dashboard.model.data.Demographics;
+import com.comp2211.dashboard.model.data.Demographics.Demographic;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import javafx.collections.FXCollections;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class PrimaryViewModelTest {
+
+  private static DatabaseManager manager;
+  private PrimaryViewModel viewModel;
+
+  private static int campaignCount = 2;
+
+  @BeforeEach
+  void setUp() {
+    this.manager = new MockDatabaseManager();
+
+    // Instantiates Campaign singleton with multiple campaigns
+    new Campaign("Demo Campaign 1", this.manager);
+    new Campaign("Demo Campaign 2", this.manager);
+
+    this.viewModel = new PrimaryViewModel();
+    this.viewModel.initialize();
+  }
+
+  @AfterEach
+  void tearDown() {
+    Campaign.removeAllCampaigns();
+    this.viewModel = null;
+    assertNull(this.viewModel);
+  }
+
+  @Test
+  void campaignsList() {
+    Boolean listMatches = true;
+
+    int i = 0;
+    for (Iterator<Campaign> it = this.viewModel.campaignsList().iterator(); it.hasNext(); i++) {
+      Campaign c = it.next();
+      if (!c.getCampaignID().equals(Campaign.getCampaigns().get(i).getCampaignID())) {
+        listMatches = false;
+        break;
+      }
+    }
+
+    assertTrue(listMatches);
+
+    assertEquals(this.campaignCount, this.viewModel.campaignsList().size());
+  }
+
+  @Test
+  void totalList() {
+    String[] totals = {"Impressions", "Clicks", "Uniques", "Bounces", "Conversions"};
+    List<String> totalsList = Arrays.asList(totals);
+    String totalNotAvailable = "";
+
+    Iterator<String> it = this.viewModel.totalList().iterator();
+    while (it.hasNext()) {
+      String totalHeader = it.next();
+      if (!totalsList.contains(totalHeader)) {
+        totalNotAvailable = totalHeader;
+        break;
+      }
+    }
+
+    assertTrue(totalNotAvailable.isEmpty(), "Total header not shown: " + totalNotAvailable);
+  }
+
+  @Test
+  void averagesList() {
+    String[] averages = {"Average Cost of Click", "Average Cost of Impression", "Average Cost of Acquisition"};
+    List<String> totalsList = Arrays.asList(averages);
+    String avgNotAvailable = "";
+
+    Iterator<String> it = this.viewModel.averagesList().iterator();
+    while (it.hasNext()) {
+      String avgHeader = it.next();
+      if (!totalsList.contains(avgHeader)) {
+        avgNotAvailable = avgHeader;
+        break;
+      }
+    }
+
+    assertTrue(avgNotAvailable.isEmpty(), "Average header not shown: " + avgNotAvailable);
+  }
+
+  @Test
+  void demographicsList() {
+    Demographic[] demographics = Demographics.Demographic.values();
+    List<Demographic> demographicsList = Arrays.asList(demographics);
+    String demNotAvailable = "";
+
+    Iterator<Demographic> it = this.viewModel.demographicsList().iterator();
+    while (it.hasNext()) {
+      Demographic demHeader = it.next();
+      if (!demographicsList.contains(demHeader)) {
+        demNotAvailable = demHeader.toString();
+        break;
+      }
+    }
+
+    assertTrue(demNotAvailable.isEmpty(), "Demographic header not shown: " + demNotAvailable);
+  }
+
+//  @Test
+//  void selectedAverageProperty() {}
+//
+//  @Test
+//  void selectedTotalMetricProperty() {}
+//
+//  @Test
+//  void selectedDemographicProperty() {}
+//
+//  @Test
+//  void selectedCampaignProperty() {}
+}
