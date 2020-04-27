@@ -6,7 +6,12 @@ import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.GUIStarter;
 import com.comp2211.dashboard.io.DatabaseManager;
 import com.comp2211.dashboard.io.MockDatabaseManager;
+import com.comp2211.dashboard.model.data.Demographics;
+import com.comp2211.dashboard.model.data.Demographics.Demographic;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import javafx.collections.FXCollections;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +21,8 @@ class PrimaryViewModelTest {
 
   private static DatabaseManager manager;
   private PrimaryViewModel viewModel;
+
+  private static int campaignCount = 2;
 
   @BeforeEach
   void setUp() {
@@ -31,6 +38,7 @@ class PrimaryViewModelTest {
 
   @AfterEach
   void tearDown() {
+    Campaign.removeAllCampaigns();
     this.viewModel = null;
     assertNull(this.viewModel);
   }
@@ -50,28 +58,63 @@ class PrimaryViewModelTest {
 
     assertTrue(listMatches);
 
-    System.out.println("this.viewModel.campaignsList().size(): " + this.viewModel.campaignsList().size());
-    assertTrue(this.viewModel.campaignsList().size() == 2);
+    assertEquals(this.campaignCount, this.viewModel.campaignsList().size());
   }
 
-//  @Test
-//  void totalList() {}
-//
-//  @Test
-//  void averagesList() {}
-//
-//  @Test
-//  void demographicsList() {}
-//
-//  @Test
-//  void averageChartData() {}
-//
-//  @Test
-//  void totalMetricChartData() {}
-//
-//  @Test
-//  void demographicsChartData() {}
-//
+  @Test
+  void totalList() {
+    String[] totals = {"Impressions", "Clicks", "Uniques", "Bounces", "Conversions"};
+    List<String> totalsList = Arrays.asList(totals);
+    String totalNotAvailable = "";
+
+    Iterator<String> it = this.viewModel.totalList().iterator();
+    while (it.hasNext()) {
+      String totalHeader = it.next();
+      if (!totalsList.contains(totalHeader)) {
+        totalNotAvailable = totalHeader;
+        break;
+      }
+    }
+
+    assertTrue(totalNotAvailable.isEmpty(), "Total header not shown: " + totalNotAvailable);
+  }
+
+  @Test
+  void averagesList() {
+    String[] averages = {"Average Cost of Click", "Average Cost of Impression", "Average Cost of Acquisition"};
+    List<String> totalsList = Arrays.asList(averages);
+    String avgNotAvailable = "";
+
+    Iterator<String> it = this.viewModel.averagesList().iterator();
+    while (it.hasNext()) {
+      String avgHeader = it.next();
+      if (!totalsList.contains(avgHeader)) {
+        avgNotAvailable = avgHeader;
+        break;
+      }
+    }
+
+    assertTrue(avgNotAvailable.isEmpty(), "Average header not shown: " + avgNotAvailable);
+  }
+
+  @Test
+  void demographicsList() {
+    Demographic[] demographics = Demographics.Demographic.values();
+    List<Demographic> demographicsList = Arrays.asList(demographics);
+    String demNotAvailable = "";
+
+    Iterator<Demographic> it = this.viewModel.demographicsList().iterator();
+    while (it.hasNext()) {
+      Demographic demHeader = it.next();
+      if (!demographicsList.contains(demHeader)) {
+        demNotAvailable = demHeader.toString();
+        break;
+      }
+    }
+
+    assertTrue(demNotAvailable.isEmpty(), "Demographic header not shown: " + demNotAvailable);
+  }
+
 //  @Test
 //  void selectedAverageProperty() {}
 //
@@ -83,40 +126,4 @@ class PrimaryViewModelTest {
 //
 //  @Test
 //  void selectedCampaignProperty() {}
-//
-//  @Test
-//  void totalClickCostProperty() {}
-//
-//  @Test
-//  void totalImpresCostProperty() {}
-//
-//  @Test
-//  void totalCostProperty() {}
-//
-//  @Test
-//  void clickThroughRateTextProperty() {}
-//
-//  @Test
-//  void bounceConversionTextProperty() {}
-//
-//  @Test
-//  void bounceRateTextProperty() {}
-//
-//  @Test
-//  void getConversionUniquesProperty() {}
-//
-//  @Test
-//  void getTotalImpressionsProperty() {}
-//
-//  @Test
-//  void getTotalClicksProperty() {}
-//
-//  @Test
-//  void getTotalUniquesProperty() {}
-//
-//  @Test
-//  void getTotalBouncesProperty() {}
-//
-//  @Test
-//  void getTotalConversionsProperty() {}
 }

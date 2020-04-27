@@ -36,6 +36,7 @@ public class Campaign {
   public static List<Campaign> getCampaigns(){
     return allCampaigns;
   }
+  public static void removeAllCampaigns() { allCampaigns = new ArrayList<>(); }
 
   public static Campaign getCampaignByID(String id){
     for(Campaign c : allCampaigns) {
