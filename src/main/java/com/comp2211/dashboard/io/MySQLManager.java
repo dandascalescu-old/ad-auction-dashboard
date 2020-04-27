@@ -17,11 +17,25 @@ import com.comp2211.dashboard.util.UserSession;
 public class MySQLManager extends DatabaseManager {
 
   public MySQLManager() {
-    super("64.227.36.253","3306","seg","seg23","exw3karpouziastinakri", Table.click_table.toString(), Table.impression_table.toString(), Table.server_table.toString());
+    this("64.227.36.253","3306","seg","seg23","exw3karpouziastinakri", Table.click_table.toString(), Table.impression_table.toString(), Table.server_table.toString());
   }
 
   public MySQLManager(final String host, final String port, final String db, final String user, final String pw) {
-    super( host, port, db, user, pw, Table.click_table.toString(), Table.impression_table.toString(), Table.server_table.toString());
+    super();
+
+    sqlDatabase = new Database(host, port, db, user, pw);
+
+    click_table = Table.click_table.toString();
+    impression_table = Table.impression_table.toString();
+    server_table = Table.server_table.toString();
+
+    if (sqlDatabase.getConnection() == null) {
+      Logger.log("Cannot establish database connection. Exiting now.");
+      return;
+    }
+    Logger.log("Database connection established.");
+    open = true;
+    verifyDatabaseTables();
   }
 
   public MySQLManager(
@@ -33,7 +47,7 @@ public class MySQLManager extends DatabaseManager {
       final String c_table,
       final String i_table,
       final String s_table) {
-    super(host, port, db, user, pw, c_table, i_table, s_table);
+    this(host, port, db, user, pw);
   }
 
   public List<List<String>> retrieve(String statement, Object[] params, String[] resultColumns) {

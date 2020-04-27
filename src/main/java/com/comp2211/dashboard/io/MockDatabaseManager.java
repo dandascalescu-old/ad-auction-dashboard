@@ -28,15 +28,12 @@ public class MockDatabaseManager extends DatabaseManager {
   private Boolean open = true;
 
   public MockDatabaseManager() {
-    super(
+    this(
       "",
       "",
       "",
       "",
-      "",
-      Table.click_table.toString(),
-      Table.impression_table.toString(),
-      Table.server_table.toString()
+      ""
     );
   }
 
@@ -47,16 +44,14 @@ public class MockDatabaseManager extends DatabaseManager {
       final String user,
       final String pw
   ) {
-    super(
-      host,
-      port,
-      db,
-      user,
-      pw,
-      Table.click_table.toString(),
-      Table.impression_table.toString(),
-      Table.server_table.toString()
-    );
+    super();
+
+    click_table = Table.click_table.toString();
+    impression_table = Table.impression_table.toString();
+    server_table = Table.server_table.toString();
+
+    open = true;
+    verifyDatabaseTables();
   }
 
   public MockDatabaseManager(
@@ -69,7 +64,7 @@ public class MockDatabaseManager extends DatabaseManager {
       final String i_table,
       final String s_table
   ) {
-    super(host, port, db, user, pw, c_table, i_table, s_table);
+    this(host, port, db, user, pw);
   }
 
   @Override
@@ -239,7 +234,7 @@ public class MockDatabaseManager extends DatabaseManager {
 
   private HashMap<String, Long> getLongTestData() {
     String data = "2015-01-01 22049|2015-01-02 32773|2015-01-03 34919|2015-01-04 33111|2015-01-05 35758|2015-01-06 37379|2015-01-07 37958|2015-01-08 37311|2015-01-09 39031|2015-01-10 36562|2015-01-11 42014|2015-01-12 40945|2015-01-13 42159|2015-01-14 14135";
-    String[] dataPoints = data.split("|");
+    String[] dataPoints = data.split("\\|");
 
     HashMap<String, Long> datedImpressionTotals = new HashMap<>();
 
@@ -252,8 +247,8 @@ public class MockDatabaseManager extends DatabaseManager {
   }
 
   private HashMap<String, BigDecimal> getBigDecimalTestData() {
-    String data = "2015-01-01 22049|2015-01-02 32773|2015-01-03 34919|2015-01-04 33111|2015-01-05 35758|2015-01-06 37379|2015-01-07 37958|2015-01-08 37311|2015-01-09 39031|2015-01-10 36562|2015-01-11 42014|2015-01-12 40945|2015-01-13 42159|2015-01-14 14135|";
-    String[] dataPoints = data.split("|");
+    String data = "2015-01-01 22049|2015-01-02 32773|2015-01-03 34919|2015-01-04 33111|2015-01-05 35758|2015-01-06 37379|2015-01-07 37958|2015-01-08 37311|2015-01-09 39031|2015-01-10 36562|2015-01-11 42014|2015-01-12 40945|2015-01-13 42159|2015-01-14 14135";
+    String[] dataPoints = data.split("\\|");
 
     HashMap<String, BigDecimal> datedImpressionTotals = new HashMap<>();
 

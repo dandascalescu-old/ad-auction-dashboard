@@ -17,21 +17,7 @@ public abstract class DatabaseManager {
   /**
    * Initialise the database connection using info from the configuration file
    */
-  public DatabaseManager(final String host, final String port, final String db, final String user, final String pw, final String c_table, final String i_table, final String s_table) {
-    sqlDatabase = new Database(host, port, db, user, pw);
-
-    click_table = c_table;
-    impression_table = i_table;
-    server_table = s_table;
-
-    if (sqlDatabase.getConnection() == null) {
-      Logger.log("Cannot establish database connection. Exiting now.");
-      return;
-    }
-    Logger.log("Database connection established.");
-    open = true;
-    verifyDatabaseTables();
-  }
+  public DatabaseManager() {}
 
   /**
    * Verifies and prints if any database tables aren't available

@@ -12,12 +12,15 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 /**
  * Campaign object used to represent each individual campaign. Contains impression, click and server
  * info.
  */
 public class Campaign {
+
+  // Used as a singleton across app
   private static List<Campaign> allCampaigns = new ArrayList<Campaign>();
 
   private String campaignID;
@@ -50,7 +53,7 @@ public class Campaign {
    */
   public Campaign(String campaignID, DatabaseManager dbManager) {
     this.campaignID = campaignID;
-    this.dbManager = dbManager;
+    this.dbManager = Objects.requireNonNull(dbManager, "dbManager must not be null");;
 
     cachedDatedAcquisitionCostAverages = new LinkedHashMap<String, BigDecimal>();
     cachedDatedImpressionCostAverages = new LinkedHashMap<String, BigDecimal>();
@@ -87,6 +90,7 @@ public class Campaign {
    * Fetches and caches entries from the database
    */
   public void cacheData() {
+    System.out.println("dbManager: " + dbManager);
     clickDataCount = dbManager.retrieveDataCount(dbManager.getClickTable());
     impressionDataCount = dbManager.retrieveDataCount(dbManager.getImpressionTable());
     serverDataCount = dbManager.retrieveDataCount(dbManager.getServerTable());

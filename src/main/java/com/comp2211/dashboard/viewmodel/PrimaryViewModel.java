@@ -10,21 +10,13 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
-import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
-import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 
 public class PrimaryViewModel implements ViewModel {
 
@@ -84,23 +76,15 @@ public class PrimaryViewModel implements ViewModel {
 
     setupCampaignSelector();
 
-    new Thread() {
-      public void run() {
-        selectedCampaign.getValue().cacheData();
-        //TODO Change to load data over time: check campaign.loadData(limit, offset);
-        Platform.runLater(new Runnable() {
-          public void run() {
-            //TODO move all updates to single method?
-            updateTotalMetrics();
-            updateTotalCosts();
-            updateBouncesCountDefault();
-            setupDemographicSelector();
-            setupAverageSelector();
-            setUpTotalsSelector();
-          }
-        });
-      }
-    }.start();
+    // This was in an runnable block, which has been removed to make testing more manageable
+    selectedCampaign.getValue().cacheData();
+
+    updateTotalMetrics();
+    updateTotalCosts();
+    updateBouncesCountDefault();
+    setupDemographicSelector();
+    setupAverageSelector();
+    setUpTotalsSelector();
   }
 
   public ObservableList<Campaign> campaignsList() {
@@ -316,7 +300,6 @@ public class PrimaryViewModel implements ViewModel {
     s.setName(selectedCampaign.getValue().toString());
     for (Entry<String, BigDecimal> entry : dataMap.entrySet()) {
       Data<String, Number> data = new XYChart.Data<>(entry.getKey(), entry.getValue().doubleValue());
-      data.setNode(new ChartPointLabel(data.getYValue().toString()));
       s.getData().add(data);
     }
     averageChartData.add(s);
@@ -328,37 +311,9 @@ public class PrimaryViewModel implements ViewModel {
     s.setName(selectedCampaign.getValue().toString());
     for (Entry<String, Long> entry : dataMap.entrySet()) {
       Data<String, Number> data = new XYChart.Data<>(entry.getKey(), entry.getValue());
-      data.setNode(new ChartPointLabel(data.getYValue().toString()));
       s.getData().add(data);
     }
     totalMetricChartData.add(s);
   }
 
-
-}
-
-final class ChartPointLabel extends StackPane {
-  public ChartPointLabel(String value) {
-    setPrefSize(12, 12);
-
-    final Label label = new Label(value);
-    label.getStyleClass().addAll("default-color0", "chart-line-symbol", "chart-series-line");
-    label.setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
-
-    label.setTextFill(Color.DARKGRAY);
-    label.setMinSize(Label.USE_PREF_SIZE, Label.USE_PREF_SIZE);
-
-    setOnMouseEntered(new EventHandler<MouseEvent>() {
-      @Override public void handle(MouseEvent e) {
-        getChildren().setAll(label);
-        label.setTranslateY(e.getY()+24);
-        toFront();
-      }
-    });
-    setOnMouseExited(new EventHandler<MouseEvent>() {
-      @Override public void handle(MouseEvent e) {
-        getChildren().clear();
-      }
-    });
-  }
 }
