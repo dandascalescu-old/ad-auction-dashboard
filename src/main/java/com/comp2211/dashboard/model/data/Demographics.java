@@ -2,7 +2,7 @@ package com.comp2211.dashboard.model.data;
 
 public class Demographics {
 
-  public static enum Demographic { Gender, Age, Income, Context };
+  public enum Demographic { Gender, Age, Income, Context }
 
   public static final String[] GenderTypes = { "Male", "Female" };
   public static final String[] AgeTypes = { "<25", "25-34", "35-44", "45-54", ">54" };

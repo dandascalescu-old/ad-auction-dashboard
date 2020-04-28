@@ -21,7 +21,7 @@ import java.util.Objects;
 public class Campaign {
 
   // Used as a singleton across app
-  private static List<Campaign> allCampaigns = new ArrayList<Campaign>();
+  private static List<Campaign> allCampaigns = new ArrayList<>();
 
   private String campaignID;
   private DatabaseManager dbManager;
@@ -54,22 +54,22 @@ public class Campaign {
    */
   public Campaign(String campaignID, DatabaseManager dbManager) {
     this.campaignID = campaignID;
-    this.dbManager = Objects.requireNonNull(dbManager, "dbManager must not be null");;
+    this.dbManager = Objects.requireNonNull(dbManager, "dbManager must not be null");
 
-    cachedDatedAcquisitionCostAverages = new LinkedHashMap<String, BigDecimal>();
-    cachedDatedImpressionCostAverages = new LinkedHashMap<String, BigDecimal>();
-    cachedDatedClickCostAverages = new LinkedHashMap<String, BigDecimal>();
+    cachedDatedAcquisitionCostAverages = new LinkedHashMap<>();
+    cachedDatedImpressionCostAverages = new LinkedHashMap<>();
+    cachedDatedClickCostAverages = new LinkedHashMap<>();
 
-    cachedDatedImpressionTotals = new LinkedHashMap<String, Long>();
-    cachedDatedClickTotals = new LinkedHashMap<String, Long>();
-    cachedDatedUniqueTotals = new LinkedHashMap<String, Long>();
-    cachedDatedBounceTotals = new LinkedHashMap<String, Long>();
-    cachedDatedAcquisitionTotals = new LinkedHashMap<String, Long>();
+    cachedDatedImpressionTotals = new LinkedHashMap<>();
+    cachedDatedClickTotals = new LinkedHashMap<>();
+    cachedDatedUniqueTotals = new LinkedHashMap<>();
+    cachedDatedBounceTotals = new LinkedHashMap<>();
+    cachedDatedAcquisitionTotals = new LinkedHashMap<>();
 
-    cachedAgePercentage = new LinkedHashMap<String, BigDecimal>();
-    cachedGenderPercentage = new LinkedHashMap<String, BigDecimal>();
-    cachedIncomePercentage = new LinkedHashMap<String, BigDecimal>();
-    cachedContextPercentage = new LinkedHashMap<String, BigDecimal>();
+    cachedAgePercentage = new LinkedHashMap<>();
+    cachedGenderPercentage = new LinkedHashMap<>();
+    cachedIncomePercentage = new LinkedHashMap<>();
+    cachedContextPercentage = new LinkedHashMap<>();
 
     allCampaigns.add(this);
   }

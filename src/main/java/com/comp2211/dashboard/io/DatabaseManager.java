@@ -11,8 +11,8 @@ public abstract class DatabaseManager {
   protected boolean open = false;
   protected String click_table, impression_table, server_table;
 
-  public static enum Table { click_table, impression_table, server_table };
-  public static enum Cost { Click_Cost, Impression_Cost };
+  public enum Table { click_table, impression_table, server_table }
+  public enum Cost { Click_Cost, Impression_Cost }
 
   /**
    * Initialise the database connection using info from the configuration file

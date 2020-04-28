@@ -47,8 +47,8 @@ public class PrimaryViewModel implements ViewModel {
 
   private StringProperty selectedAverage = new SimpleStringProperty("");
   private StringProperty selectedTotals = new SimpleStringProperty("");
-  private ObjectProperty<Demographic> selectedDemographic = new SimpleObjectProperty<Demographic>();
-  private ObjectProperty<Campaign> selectedCampaign = new SimpleObjectProperty<Campaign>();
+  private ObjectProperty<Demographic> selectedDemographic = new SimpleObjectProperty<>();
+  private ObjectProperty<Campaign> selectedCampaign = new SimpleObjectProperty<>();
 
   private final String avgCostClick = "Average Cost of Click";
   private final String avgCostImpr = "Average Cost of Impression";
@@ -235,12 +235,16 @@ public class PrimaryViewModel implements ViewModel {
       } else {
         selectedAverage.setValue(avgCostClick);
       }
-      if (selectedAverage.getValue().equals(avgCostClick)) {
-        updateLineChartData(selectedCampaign.getValue().getDatedClickCostAverages());
-      } else if (selectedAverage.getValue().equals(avgCostImpr)) {
-        updateLineChartData(selectedCampaign.getValue().getDatedImpressionCostAverages());
-      } else if (selectedAverage.getValue().equals(avgCostAcq)) {
-        updateLineChartData(selectedCampaign.getValue().getDatedAcquisitionCostAverages());
+      switch (selectedAverage.getValue()) {
+        case avgCostClick:
+          updateLineChartData(selectedCampaign.getValue().getDatedClickCostAverages());
+          break;
+        case avgCostImpr:
+          updateLineChartData(selectedCampaign.getValue().getDatedImpressionCostAverages());
+          break;
+        case avgCostAcq:
+          updateLineChartData(selectedCampaign.getValue().getDatedAcquisitionCostAverages());
+          break;
       }
     });
     selectedAverage.setValue(avgCostClick);
@@ -255,16 +259,22 @@ public class PrimaryViewModel implements ViewModel {
       } else {
         selectedTotals.setValue(totalImpressions);
       }
-      if (selectedTotals.getValue().equals(totalImpressions)) {
-        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedImpressionTotals());
-      } else if (selectedTotals.getValue().equals(totalClicks)) {
-        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedClickTotals());
-      } else if (selectedTotals.getValue().equals(totalUniques)) {
-        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedUniqueTotals());
-      } else if (selectedTotals.getValue().equals(totalBounces)) {
-        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedBounceTotals());
-      } else if (selectedTotals.getValue().equals(totalConversions)) {
-        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedAcquisitionTotals());
+      switch (selectedTotals.getValue()) {
+        case totalImpressions:
+          updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedImpressionTotals());
+          break;
+        case totalClicks:
+          updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedClickTotals());
+          break;
+        case totalUniques:
+          updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedUniqueTotals());
+          break;
+        case totalBounces:
+          updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedBounceTotals());
+          break;
+        case totalConversions:
+          updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedAcquisitionTotals());
+          break;
       }
     });
     selectedTotals.setValue(totalImpressions);
