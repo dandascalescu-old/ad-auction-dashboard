@@ -52,8 +52,10 @@ public class LoginView implements FxmlView<LoginViewModel> {
 
     viewModel.subscribe(LoginViewModel.SHOW_AUTHENTICATED_VIEW, (key, payload) -> {
       // TODO: get campaigns from UserSession
-      Campaign campaign = new Campaign("Demo Campaign", GUIStarter.getDatabaseManager());
-      campaign.cacheData();
+      Campaign campaign1 = new Campaign("Demo Campaign 1", GUIStarter.getDatabaseManager());
+      Campaign campaign2 = new Campaign("Demo Campaign 2", GUIStarter.getDatabaseManager());
+      campaign1.cacheData();
+      campaign2.cacheData();
 
       new FadeOut(signinPane).play();
       AnimationFX newAnimation = new FadeOutLeft(welcomePane);
