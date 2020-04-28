@@ -4,9 +4,14 @@ import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel;
 import com.jfoenix.controls.JFXComboBox;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
+import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
+import javafx.scene.text.Text;
+
 import java.time.LocalDate;
 
 public class PrimaryFilterDialog implements FxmlView<PrimaryFilterDialogModel> {
@@ -21,12 +26,17 @@ public class PrimaryFilterDialog implements FxmlView<PrimaryFilterDialogModel> {
     private PrimaryFilterDialogModel viewModel;
 
     public void initialize() {
+        startDatePicker.valueProperty().bindBidirectional(viewModel.startDateProperty());
+        endDatePicker.valueProperty().bindBidirectional(viewModel.endDateProperty());
+        genderComboBox.valueProperty().bindBidirectional(viewModel.genderStringProperty());
+        ageComboBox.valueProperty().bindBidirectional(viewModel.ageStringProperty());
+        incomeComboBox.valueProperty().bindBidirectional(viewModel.incomeStringProperty());
+        contextComboBox.valueProperty().bindBidirectional(viewModel.contextStringProperty());
 
         genderComboBox.setItems(viewModel.genderList());
         ageComboBox.setItems(viewModel.ageList());
         incomeComboBox.setItems(viewModel.incomeList());
         contextComboBox.setItems(viewModel.contextList());
-
     }
 
     @FXML
@@ -36,14 +46,14 @@ public class PrimaryFilterDialog implements FxmlView<PrimaryFilterDialogModel> {
 
     @FXML
     void saveFilter(ActionEvent event){
-
-        LocalDate pickedStartDate = startDatePicker.getValue();
+        /*LocalDate pickedStartDate = startDatePicker.getValue();
         LocalDate pickedEndDate = endDatePicker.getValue();
 
         String pickedGender = genderComboBox.getValue();
         String pickedAge = ageComboBox.getValue();
         String pickedIncome = incomeComboBox.getValue();
-        String pickedContext = contextComboBox.getValue();
+        String pickedContext = contextComboBox.getValue();*/
+        viewModel.applyFilters();
 
         PrimaryView.cancelDialogAction();
     }

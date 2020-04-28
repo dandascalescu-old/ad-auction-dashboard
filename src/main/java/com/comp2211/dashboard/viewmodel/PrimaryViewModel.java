@@ -3,13 +3,18 @@ package com.comp2211.dashboard.viewmodel;
 import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.model.data.Demographics;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
+import com.comp2211.dashboard.util.Logger;
+import de.saxsys.mvvmfx.MvvmFX;
 import de.saxsys.mvvmfx.ViewModel;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,6 +24,8 @@ import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 
 public class PrimaryViewModel implements ViewModel {
+
+  private NotificationCenter notificationCenter;
 
   // TODO: Refactor to service and inject...
   private ObservableList<String> averages;
@@ -43,7 +50,6 @@ public class PrimaryViewModel implements ViewModel {
   private StringProperty totalUniquesText = new SimpleStringProperty("");
   private StringProperty totalBouncesText = new SimpleStringProperty("");
   private StringProperty totalConversionsText = new SimpleStringProperty("");
-
 
   private StringProperty selectedAverage = new SimpleStringProperty("");
   private StringProperty selectedTotals = new SimpleStringProperty("");
@@ -82,9 +88,11 @@ public class PrimaryViewModel implements ViewModel {
     updateTotalMetrics();
     updateTotalCosts();
     updateBouncesCountDefault();
+
     setupDemographicSelector();
     setupAverageSelector();
     setUpTotalsSelector();
+    setupFilterReceiving();
   }
 
   public ObservableList<Campaign> campaignsList() {
@@ -224,6 +232,7 @@ public class PrimaryViewModel implements ViewModel {
         selectedCampaign.setValue(Campaign.getCampaigns().get(0));
       }
     });
+
     selectedCampaign.setValue(Campaign.getCampaigns().get(0));
   }
 
@@ -247,11 +256,11 @@ public class PrimaryViewModel implements ViewModel {
           break;
       }
     });
+
     selectedAverage.setValue(avgCostClick);
   }
 
   private void setUpTotalsSelector(){
-
     selectedTotals.addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
         Optional<String> matchingAverage = totals.stream().filter(newVal::equals).findFirst();
@@ -277,6 +286,7 @@ public class PrimaryViewModel implements ViewModel {
           break;
       }
     });
+
     selectedTotals.setValue(totalImpressions);
   }
 
@@ -290,6 +300,7 @@ public class PrimaryViewModel implements ViewModel {
       }
       updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
     });
+
     selectedDemographic.setValue(Demographic.Gender);
   }
 
@@ -322,6 +333,31 @@ public class PrimaryViewModel implements ViewModel {
       s.getData().add(data);
     }
     totalMetricChartData.add(s);
+  }
+
+  private void setupFilterReceiving() {
+    notificationCenter = MvvmFX.getNotificationCenter();
+    notificationCenter.subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION, (key, payload) -> {
+      try {
+        LocalDate startDate = (LocalDate) payload[0];
+        LocalDate endDate = (LocalDate) payload[1];
+        String genderString = (String) payload[2];
+        String ageString = (String) payload[3];
+        String incomeString = (String) payload[4];
+        String contextString = (String) payload[5];
+
+        //
+
+        updateTotalMetrics();
+        updateTotalCosts();
+        //TODO change to apply correct bounce method
+        updateBouncesCountDefault();
+        //TODO add graph updates
+      } catch (ClassCastException e) {
+        e.printStackTrace();
+        Logger.log("Invalid filter received");
+      }
+    });
   }
 
 }

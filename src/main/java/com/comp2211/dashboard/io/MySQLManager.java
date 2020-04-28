@@ -269,15 +269,9 @@ public class MySQLManager extends DatabaseManager {
             "FROM " + click_table +
             " WHERE ID IN (SELECT DISTINCT ID FROM " + server_table + " WHERE Conversion = 1) " +
             "GROUP BY DateOnly";
-    HashMap<String, BigDecimal> retVal = toBigDecimalMap(
+    return toBigDecimalMap(
             retrieve(statement, new Object[]{}, new String[]{"DateOnly", "AVG"})
     );
-
-    retVal.entrySet().forEach(entry -> {
-      System.out.print(entry.getKey() + " " + entry.getValue() + "|");
-    });
-
-    return retVal;
   }
 
 
@@ -290,14 +284,9 @@ public class MySQLManager extends DatabaseManager {
     String statement = "SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT " +
             "FROM " + impression_table +
             " GROUP BY DateOnly";
-
-    HashMap<String, Long> retVal =
-        toLongMap(retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"}));
-
-    retVal.entrySet().forEach(entry -> {
-          System.out.print(entry.getKey() + " " + entry.getValue() + "|");
-        });
-    return retVal;
+    return toLongMap(
+            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
+    );
   }
 
   /**
