@@ -17,15 +17,37 @@ import com.comp2211.dashboard.util.UserSession;
 public class MySQLManager extends DatabaseManager {
 
   public MySQLManager() {
-    super("64.227.36.253","3306","seg","seg23","exw3karpouziastinakri", Table.click_table.toString(), Table.impression_table.toString(), Table.server_table.toString());
+    this("64.227.36.253","3306","seg","seg23","exw3karpouziastinakri", Table.click_table.toString(), Table.impression_table.toString(), Table.server_table.toString());
   }
 
   public MySQLManager(final String host, final String port, final String db, final String user, final String pw) {
-    super( host, port, db, user, pw, Table.click_table.toString(), Table.impression_table.toString(), Table.server_table.toString());
+    super();
+
+    sqlDatabase = new Database(host, port, db, user, pw);
+
+    click_table = Table.click_table.toString();
+    impression_table = Table.impression_table.toString();
+    server_table = Table.server_table.toString();
+
+    if (sqlDatabase.getConnection() == null) {
+      Logger.log("Cannot establish database connection. Exiting now.");
+      return;
+    }
+    Logger.log("Database connection established.");
+    open = true;
+    verifyDatabaseTables();
   }
 
-  public MySQLManager(final String host, final String port, final String db, final String user, final String pw, final String c_table, final String i_table, final String s_table) {
-    super(host, port, db, user, pw, c_table, i_table, s_table);
+  public MySQLManager(
+      final String host,
+      final String port,
+      final String db,
+      final String user,
+      final String pw,
+      final String c_table,
+      final String i_table,
+      final String s_table) {
+    this(host, port, db, user, pw);
   }
 
   public List<List<String>> retrieve(String statement, Object[] params, String[] resultColumns) {
@@ -119,6 +141,36 @@ public class MySQLManager extends DatabaseManager {
         Logger.log("[ERROR] Invalid result returned from SQL query. Double conversion failed on value <" + resultsList.get(0).get(0) + ">.");
       }
     return BigDecimal.ZERO;
+  }
+
+  @Override
+  public void verifyDatabaseTables() {
+    Logger.log("Verifying database tables...");
+    boolean valid = true;
+    if (!sqlDatabase.tableExists("credentials")) {
+      Logger.log("Credentials table doesn't exist.");
+      valid = false;
+    }
+    if (!sqlDatabase.tableExists(click_table)) {
+      Logger.log("Click table doesn't exist.");
+      valid = false;
+    }
+    if (!sqlDatabase.tableExists(impression_table)) {
+      Logger.log("Impression table doesn't exist.");
+      valid = false;
+    }
+    if (!sqlDatabase.tableExists(server_table)) {
+      Logger.log("Server table doesn't exist.");
+      valid = false;
+    }
+    if(valid) {
+      Logger.log("Verification complete.");
+    }
+  }
+
+  @Override
+  public boolean isOpen() {
+    return open;
   }
 
   /**
@@ -217,9 +269,15 @@ public class MySQLManager extends DatabaseManager {
             "FROM " + click_table +
             " WHERE ID IN (SELECT DISTINCT ID FROM " + server_table + " WHERE Conversion = 1) " +
             "GROUP BY DateOnly";
-    return toBigDecimalMap(
+    HashMap<String, BigDecimal> retVal = toBigDecimalMap(
             retrieve(statement, new Object[]{}, new String[]{"DateOnly", "AVG"})
     );
+
+    retVal.entrySet().forEach(entry -> {
+      System.out.print(entry.getKey() + " " + entry.getValue() + "|");
+    });
+
+    return retVal;
   }
 
 
@@ -232,9 +290,14 @@ public class MySQLManager extends DatabaseManager {
     String statement = "SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT " +
             "FROM " + impression_table +
             " GROUP BY DateOnly";
-    return toLongMap(
-            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
-    );
+
+    HashMap<String, Long> retVal =
+        toLongMap(retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"}));
+
+    retVal.entrySet().forEach(entry -> {
+          System.out.print(entry.getKey() + " " + entry.getValue() + "|");
+        });
+    return retVal;
   }
 
   /**
