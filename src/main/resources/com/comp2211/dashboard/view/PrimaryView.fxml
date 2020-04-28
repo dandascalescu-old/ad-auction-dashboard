@@ -56,7 +56,7 @@
 
 
 
-         <Pane layoutX="55.0" layoutY="918.0" prefHeight="342.0" prefWidth="1063.0" style="-fx-background-color: #FCFCFC;">
+         <Pane fx:id="averageCostPane" layoutX="55.0" layoutY="918.0" prefHeight="342.0" prefWidth="1063.0" style="-fx-background-color: #FCFCFC;">
             <children>
                <Line endX="962.0" layoutX="100.0" layoutY="43.0" opacity="0.1" startX="-100.0" />
                <Text fill="#474c49" layoutX="23.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="AVERAGE COST ">
@@ -78,7 +78,7 @@
                <DropShadow color="#00000022" height="10.38" offsetX="5.0" offsetY="5.0" radius="4.3100000000000005" width="8.86" />
             </effect>
          </Pane>
-         <Pane layoutX="511.0" layoutY="563.0" prefHeight="330.0" prefWidth="607.0" style="-fx-background-color: #FFFFFF;">
+         <Pane fx:id="demographicsPane" layoutX="511.0" layoutY="563.0" prefHeight="330.0" prefWidth="607.0" style="-fx-background-color: #FFFFFF;">
             <children>
                <Line endX="913.0" layoutX="-306.0" layoutY="53.0" opacity="0.1" startX="306.0" />
                <Text fill="#474c49" layoutX="22.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DEMOGRAPHICS">
@@ -93,7 +93,7 @@
                <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
             </effect>
          </Pane>
-         <Pane layoutX="55.0" layoutY="563.0" prefHeight="330.0" prefWidth="420.0" style="-fx-background-color: #FFFFFF;">
+         <Pane fx:id="totalCostPane" layoutX="55.0" layoutY="563.0" prefHeight="330.0" prefWidth="420.0" style="-fx-background-color: #FFFFFF;">
             <children>
                <Line endX="785.0" layoutX="-365.0" layoutY="53.0" opacity="0.1" startX="365.0" />
                <Text fill="#474c49" layoutX="26.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TOTAL COST">
@@ -138,7 +138,7 @@
                <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
             </effect>
          </Pane>
-         <Pane layoutX="55.0" layoutY="196.0" prefHeight="330.0" prefWidth="607.0" style="-fx-background-color: #FFFFFF;">
+         <Pane fx:id="totalMetricsOverTimePane" layoutX="55.0" layoutY="196.0" prefHeight="330.0" prefWidth="607.0" style="-fx-background-color: #FFFFFF;">
             <children>
                <Line endX="913.0" layoutX="-306.0" layoutY="53.0" opacity="0.1" startX="306.0" />
                <Text fill="#474c49" layoutX="22.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TOTAL METRICS OVER TIME">
@@ -171,7 +171,7 @@
                <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
             </effect>
          </Pane>
-         <Pane layoutX="55.0" layoutY="99.0" prefHeight="72.0" prefWidth="192.0" style="-fx-background-color: #FFFFFF;">
+         <Pane fx:id="ctrPane" layoutX="55.0" layoutY="99.0" prefHeight="72.0" prefWidth="192.0" style="-fx-background-color: #FFFFFF;">
             <effect>
                <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
             </effect>
@@ -205,7 +205,7 @@
                </Text>
             </children>
          </Pane>
-         <Pane layoutX="511.0" layoutY="98.0" prefHeight="72.0" prefWidth="285.5" style="-fx-background-color: #FFFFFF;">
+         <Pane fx:id="conversionsUniquesPane" layoutX="511.0" layoutY="98.0" prefHeight="72.0" prefWidth="285.5" style="-fx-background-color: #FFFFFF;">
             <effect>
                <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
             </effect>
@@ -237,7 +237,7 @@
                         </font>
                      </Text>
                   </children></Pane>
-            <Pane layoutX="697.0" layoutY="196.0" prefHeight="330.0" prefWidth="421.0" style="-fx-background-color: #FFFFFF;">
+            <Pane fx:id="totalMetricsPane" layoutX="697.0" layoutY="196.0" prefHeight="330.0" prefWidth="421.0" style="-fx-background-color: #FFFFFF;">
                <children>
                   <Line endX="913.0" layoutX="-493.0" layoutY="52.0" opacity="0.1" startX="493.0" />
                   <Text fill="#474c49" layoutX="22.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TOTAL METRICS ">
