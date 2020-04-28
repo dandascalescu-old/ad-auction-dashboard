@@ -76,17 +76,23 @@ public class ExportDialog implements FxmlView<ExportDialogViewModel> {
     private void export(File selectedDirectory) {
         if(ctrExportCheckBox.isSelected()){
             saveDataAsPNG(primaryView.ctrPane, selectedDirectory);
-        }if (convUniquesExportCheckBox.isSelected()){
+        }
+        if (convUniquesExportCheckBox.isSelected()){
             saveDataAsPNG(primaryView.conversionsUniquesPane, selectedDirectory);
-        }if (totalMetricsExportCheckBox.isSelected()){
+        }
+        if (totalMetricsExportCheckBox.isSelected()){
             saveDataAsPNG(primaryView.totalMetricsPane, selectedDirectory);
-        }if (totalCostsExportCheckBox.isSelected()){
+        }
+        if (totalCostsExportCheckBox.isSelected()){
             saveDataAsPNG(primaryView.totalCostPane, selectedDirectory);
-        }if (totalOverTimeExportCheckBox.isSelected()){
+        }
+        if (totalOverTimeExportCheckBox.isSelected()){
             saveDataAsPNG(primaryView.totalMetricsOverTimePane, selectedDirectory);
-        }if (demographExportCheckBox.isSelected()){
+        }
+        if (demographExportCheckBox.isSelected()){
             saveDataAsPNG(primaryView.demographicsPane, selectedDirectory);
-        }if (averageCostExportCheckBox.isSelected()){
+        }
+        if (averageCostExportCheckBox.isSelected()){
             saveDataAsPNG(primaryView.averageCostPane, selectedDirectory);
         }
     }
