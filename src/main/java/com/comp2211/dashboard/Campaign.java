@@ -223,7 +223,11 @@ public class Campaign {
     return BigDecimal.valueOf(bouncesCount).divide(BigDecimal.valueOf(serverDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
   }
 
-  public BigDecimal getConversionsPerUniques() {
+  public BigDecimal getBouncesPerConversion() {
+    return BigDecimal.valueOf(bouncesCount).divide(BigDecimal.valueOf(conversionsCount), 6, RoundingMode.HALF_UP);
+  }
+
+  public BigDecimal getConversionsPerUnique() {
     return BigDecimal.valueOf(conversionsCount).divide(BigDecimal.valueOf(uniquesCount), 6, RoundingMode.HALF_UP);
   }
 

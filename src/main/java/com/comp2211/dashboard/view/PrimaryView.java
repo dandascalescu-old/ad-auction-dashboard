@@ -87,6 +87,7 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     ctrText.textProperty().bind(viewModel.clickThroughRateTextProperty());
     bounceRateText.textProperty().bind(viewModel.bounceRateTextProperty());
     conversionUniquesText.textProperty().bind(viewModel.getConversionUniquesProperty());
+    bounceConversionText.textProperty().bind(viewModel.bounceConversionTextProperty());
 
     campaignCombobox.setItems(viewModel.campaignsList());
     campaignCombobox.valueProperty().bindBidirectional(viewModel.selectedCampaignProperty());
@@ -108,7 +109,6 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
     totalMetricsLineChart.setData(viewModel.totalMetricChartData());
 
-    bounceConversionText.textProperty().bind(viewModel.bounceConversionTextProperty());
     totalImpressions.textProperty().bind(viewModel.getTotalImpressionsProperty());
     totalClicks.textProperty().bind(viewModel.getTotalClicksProperty());
     totalUniques.textProperty().bind(viewModel.getTotalUniquesProperty());

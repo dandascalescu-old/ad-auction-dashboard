@@ -35,8 +35,8 @@ public class PrimaryViewModel implements ViewModel {
   private StringProperty totalCost = new SimpleStringProperty("");
   private StringProperty clickThroughRateText = new SimpleStringProperty("");
   private StringProperty bounceRateText = new SimpleStringProperty("");
-  private StringProperty conversionUniquesText = new SimpleStringProperty("");
-  private StringProperty bounceConversionText = new SimpleStringProperty("");
+  private StringProperty conversionsPerUniqueText = new SimpleStringProperty("");
+  private StringProperty bouncesPerConversionText = new SimpleStringProperty("");
 
   private StringProperty totalImpressionsText = new SimpleStringProperty("");
   private StringProperty totalClicksText = new SimpleStringProperty("");
@@ -147,14 +147,14 @@ public class PrimaryViewModel implements ViewModel {
     return clickThroughRateText;
   }
 
-  public StringProperty bounceConversionTextProperty() { return bounceConversionText; }
+  public StringProperty bounceConversionTextProperty() { return bouncesPerConversionText; }
 
   public StringProperty bounceRateTextProperty() {
     return bounceRateText;
   }
 
   public StringProperty getConversionUniquesProperty() {
-    return conversionUniquesText;
+    return conversionsPerUniqueText;
   }
 
   public StringProperty getTotalImpressionsProperty() {
@@ -183,11 +183,7 @@ public class PrimaryViewModel implements ViewModel {
     totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost().setScale(2, RoundingMode.CEILING).toPlainString());
 
     clickThroughRateText.setValue(selectedCampaign.getValue().getClickThroughRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
-    
-    //TODO:: Need to set value for bounceConversionText;
-    bounceConversionText.setValue("0.404");
-    
-    conversionUniquesText.setValue(selectedCampaign.getValue().getConversionsPerUniques().setScale(2, RoundingMode.CEILING).toPlainString());
+    conversionsPerUniqueText.setValue(selectedCampaign.getValue().getConversionsPerUnique().setScale(2, RoundingMode.CEILING).toPlainString());
   }
 
   private void updateTotalMetrics() {
@@ -203,16 +199,18 @@ public class PrimaryViewModel implements ViewModel {
 
   private void updateBouncesCountByTime(long maxSeconds, boolean allowInf) {
     selectedCampaign.getValue().updateBouncesByTime(maxSeconds, allowInf);
-    totalBouncesText.setValue(String.valueOf(selectedCampaign.getValue().getBouncesCount()));
-    bounceRateText.setValue(selectedCampaign.getValue().getBounceRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
-    if (selectedTotals.getValue().equals(totalBounces))
-      updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedBounceTotals());
+    updateBounceMetrics();
   }
 
   private void updateBouncesCountByPages(byte maxPages) {
     selectedCampaign.getValue().updateBouncesByPages(maxPages);
+    updateBounceMetrics();
+  }
+
+  private void updateBounceMetrics() {
     totalBouncesText.setValue(String.valueOf(selectedCampaign.getValue().getBouncesCount()));
     bounceRateText.setValue(selectedCampaign.getValue().getBounceRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+    bouncesPerConversionText.setValue(selectedCampaign.getValue().getBouncesPerConversion().setScale(2, RoundingMode.CEILING).toPlainString());
     if (selectedTotals.getValue().equals(totalBounces))
       updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedBounceTotals());
   }
