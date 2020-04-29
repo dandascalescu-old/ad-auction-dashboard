@@ -2,6 +2,7 @@ package com.comp2211.dashboard.view;
 
 import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
+import com.comp2211.dashboard.viewmodel.ExportDialogViewModel;
 import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel;
 import com.comp2211.dashboard.viewmodel.PrimaryViewModel;
 import com.jfoenix.controls.JFXButton;
@@ -26,6 +27,27 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 
 public class PrimaryView implements FxmlView<PrimaryViewModel> {
+
+  @FXML
+  public Pane totalMetricsOverTimePane;
+
+  @FXML
+  public Pane totalMetricsPane;
+
+  @FXML
+  public Pane averageCostPane;
+
+  @FXML
+  public Pane demographicsPane;
+
+  @FXML
+  public Pane totalCostPane;
+
+  @FXML
+  public Pane conversionsUniquesPane;
+
+  @FXML
+  public Pane ctrPane;
 
   @FXML
   private BorderPane mainPane;
@@ -63,6 +85,8 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   @InjectViewModel
   private PrimaryViewModel viewModel;
 
+
+
   @FXML
   StackPane stackPane;
 
@@ -74,6 +98,8 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
   @FXML
   Text ctrText, conversionUniquesText;
+
+  ViewTuple<ExportDialog, ExportDialogViewModel> exportDialogView;
 
   ViewTuple<PrimaryFilterDialog, PrimaryFilterDialogModel> primaryDialogView;
 
@@ -148,15 +174,14 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   }
 
   public void openExportDataWindow(ActionEvent event) throws IOException {
-
-    Parent parent = FXMLLoader.load(getClass().getResource("ExportDialog.fxml"));
+    exportDialogView = FluentViewLoader.fxmlView(ExportDialog.class).load();
+    exportDialogView.getCodeBehind().setPrimaryView(this);
     JFXDialogLayout dialogLayout = new JFXDialogLayout();
-    dialogLayout.setBody(parent);
+    dialogLayout.setBody(exportDialogView.getView());
     dialogExport = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
     dialogExport.setTranslateY(-200);
     dialogExport.show();
   }
-
 
   static void cancelDialogAction() {
     dialogFilter.close();
