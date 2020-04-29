@@ -181,6 +181,7 @@ public class Campaign {
     return totalImpressionCost;
   }
 
+  //TODO use these in the dashboard
   /**
    * Calculates the average cost per click using the total click cost divided by the number of
    * clicks.

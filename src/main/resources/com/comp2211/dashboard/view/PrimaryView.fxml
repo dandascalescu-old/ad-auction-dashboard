@@ -212,7 +212,7 @@
             <children>
                <Text fill="#474c49" layoutX="14.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Conversions per Unique" wrappingWidth="106.5830078125">
                   <font>
-                     <Font name="SansSerif Bold" size="18.0" />
+                     <Font name="SansSerif Bold" size="16.0" />
                   </font>
                </Text>
                <Text fx:id="conversionUniquesText" fill="#474c49" layoutX="192.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0.82">
@@ -228,7 +228,7 @@
                   <children>
                      <Text fill="#474c49" layoutX="22.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Bounces per Conversion" wrappingWidth="106.5830078125">
                         <font>
-                           <Font name="SansSerif Bold" size="18.0" />
+                           <Font name="SansSerif Bold" size="16.0" />
                         </font>
                      </Text>
                      <Text fx:id="bounceConversionText" fill="#474c49" layoutX="182.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0.82">
