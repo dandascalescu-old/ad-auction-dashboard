@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.comp2211.dashboard.io.DatabaseManager;
 import com.comp2211.dashboard.io.MockDatabaseManager;
-import de.saxsys.mvvmfx.utils.notifications.NotificationTestHelper;
+import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +32,10 @@ class LoginViewModelTest {
       assertTrue(true);
     });
 
+    viewModel.subscribe(LoginViewModel.UNABLE_TO_AUTHENTICATE, (key, payload) -> {
+      assertTrue(false);
+    });
+
     viewModel.usernameStringProperty().setValue("test");
     viewModel.passwordStringProperty().setValue("test");
 
@@ -41,12 +45,16 @@ class LoginViewModelTest {
   @Test
   @Description("Test incorrect login credentials")
   void getLoginCommandFail() {
+    viewModel.subscribe(LoginViewModel.SHOW_AUTHENTICATED_VIEW, (key, payload) -> {
+      assertTrue(false);
+    });
+
     viewModel.subscribe(LoginViewModel.UNABLE_TO_AUTHENTICATE, (key, payload) -> {
       assertTrue(true);
     });
 
-    viewModel.usernameStringProperty().setValue("test");
-    viewModel.passwordStringProperty().setValue("test");
+    viewModel.usernameStringProperty().setValue("wuofw");
+    viewModel.passwordStringProperty().setValue("invtest");
 
     viewModel.login();
   }
