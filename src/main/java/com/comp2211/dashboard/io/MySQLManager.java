@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 import com.comp2211.dashboard.util.Logger;
+import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel.Filter;
 import org.apache.commons.dbutils.DbUtils;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import com.comp2211.dashboard.model.data.Demographics;
@@ -122,7 +123,8 @@ public class MySQLManager extends DatabaseManager {
       Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 result, received " + resultsList.get(0).size() + ".");
     else
       try {
-        return Long.parseLong(resultsList.get(0).get(0));
+        if (resultsList.get(0).get(0) == null) return 0L;
+        else return Long.parseLong(resultsList.get(0).get(0));
       } catch (NumberFormatException e) {
         Logger.log("[ERROR] Invalid result returned from SQL query. Long conversion failed on value <" + resultsList.get(0).get(0) + ">.");
       }
@@ -136,7 +138,8 @@ public class MySQLManager extends DatabaseManager {
       Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 result, received " + resultsList.get(0).size() + ".");
     else
       try {
-        return BigDecimal.valueOf(Double.parseDouble(resultsList.get(0).get(0)));
+        if (resultsList.get(0).get(0) == null) return BigDecimal.ZERO;
+        else return BigDecimal.valueOf(Double.parseDouble(resultsList.get(0).get(0)));
       } catch (NumberFormatException e) {
         Logger.log("[ERROR] Invalid result returned from SQL query. Double conversion failed on value <" + resultsList.get(0).get(0) + ">.");
       }
@@ -179,9 +182,11 @@ public class MySQLManager extends DatabaseManager {
    * @return BigDecimal representing the total cost.
    */
   @Override
-  public BigDecimal retrieveTotalCost(Cost type) {
+  public BigDecimal retrieveTotalCost(Cost type, Filter filter) {
+    String where = filterToWhere(filter, Table.impression_table);
     String statement = "SELECT SUM(" + type.toString() + ") AS SUM " +
-            "FROM " + (type.equals(Cost.Click_Cost) ? click_table : impression_table);
+            "FROM " + (type.equals(Cost.Click_Cost) ? click_table : impression_table) +
+            ( where.isEmpty() ? "" : " WHERE " + where );
     return toBigDecimal(
             retrieve(statement, new Object[]{}, new String[]{"SUM"})
     );
@@ -194,10 +199,11 @@ public class MySQLManager extends DatabaseManager {
    * @return long value of the number of bounces
    */
   @Override
-  public long retrieveBouncesCountByTime(long maxSeconds, boolean allowInf) {
+  public long retrieveBouncesCountByTime(long maxSeconds, boolean allowInf, Filter filter) {
+    String where = filterToWhere(filter, Table.server_table);
     String statement = "SELECT COUNT(*) AS COUNT " +
             "FROM " + server_table +
-            "WHERE (Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL" : "");
+            "WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "((Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL)" : ")");
     return toLong(
             retrieve(statement, new Object[]{maxSeconds}, new String[]{"COUNT"})
     );
@@ -209,10 +215,11 @@ public class MySQLManager extends DatabaseManager {
    * @return long value of the number of bounces
    */
   @Override
-  public long retrieveBouncesCountByPages(byte maxPages) {
+  public long retrieveBouncesCountByPages(byte maxPages, Filter filter) {
+    String where = filterToWhere(filter, Table.server_table);
     String statement = "SELECT COUNT(*) AS COUNT " +
             "FROM " + server_table +
-            " WHERE Pages_Viewed <= ?";
+            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "Pages_Viewed <= ?";
     return toLong(
             retrieve(statement, new Object[]{maxPages}, new String[]{"COUNT"})
     );
@@ -222,10 +229,11 @@ public class MySQLManager extends DatabaseManager {
    * Retrieve the total number of acquisitions
    * @return total count
    */
-  public long retrieveAcquisitionCount() {
+  public long retrieveAcquisitionCount(Filter filter) {
+    String where = filterToWhere(filter, Table.server_table);
     String statement = "SELECT COUNT(*) AS COUNT " +
             "FROM " + server_table +
-            " WHERE Conversion = 1";
+            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "Conversion = 1";
     return toLong(
             retrieve(statement, new Object[]{}, new String[]{"COUNT"})
     );
@@ -236,10 +244,11 @@ public class MySQLManager extends DatabaseManager {
    * @return the calculated average acquisition cost
    */
   @Override
-  public BigDecimal retrieveAverageAcquisitionCost() {
+  public BigDecimal retrieveAverageAcquisitionCost(Filter filter) {
+    String where = filterToWhere(filter, Table.click_table);
     String statement = "SELECT AVG(Click_Cost) AS AVG " +
             "FROM " + click_table +
-            " WHERE ID IN (SELECT DISTINCT ID FROM " + server_table + " WHERE Conversion = 1)";
+            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "ID IN (SELECT DISTINCT ID FROM " + server_table + " WHERE Conversion = 1)";
     return toBigDecimal(
             retrieve(statement, new Object[]{}, new String[]{"AVG"})
     );
@@ -250,9 +259,11 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the avg for that date as a value
    */
   @Override
-  public HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type) {
+  public HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type, Filter filter) {
+    String where = filterToWhere(filter, Table.impression_table);
     String statement = "SELECT DATE(Date) AS DateOnly, AVG(" + type.toString() + ") AS AVG " +
             "FROM " + (type.equals(Cost.Click_Cost) ? click_table : impression_table) +
+            ( where.isEmpty() ? "" : " WHERE " + where ) +
             " GROUP BY DateOnly";
     return toBigDecimalMap(
             retrieve(statement, new Object[]{}, new String[]{"DateOnly", "AVG"})
@@ -264,20 +275,15 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the avg for that date as a value
    */
   @Override
-  public HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost() {
+  public HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost(Filter filter) {
+    String where = filterToWhere(filter, Table.click_table);
     String statement = "SELECT DATE(Date) AS DateOnly, AVG(Click_Cost) AS AVG " +
             "FROM " + click_table +
-            " WHERE ID IN (SELECT DISTINCT ID FROM " + server_table + " WHERE Conversion = 1) " +
+            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "ID IN (SELECT DISTINCT ID FROM " + server_table + " WHERE Conversion = 1) " +
             "GROUP BY DateOnly";
-    HashMap<String, BigDecimal> retVal = toBigDecimalMap(
+    return toBigDecimalMap(
             retrieve(statement, new Object[]{}, new String[]{"DateOnly", "AVG"})
     );
-
-    retVal.entrySet().forEach(entry -> {
-      System.out.print(entry.getKey() + " " + entry.getValue() + "|");
-    });
-
-    return retVal;
   }
 
 
@@ -286,18 +292,15 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedImpressionTotals() {
+  public HashMap<String, Long> retrieveDatedImpressionTotals(Filter filter) {
+    String where = filterToWhere(filter, Table.impression_table);
     String statement = "SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT " +
             "FROM " + impression_table +
+            ( where.isEmpty() ? "" : " WHERE " + where ) +
             " GROUP BY DateOnly";
-
-    HashMap<String, Long> retVal =
-        toLongMap(retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"}));
-
-    retVal.entrySet().forEach(entry -> {
-          System.out.print(entry.getKey() + " " + entry.getValue() + "|");
-        });
-    return retVal;
+    return toLongMap(
+            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
+    );
   }
 
   /**
@@ -305,9 +308,11 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedClickTotals() {
+  public HashMap<String, Long> retrieveDatedClickTotals(Filter filter) {
+    String where = filterToWhere(filter, Table.click_table);
     String statement = "SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT " +
             "FROM " + click_table +
+            ( where.isEmpty() ? "" : " WHERE " + where ) +
             " GROUP BY DateOnly";
     return toLongMap(
             retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
@@ -319,9 +324,11 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedUniqueTotals() {
+  public HashMap<String, Long> retrieveDatedUniqueTotals(Filter filter) {
+    String where = filterToWhere(filter, Table.click_table);
     String statement = "SELECT DATE(Date) AS DateOnly, COUNT(DISTINCT ID) AS COUNT " +
             "FROM " + click_table +
+            ( where.isEmpty() ? "" : " WHERE " + where ) +
             " GROUP BY DateOnly";
     return toLongMap(
             retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
@@ -335,10 +342,11 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedBounceTotalsByTime(long maxSeconds, boolean allowInf) {
+  public HashMap<String, Long> retrieveDatedBounceTotalsByTime(long maxSeconds, boolean allowInf, Filter filter) {
+    String where = filterToWhere(filter, Table.server_table);
     String statement = "SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT " +
             "FROM " + server_table +
-            " WHERE (Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL" : "") +
+            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "(Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL" : "") +
             " GROUP BY DateOnly";
     return toLongMap(
             retrieve(statement, new Object[]{maxSeconds}, new String[]{"DateOnly", "COUNT"})
@@ -351,10 +359,11 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte maxPages) {
+  public HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte maxPages, Filter filter) {
+    String where = filterToWhere(filter, Table.server_table);
     String statement = "SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT " +
             "FROM " + server_table +
-            " WHERE Pages_Viewed <= ?" +
+            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "Pages_Viewed <= ?" +
             " GROUP BY DateOnly";
     return toLongMap(
             retrieve(statement, new Object[]{maxPages}, new String[]{"DateOnly", "COUNT"})
@@ -366,10 +375,11 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedAcquisitionTotals() {
+  public HashMap<String, Long> retrieveDatedAcquisitionTotals(Filter filter) {
+    String where = filterToWhere(filter, Table.server_table);
     String statement = "SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT " +
             "FROM " + server_table +
-            " WHERE Conversion = 1" +
+            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "Conversion = 1" +
             " GROUP BY DateOnly";
     return toLongMap(
             retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
@@ -382,7 +392,8 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each demographic as keys and the count for that demographic as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDemographics(Demographic type) {
+  public HashMap<String, Long> retrieveDemographics(Demographic type, Filter filter) {
+    String where = filterToWhere(filter, Table.impression_table);
     PreparedStatement stmt = null;
     ResultSet rs = null;
     HashMap<String, Long> resultMap = new LinkedHashMap<>();
@@ -391,6 +402,7 @@ public class MySQLManager extends DatabaseManager {
       sb.append(type.toString());
       sb.append(" FROM ");
       sb.append(impression_table);
+      sb.append(( where.isEmpty() ? "" : " WHERE " + where ));
       sb.append(" GROUP BY ");
       sb.append(type.toString());
       stmt = sqlDatabase.getConnection().prepareStatement(sb.toString());
@@ -413,10 +425,11 @@ public class MySQLManager extends DatabaseManager {
    * @param table the Table to check
    * @return the amount of entries found
    */
-  @Override
-  public long retrieveDataCount(String table, boolean unique) {
+  public long retrieveDataCount(Table table, boolean unique, Filter filter) {
+    String where = filterToWhere(filter, table);
     String statement = "SELECT COUNT(" + (unique ? "DISTINCT ID" : "*") + ") AS COUNT " +
-            "FROM " + table;
+            "FROM " + table +
+            ( where.isEmpty() ? "" : " WHERE " + where );
     return toLong(
             retrieve(statement, new Object[]{}, new String[]{"COUNT"})
     );
@@ -452,5 +465,20 @@ public class MySQLManager extends DatabaseManager {
       DbUtils.closeQuietly(stmt);
     }
     return false;
+  }
+
+  private static String filterToWhere(Filter filter, Table table) {
+    String dateTitle = "Date";
+    if (table.equals(Table.server_table)) dateTitle = "Entry_Date";
+
+    String where = "";
+    where += (filter.startDate != null ? "DATE(" + dateTitle + ") >= '" + filter.startDate.toString() + "'"                                                                         : "");
+    where += (filter.endDate   != null ? (where.isEmpty() ? "" : " AND ") + "DATE(" + dateTitle + ") <= '" + filter.endDate.toString() + "'"                                        : "");
+    where += (filter.gender    >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Gender = "  + filter.gender  + ")" : "");
+    where += (filter.age       >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Age = "     + filter.age     + ")" : "");
+    where += (filter.income    >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Income = "  + filter.income  + ")" : "");
+    where += (filter.context   >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Context = " + filter.context + ")" : "");
+
+    return where;
   }
 }

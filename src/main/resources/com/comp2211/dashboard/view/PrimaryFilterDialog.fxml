@@ -59,7 +59,7 @@
                <Font name="SansSerif Bold" size="14.0" />
             </font>
          </Text>
-         <Text layoutX="252.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" text="income" textAlignment="CENTER">
+         <Text layoutX="252.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Income" textAlignment="CENTER">
             <font>
                <Font name="SansSerif Bold" size="14.0" />
             </font>

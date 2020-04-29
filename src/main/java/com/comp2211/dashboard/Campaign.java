@@ -4,6 +4,8 @@ import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import com.comp2211.dashboard.util.Logger;
 import com.comp2211.dashboard.io.DatabaseManager;
 import com.comp2211.dashboard.io.DatabaseManager.Cost;
+import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel.Filter;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -21,7 +23,7 @@ import java.util.Objects;
 public class Campaign {
 
   // Used as a singleton across app
-  private static List<Campaign> allCampaigns = new ArrayList<Campaign>();
+  private static List<Campaign> allCampaigns = new ArrayList<>();
 
   private String campaignID;
   private DatabaseManager dbManager;
@@ -54,22 +56,22 @@ public class Campaign {
    */
   public Campaign(String campaignID, DatabaseManager dbManager) {
     this.campaignID = campaignID;
-    this.dbManager = Objects.requireNonNull(dbManager, "dbManager must not be null");;
+    this.dbManager = Objects.requireNonNull(dbManager, "dbManager must not be null");
 
-    cachedDatedAcquisitionCostAverages = new LinkedHashMap<String, BigDecimal>();
-    cachedDatedImpressionCostAverages = new LinkedHashMap<String, BigDecimal>();
-    cachedDatedClickCostAverages = new LinkedHashMap<String, BigDecimal>();
+    cachedDatedAcquisitionCostAverages = new LinkedHashMap<>();
+    cachedDatedImpressionCostAverages = new LinkedHashMap<>();
+    cachedDatedClickCostAverages = new LinkedHashMap<>();
 
-    cachedDatedImpressionTotals = new LinkedHashMap<String, Long>();
-    cachedDatedClickTotals = new LinkedHashMap<String, Long>();
-    cachedDatedUniqueTotals = new LinkedHashMap<String, Long>();
-    cachedDatedBounceTotals = new LinkedHashMap<String, Long>();
-    cachedDatedAcquisitionTotals = new LinkedHashMap<String, Long>();
+    cachedDatedImpressionTotals = new LinkedHashMap<>();
+    cachedDatedClickTotals = new LinkedHashMap<>();
+    cachedDatedUniqueTotals = new LinkedHashMap<>();
+    cachedDatedBounceTotals = new LinkedHashMap<>();
+    cachedDatedAcquisitionTotals = new LinkedHashMap<>();
 
-    cachedAgePercentage = new LinkedHashMap<String, BigDecimal>();
-    cachedGenderPercentage = new LinkedHashMap<String, BigDecimal>();
-    cachedIncomePercentage = new LinkedHashMap<String, BigDecimal>();
-    cachedContextPercentage = new LinkedHashMap<String, BigDecimal>();
+    cachedAgePercentage = new LinkedHashMap<>();
+    cachedGenderPercentage = new LinkedHashMap<>();
+    cachedIncomePercentage = new LinkedHashMap<>();
+    cachedContextPercentage = new LinkedHashMap<>();
 
     allCampaigns.add(this);
   }
@@ -90,17 +92,32 @@ public class Campaign {
   /**
    * Fetches and caches entries from the database
    */
-  public void cacheData() {
+  public void cacheData(Filter filter) {
+    //TODO maybe cache IDs for certain demographics?
     System.out.println("dbManager: " + dbManager);
-    clickDataCount = dbManager.retrieveDataCount(dbManager.getClickTable());
-    impressionDataCount = dbManager.retrieveDataCount(dbManager.getImpressionTable());
-    serverDataCount = dbManager.retrieveDataCount(dbManager.getServerTable());
-    uniquesCount = dbManager.retrieveDataCount(dbManager.getClickTable(), true);
-    conversionsCount = dbManager.retrieveAcquisitionCount();
+    clickDataCount = dbManager.retrieveDataCount(DatabaseManager.Table.click_table, filter);
+    impressionDataCount = dbManager.retrieveDataCount(DatabaseManager.Table.impression_table, filter);
+    serverDataCount = dbManager.retrieveDataCount(DatabaseManager.Table.server_table, filter);
+    uniquesCount = dbManager.retrieveDataCount(DatabaseManager.Table.click_table, true, filter);
+    conversionsCount = dbManager.retrieveAcquisitionCount(filter);
 
-    totalClickCost = dbManager.retrieveTotalCost(Cost.Click_Cost);
-    totalImpressionCost = dbManager.retrieveTotalCost(Cost.Impression_Cost);
-    averageAcquisitionCost = dbManager.retrieveAverageAcquisitionCost();
+    totalClickCost = dbManager.retrieveTotalCost(Cost.Click_Cost, filter);
+    totalImpressionCost = dbManager.retrieveTotalCost(Cost.Impression_Cost, filter);
+    averageAcquisitionCost = dbManager.retrieveAverageAcquisitionCost(filter);
+
+    cachedDatedClickCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Click_Cost, filter));
+    cachedDatedImpressionCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Impression_Cost, filter));
+    cachedDatedAcquisitionCostAverages.putAll(dbManager.retrieveDatedAverageAcquisitionCost(filter));
+
+    cachedDatedImpressionTotals.putAll(dbManager.retrieveDatedImpressionTotals(filter));
+    cachedDatedClickTotals.putAll(dbManager.retrieveDatedClickTotals(filter));
+    cachedDatedUniqueTotals.putAll(dbManager.retrieveDatedUniqueTotals(filter));
+    cachedDatedAcquisitionTotals.putAll(dbManager.retrieveDatedAcquisitionTotals(filter));
+
+    cachedAgePercentage.putAll(percentageMap(Demographic.Age, dbManager.retrieveDemographics(Demographic.Age, filter)));
+    cachedGenderPercentage.putAll(percentageMap(Demographic.Gender, dbManager.retrieveDemographics(Demographic.Gender, filter)));
+    cachedIncomePercentage.putAll(percentageMap(Demographic.Income, dbManager.retrieveDemographics(Demographic.Income, filter)));
+    cachedContextPercentage.putAll(percentageMap(Demographic.Context, dbManager.retrieveDemographics(Demographic.Context, filter)));
 
     Logger.log("Data cached successfully.");
   }
@@ -164,6 +181,7 @@ public class Campaign {
     return totalImpressionCost;
   }
 
+  //TODO use these in the dashboard
   /**
    * Calculates the average cost per click using the total click cost divided by the number of
    * clicks.
@@ -189,30 +207,32 @@ public class Campaign {
     return BigDecimal.valueOf(clickDataCount).divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
   }
 
-  public void updateBouncesByTime(long maxSeconds, boolean allowInf) {
+  public void updateBouncesByTime(long maxSeconds, boolean allowInf, Filter filter) {
     if (maxSeconds < 0) {
       Logger.log("Attempted bounce calculation with negative value");
       return;
     }
-    if (serverDataCount == 0) {
+    /*if (serverDataCount == 0) {
       return;
-    }
-    bouncesCount = dbManager.retrieveBouncesCountByTime(maxSeconds, allowInf);
+    }*/
+    bouncesCount = dbManager.retrieveBouncesCountByTime(maxSeconds, allowInf, filter);
     cachedDatedBounceTotals.clear();
-    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByTime(maxSeconds, allowInf));
+    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByTime(maxSeconds, allowInf, filter));
   }
 
-  public void updateBouncesByPages(byte maxPages) {
+  public void updateBouncesByPages(byte maxPages, Filter filter) {
     if (maxPages < 0) {
       Logger.log("Attempted bounce calculation with negative value, returning 0");
       return;
     }
-    if (serverDataCount == 0) {
+    /*if (serverDataCount == 0) {
+      bouncesCount = 0L;
+      cachedDatedBounceTotals.clear();
       return;
-    }
-    bouncesCount = dbManager.retrieveBouncesCountByPages(maxPages);
+    }*/
+    bouncesCount = dbManager.retrieveBouncesCountByPages(maxPages, filter);
     cachedDatedBounceTotals.clear();
-    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(maxPages));
+    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(maxPages, filter));
   }
 
   /**
@@ -220,10 +240,23 @@ public class Campaign {
    * @return Bounce rate as a percentage
    */
   public BigDecimal getBounceRate() {
+    if (serverDataCount == 0) {
+      return BigDecimal.ZERO;
+    }
     return BigDecimal.valueOf(bouncesCount).divide(BigDecimal.valueOf(serverDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
   }
 
-  public BigDecimal getConversionsPerUniques() {
+  public BigDecimal getBouncesPerConversion() {
+    if (conversionsCount == 0) {
+      return BigDecimal.ZERO;
+    }
+    return BigDecimal.valueOf(bouncesCount).divide(BigDecimal.valueOf(conversionsCount), 6, RoundingMode.HALF_UP);
+  }
+
+  public BigDecimal getConversionsPerUnique() {
+    if (uniquesCount == 0) {
+      return BigDecimal.ZERO;
+    }
     return BigDecimal.valueOf(conversionsCount).divide(BigDecimal.valueOf(uniquesCount), 6, RoundingMode.HALF_UP);
   }
 
@@ -266,11 +299,6 @@ public class Campaign {
    *     that date as the value.
    */
   public HashMap<String, BigDecimal> getDatedAcquisitionCostAverages() {
-    if (!cachedDatedAcquisitionCostAverages.isEmpty()) {
-      return cachedDatedAcquisitionCostAverages;
-    }
-
-    cachedDatedAcquisitionCostAverages.putAll(dbManager.retrieveDatedAverageAcquisitionCost());
     return cachedDatedAcquisitionCostAverages;
   }
 
@@ -281,11 +309,6 @@ public class Campaign {
    *     that date as the value.
    */
   public HashMap<String, BigDecimal> getDatedImpressionCostAverages() {
-    if (!cachedDatedImpressionCostAverages.isEmpty()) {
-      return cachedDatedImpressionCostAverages;
-    }
-
-    cachedDatedImpressionCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Impression_Cost));
     return cachedDatedImpressionCostAverages;
   }
 
@@ -296,11 +319,6 @@ public class Campaign {
    *     that date as the value.
    */
   public HashMap<String, BigDecimal> getDatedClickCostAverages() {
-    if (!cachedDatedClickCostAverages.isEmpty()) {
-      return cachedDatedClickCostAverages;
-    }
-
-    cachedDatedClickCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Click_Cost));
     return cachedDatedClickCostAverages;
   }
 
@@ -311,11 +329,6 @@ public class Campaign {
    *     that date as the value.
    */
   public HashMap<String, Long> getDatedImpressionTotals() {
-    if (!cachedDatedImpressionTotals.isEmpty()) {
-      return cachedDatedImpressionTotals;
-    }
-
-    cachedDatedImpressionTotals.putAll(dbManager.retrieveDatedImpressionTotals());
     return cachedDatedImpressionTotals;
   }
 
@@ -326,11 +339,6 @@ public class Campaign {
    *     that date as the value.
    */
   public HashMap<String, Long> getDatedClickTotals() {
-    if (!cachedDatedClickTotals.isEmpty()) {
-      return cachedDatedClickTotals;
-    }
-
-    cachedDatedClickTotals.putAll(dbManager.retrieveDatedClickTotals());
     return cachedDatedClickTotals;
   }
 
@@ -341,11 +349,6 @@ public class Campaign {
    *     that date as the value.
    */
   public HashMap<String, Long> getDatedUniqueTotals() {
-    if (!cachedDatedUniqueTotals.isEmpty()) {
-      return cachedDatedUniqueTotals;
-    }
-
-    cachedDatedUniqueTotals.putAll(dbManager.retrieveDatedUniqueTotals());
     return cachedDatedUniqueTotals;
   }
 
@@ -356,11 +359,6 @@ public class Campaign {
    *     that date as the value.
    */
   public HashMap<String, Long> getDatedBounceTotals() {
-    if (!cachedDatedBounceTotals.isEmpty()) {
-      return cachedDatedBounceTotals;
-    }
-
-    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages((byte) 1));
     return cachedDatedBounceTotals;
   }
 
@@ -371,11 +369,6 @@ public class Campaign {
    *     that date as the value.
    */
   public HashMap<String, Long> getDatedAcquisitionTotals() {
-    if (!cachedDatedAcquisitionTotals.isEmpty()) {
-      return cachedDatedAcquisitionTotals;
-    }
-
-    cachedDatedAcquisitionTotals.putAll(dbManager.retrieveDatedAcquisitionTotals());
     return cachedDatedAcquisitionTotals;
   }
 
@@ -404,11 +397,6 @@ public class Campaign {
    * @return HashMap containing the age groups as keys, and the percentage of each group in the campaign.
    */
   private HashMap<String, BigDecimal> getAgePercentage() {
-    if (!cachedAgePercentage.isEmpty()) {
-      return cachedAgePercentage;
-    }
-
-    cachedAgePercentage.putAll(percentageMap(Demographic.Age, dbManager.retrieveDemographics(Demographic.Age)));
     return cachedAgePercentage;
   }
 
@@ -417,11 +405,6 @@ public class Campaign {
    * @return HashMap containing the gender groups as keys, and the percentage of each gender in the campaign.
    */
   private HashMap<String, BigDecimal> getGenderPercentage() {
-    if (!cachedGenderPercentage.isEmpty()) {
-      return cachedGenderPercentage;
-    }
-
-    cachedGenderPercentage.putAll(percentageMap(Demographic.Gender, dbManager.retrieveDemographics(Demographic.Gender)));
     return cachedGenderPercentage;
   }
 
@@ -430,11 +413,6 @@ public class Campaign {
    * @return HashMap containing the income groups as keys, and the percentage of each group in the campaign.
    */
   private HashMap<String, BigDecimal> getIncomePercentage() {
-    if (!cachedIncomePercentage.isEmpty()) {
-      return cachedIncomePercentage;
-    }
-
-    cachedIncomePercentage.putAll(percentageMap(Demographic.Income, dbManager.retrieveDemographics(Demographic.Income)));
     return cachedIncomePercentage;
   }
 
@@ -443,11 +421,6 @@ public class Campaign {
    * @return HashMap containing the context types as keys, and the percentage of each context in the campaign.
    */
   private HashMap<String, BigDecimal> getContextPercentage() {
-    if (!cachedContextPercentage.isEmpty()) {
-      return cachedContextPercentage;
-    }
-
-    cachedContextPercentage.putAll(percentageMap(Demographic.Context, dbManager.retrieveDemographics(Demographic.Context)));
     return cachedContextPercentage;
   }
 
