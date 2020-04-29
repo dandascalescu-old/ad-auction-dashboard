@@ -188,18 +188,21 @@ public class PrimaryViewModel implements ViewModel {
   }
   private void updateTotalCosts(Filter filter) {
     totalClickCost.setValue("£" + selectedCampaign.getValue().getTotalClickCost(filter).setScale(2, RoundingMode.CEILING).toPlainString());
-    totalImpresCost.setValue("£" + selectedCampaign.getValue().getTotalImpressionCost().setScale(2, RoundingMode.CEILING).toPlainString());
-    totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost().setScale(2, RoundingMode.CEILING).toPlainString());
+    totalImpresCost.setValue("£" + selectedCampaign.getValue().getTotalImpressionCost(filter).setScale(2, RoundingMode.CEILING).toPlainString());
+    totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost(filter).setScale(2, RoundingMode.CEILING).toPlainString());
 
-    clickThroughRateText.setValue(selectedCampaign.getValue().getClickThroughRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
-    conversionsPerUniqueText.setValue(selectedCampaign.getValue().getConversionsPerUnique().setScale(2, RoundingMode.CEILING).toPlainString());
+    clickThroughRateText.setValue(selectedCampaign.getValue().getClickThroughRate(filter).setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+    conversionsPerUniqueText.setValue(selectedCampaign.getValue().getConversionsPerUnique(filter).setScale(2, RoundingMode.CEILING).toPlainString());
   }
 
   private void updateTotalMetrics() {
-    totalImpressionsText.setValue(String.valueOf(selectedCampaign.getValue().getImpressionDataCount()));
-    totalClicksText.setValue(String.valueOf(selectedCampaign.getValue().getClickDataCount()));
-    totalUniquesText.setValue(String.valueOf(selectedCampaign.getValue().getUniquesCount()));
-    totalConversionsText.setValue(String.valueOf(selectedCampaign.getValue().getConversionsCount()));
+    updateTotalMetrics(new Filter());
+  }
+  private void updateTotalMetrics(Filter filter) {
+    totalImpressionsText.setValue(String.valueOf(selectedCampaign.getValue().getImpressionDataCount(filter)));
+    totalClicksText.setValue(String.valueOf(selectedCampaign.getValue().getClickDataCount(filter)));
+    totalUniquesText.setValue(String.valueOf(selectedCampaign.getValue().getUniquesCount(filter)));
+    totalConversionsText.setValue(String.valueOf(selectedCampaign.getValue().getConversionsCount(filter)));
   }
 
   private void updateBouncesCountDefault() {
@@ -347,13 +350,14 @@ public class PrimaryViewModel implements ViewModel {
         String incomeString = (String) payload[4];
         String contextString = (String) payload[5];*/
         Filter filter = (Filter) payload[0];
+        //TODO call applyFilter() in Campaign, then update methods with a boolean for use filtered cache data
 
         //
 
-        updateTotalMetrics();
+        updateTotalMetrics(filter);
         updateTotalCosts(filter);
         //TODO change to apply correct bounce method
-        updateBouncesCountDefault();
+        //updateBouncesCountDefault(filter);
         //TODO add graph updates
       } catch (ClassCastException e) {
         e.printStackTrace();

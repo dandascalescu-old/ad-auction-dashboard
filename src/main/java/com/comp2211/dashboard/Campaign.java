@@ -127,17 +127,29 @@ public class Campaign {
   public long getClickDataCount() {
     return clickDataCount;
   }
+  public long getClickDataCount(Filter filter) {
+    return dbManager.retrieveDataCount(DatabaseManager.Table.click_table, filter);
+  }
 
   public long getImpressionDataCount() {
     return impressionDataCount;
+  }
+  public long getImpressionDataCount(Filter filter) {
+    return dbManager.retrieveDataCount(DatabaseManager.Table.impression_table, filter);
   }
 
   public long getServerDataCount() {
     return serverDataCount;
   }
+  public long getServerDataCount(Filter filter) {
+    return dbManager.retrieveDataCount(DatabaseManager.Table.server_table, filter);
+  }
 
   public long getUniquesCount() {
     return uniquesCount;
+  }
+  public long getUniquesCount(Filter filter) {
+    return dbManager.retrieveDataCount(DatabaseManager.Table.server_table, true, filter);
   }
 
   public long getBouncesCount() {
@@ -146,6 +158,9 @@ public class Campaign {
 
   public long getConversionsCount() {
     return conversionsCount;
+  }
+  public long getConversionsCount(Filter filter) {
+    return dbManager.retrieveAcquisitionCount(filter);
   }
 
   /**
@@ -156,7 +171,6 @@ public class Campaign {
   public BigDecimal getTotalClickCost() {
     return totalClickCost;
   }
-
   public BigDecimal getTotalClickCost(Filter filter) {
     return dbManager.retrieveTotalCost(Cost.Click_Cost, filter);
   }
@@ -168,6 +182,9 @@ public class Campaign {
    */
   public BigDecimal getTotalImpressionCost() {
     return totalImpressionCost;
+  }
+  public BigDecimal getTotalImpressionCost(Filter filter) {
+    return dbManager.retrieveTotalCost(Cost.Impression_Cost, filter);
   }
 
   /**
@@ -193,6 +210,14 @@ public class Campaign {
       return BigDecimal.ZERO;
     }
     return BigDecimal.valueOf(clickDataCount).divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+  }
+  public BigDecimal getClickThroughRate(Filter filter) {
+    long impressionCount = getImpressionDataCount(filter);
+    if (impressionCount == 0) {
+      return BigDecimal.ZERO;
+    }
+    long clickCount = getClickDataCount(filter);
+    return BigDecimal.valueOf(clickCount).divide(BigDecimal.valueOf(impressionCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
   }
 
   public void updateBouncesByTime(long maxSeconds, boolean allowInf) {
@@ -236,6 +261,9 @@ public class Campaign {
   public BigDecimal getConversionsPerUnique() {
     return BigDecimal.valueOf(conversionsCount).divide(BigDecimal.valueOf(uniquesCount), 6, RoundingMode.HALF_UP);
   }
+  public BigDecimal getConversionsPerUnique(Filter filter) {
+    return BigDecimal.valueOf(getConversionsCount(filter)).divide(BigDecimal.valueOf(getUniquesCount(filter)), 6, RoundingMode.HALF_UP);
+  }
 
   /**
    * Calculates the total cost of the campaign using the sum of the costs of impression and clicks.
@@ -244,6 +272,9 @@ public class Campaign {
    */
   public BigDecimal getTotalCost() {
     return getTotalClickCost().add(getTotalImpressionCost());
+  }
+  public BigDecimal getTotalCost(Filter filter) {
+    return getTotalClickCost(filter).add(getTotalImpressionCost(filter));
   }
 
   /**

@@ -125,6 +125,12 @@ public class MockDatabaseManager extends DatabaseManager {
     return 50;
   }
 
+  //TODO fred
+  @Override
+  public long retrieveAcquisitionCount(Filter filter) {
+    return 0;
+  }
+
   /**
    * Retrieve the average acquisition cost.
    * @return the calculated average acquisition cost
@@ -228,6 +234,12 @@ public class MockDatabaseManager extends DatabaseManager {
   @Override
   public long retrieveDataCount(String table, boolean unique) {
     return 10;
+  }
+
+  //TODO fred
+  @Override
+  public long retrieveDataCount(Table table, boolean unique, Filter filter) {
+    return 0;
   }
 
   /**

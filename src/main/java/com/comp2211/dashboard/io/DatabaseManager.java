@@ -64,6 +64,7 @@ public abstract class DatabaseManager {
    * Retrieve the total number of acquisitions
    */
   public abstract long retrieveAcquisitionCount();
+  public abstract long retrieveAcquisitionCount(Filter filter);
 
   /**
    * Retrieve the average acquisition cost.
@@ -119,9 +120,13 @@ public abstract class DatabaseManager {
    * Retrieve the amount of entries in the specified database table
    */
   public abstract long retrieveDataCount(String table, boolean unique);
+  public abstract long retrieveDataCount(Table table, boolean unique, Filter filter);
 
   public long retrieveDataCount(String table) {
     return retrieveDataCount(table, false);
+  }
+  public long retrieveDataCount(Table table, Filter filter) {
+    return retrieveDataCount(table, false, filter);
   }
 
   /**

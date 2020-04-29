@@ -189,7 +189,6 @@ public class MySQLManager extends DatabaseManager {
             retrieve(statement, new Object[]{}, new String[]{"SUM"})
     );
   }
-
   public BigDecimal retrieveTotalCost(Cost type, Filter filter) {
     String where = filterToWhere(filter, Table.impression_table);
     String statement = "SELECT SUM(" + type.toString() + ") AS SUM " +
@@ -216,6 +215,15 @@ public class MySQLManager extends DatabaseManager {
             retrieve(statement, new Object[]{maxSeconds}, new String[]{"COUNT"})
     );
   }
+  public long retrieveBouncesCountByTime(long maxSeconds, boolean allowInf, Filter filter) {
+    String where = filterToWhere(filter, Table.server_table);
+    String statement = "SELECT COUNT(*) AS COUNT " +
+            "FROM " + server_table +
+            "WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "((Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL)" : ")");
+    return toLong(
+            retrieve(statement, new Object[]{maxSeconds}, new String[]{"COUNT"})
+    );
+  }
 
   /**
    * Retrieve the number of bounces by number of pages visited
@@ -231,6 +239,15 @@ public class MySQLManager extends DatabaseManager {
             retrieve(statement, new Object[]{maxPages}, new String[]{"COUNT"})
     );
   }
+  public long retrieveBouncesCountByPages(byte maxPages, Filter filter) {
+    String where = filterToWhere(filter, Table.server_table);
+    String statement = "SELECT COUNT(*) AS COUNT " +
+            "FROM " + server_table +
+            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "Pages_Viewed <= ?";
+    return toLong(
+            retrieve(statement, new Object[]{maxPages}, new String[]{"COUNT"})
+    );
+  }
 
   /**
    * Retrieve the total number of acquisitions
@@ -240,6 +257,15 @@ public class MySQLManager extends DatabaseManager {
     String statement = "SELECT COUNT(*) AS COUNT " +
             "FROM " + server_table +
             " WHERE Conversion = 1";
+    return toLong(
+            retrieve(statement, new Object[]{}, new String[]{"COUNT"})
+    );
+  }
+  public long retrieveAcquisitionCount(Filter filter) {
+    String where = filterToWhere(filter, Table.server_table);
+    String statement = "SELECT COUNT(*) AS COUNT " +
+            "FROM " + server_table +
+            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "Conversion = 1";
     return toLong(
             retrieve(statement, new Object[]{}, new String[]{"COUNT"})
     );
@@ -424,6 +450,15 @@ public class MySQLManager extends DatabaseManager {
             retrieve(statement, new Object[]{}, new String[]{"COUNT"})
     );
   }
+  public long retrieveDataCount(Table table, boolean unique, Filter filter) {
+    String where = filterToWhere(filter, table);
+    String statement = "SELECT COUNT(" + (unique ? "DISTINCT ID" : "*") + ") AS COUNT " +
+            "FROM " + table +
+            ( where.isEmpty() ? "" : " WHERE " + where );
+    return toLong(
+            retrieve(statement, new Object[]{}, new String[]{"COUNT"})
+    );
+  }
 
   /**
    * Attempt to login using given credentials and create UserSession
@@ -470,10 +505,5 @@ public class MySQLManager extends DatabaseManager {
     where += (filter.context   >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Context = " + filter.context + ")" : "");
 
     return where;
-  }
-
-  public void test() {
-    String statement = "SELECT * FROM impression_table WHERE DATE(Date) <= '2015-01-02'";
-    System.out.println(retrieve(statement, new Object[]{}, new String[]{"Date", "ID", "Gender", "Age", "Income", "Context"}));
   }
 }
