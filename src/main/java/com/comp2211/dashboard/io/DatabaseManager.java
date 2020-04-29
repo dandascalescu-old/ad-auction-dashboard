@@ -46,85 +46,78 @@ public abstract class DatabaseManager {
   /**
    * Retrieve the total cost (Click_Cost or Impression_Cost).
    */
-  public abstract BigDecimal retrieveTotalCost(Cost type);
-
   public abstract BigDecimal retrieveTotalCost(Cost type, Filter filter);
 
   /**
    * Retrieve the number of bounces by time
    */
-  public abstract long retrieveBouncesCountByTime(long maxSeconds, boolean allowInf);
+  public abstract long retrieveBouncesCountByTime(long maxSeconds, boolean allowInf, Filter filter);
 
   /**
    * Retrieve the number of bounces by pages visited
    */
-  public abstract long retrieveBouncesCountByPages(byte maxPages);
+  public abstract long retrieveBouncesCountByPages(byte maxPages, Filter filter);
 
   /**
    * Retrieve the total number of acquisitions
    */
-  public abstract long retrieveAcquisitionCount();
   public abstract long retrieveAcquisitionCount(Filter filter);
 
   /**
    * Retrieve the average acquisition cost.
    */
-  public abstract BigDecimal retrieveAverageAcquisitionCost();
+  public abstract BigDecimal retrieveAverageAcquisitionCost(Filter filter);
 
   /**
    * Retrieve the average cost for each date for the specified type.
    */
-  public abstract HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type);
+  public abstract HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type, Filter filter);
 
   /**
    * Retrieve the average acquisition cost for each date.
    */
-  public abstract HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost();
+  public abstract HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost(Filter filter);
 
   /**
    * Retrieve the total number of impressions for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedImpressionTotals();
+  public abstract HashMap<String, Long> retrieveDatedImpressionTotals(Filter filter);
 
   /**
    * Retrieve the total number of clicks for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedClickTotals();
+  public abstract HashMap<String, Long> retrieveDatedClickTotals(Filter filter);
 
   /**
    * Retrieve the total number of uniques for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedUniqueTotals();
+  public abstract HashMap<String, Long> retrieveDatedUniqueTotals(Filter filter);
 
   /**
    * Retrieve the total number of bounces (by time) for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedBounceTotalsByTime(long maxSeconds, boolean allowInf);
+  public abstract HashMap<String, Long> retrieveDatedBounceTotalsByTime(long maxSeconds, boolean allowInf, Filter filter);
 
   /**
    * Retrieve the total number of bounces (by pages visited) for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte maxPages);
+  public abstract HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte maxPages, Filter filter);
 
   /**
    * Retrieve the total number of acquisitions for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedAcquisitionTotals();
+  public abstract HashMap<String, Long> retrieveDatedAcquisitionTotals(Filter filter);
 
   /**
    * Retrieve demographic info
    */
-  public abstract HashMap<String, Long> retrieveDemographics(Demographic type);
+  public abstract HashMap<String, Long> retrieveDemographics(Demographic type, Filter filter);
 
   /**
    * Retrieve the amount of entries in the specified database table
    */
-  public abstract long retrieveDataCount(String table, boolean unique);
   public abstract long retrieveDataCount(Table table, boolean unique, Filter filter);
 
-  public long retrieveDataCount(String table) {
-    return retrieveDataCount(table, false);
-  }
   public long retrieveDataCount(Table table, Filter filter) {
     return retrieveDataCount(table, false, filter);
   }

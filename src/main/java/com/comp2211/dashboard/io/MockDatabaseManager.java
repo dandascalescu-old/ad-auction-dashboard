@@ -86,14 +86,8 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return BigDecimal representing the total cost.
    */
   @Override
-  public BigDecimal retrieveTotalCost(Cost type) {
-    return new BigDecimal("50.0");
-  }
-
-  //TODO whatever you want for this fred
-  @Override
   public BigDecimal retrieveTotalCost(Cost type, Filter filter) {
-    return null;
+    return new BigDecimal("50.0");
   }
 
   /**
@@ -103,7 +97,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return long value of the number of bounces
    */
   @Override
-  public long retrieveBouncesCountByTime(long maxSeconds, boolean allowInf) {
+  public long retrieveBouncesCountByTime(long maxSeconds, boolean allowInf, Filter filter) {
     return 50;
   }
 
@@ -113,7 +107,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return long value of the number of bounces
    */
   @Override
-  public long retrieveBouncesCountByPages(byte maxPages) {
+  public long retrieveBouncesCountByPages(byte maxPages, Filter filter) {
     return 50;
   }
 
@@ -121,14 +115,9 @@ public class MockDatabaseManager extends DatabaseManager {
    * Retrieve the total number of acquisitions
    * @return total count
    */
-  public long retrieveAcquisitionCount() {
-    return 50;
-  }
-
-  //TODO fred
   @Override
   public long retrieveAcquisitionCount(Filter filter) {
-    return 0;
+    return 50;
   }
 
   /**
@@ -136,7 +125,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return the calculated average acquisition cost
    */
   @Override
-  public BigDecimal retrieveAverageAcquisitionCost() {
+  public BigDecimal retrieveAverageAcquisitionCost(Filter filter) {
     return new BigDecimal("0.05");
   }
 
@@ -145,7 +134,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the avg for that date as a value
    */
   @Override
-  public HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type) {
+  public HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type, Filter filter) {
     return this.getBigDecimalTestData();
   }
 
@@ -154,7 +143,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the avg for that date as a value
    */
   @Override
-  public HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost() {
+  public HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost(Filter filter) {
     return this.getBigDecimalTestData();
   }
 
@@ -164,7 +153,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedImpressionTotals() {
+  public HashMap<String, Long> retrieveDatedImpressionTotals(Filter filter) {
     return this.getLongTestData();
   }
 
@@ -173,7 +162,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedClickTotals() {
+  public HashMap<String, Long> retrieveDatedClickTotals(Filter filter) {
     return this.getLongTestData();
   }
 
@@ -182,7 +171,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedUniqueTotals() {
+  public HashMap<String, Long> retrieveDatedUniqueTotals(Filter filter) {
     return this.getLongTestData();
   }
 
@@ -193,7 +182,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedBounceTotalsByTime(long maxSeconds, boolean allowInf) {
+  public HashMap<String, Long> retrieveDatedBounceTotalsByTime(long maxSeconds, boolean allowInf, Filter filter) {
     return this.getLongTestData();
   }
 
@@ -203,7 +192,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte maxPages) {
+  public HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte maxPages, Filter filter) {
     return this.getLongTestData();
   }
 
@@ -212,7 +201,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedAcquisitionTotals() {
+  public HashMap<String, Long> retrieveDatedAcquisitionTotals(Filter filter) {
     return this.getLongTestData();
   }
 
@@ -222,7 +211,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each demographic as keys and the count for that demographic as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDemographics(Demographic type) {
+  public HashMap<String, Long> retrieveDemographics(Demographic type, Filter filter) {
     return this.getLongTestData();
   }
 
@@ -232,14 +221,8 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return the amount of entries found
    */
   @Override
-  public long retrieveDataCount(String table, boolean unique) {
-    return 10;
-  }
-
-  //TODO fred
-  @Override
   public long retrieveDataCount(Table table, boolean unique, Filter filter) {
-    return 0;
+    return 10;
   }
 
   /**

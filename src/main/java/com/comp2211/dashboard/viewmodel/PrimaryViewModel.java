@@ -78,18 +78,20 @@ public class PrimaryViewModel implements ViewModel {
     demographics.addAll(Demographics.Demographic.values());
     totals.addAll(totalImpressions, totalClicks, totalUniques, totalBounces, totalConversions);
 
+    Filter blankFilter = new Filter();
+
     setupCampaignSelector();
 
     // This was in an runnable block, which has been removed to make testing more manageable
-    selectedCampaign.getValue().cacheData();
+    selectedCampaign.getValue().cacheData(blankFilter);
 
     updateTotalMetrics();
     updateTotalCosts();
-    updateBouncesCountDefault();
+    updateBouncesCountDefault(blankFilter);
 
-    setupDemographicSelector();
-    setupAverageSelector();
-    setUpTotalsSelector();
+    setupDemographicSelector(blankFilter);
+    setupAverageSelector(blankFilter);
+    setUpTotalsSelector(blankFilter);
     setupFilterReceiving();
   }
 
@@ -184,42 +186,36 @@ public class PrimaryViewModel implements ViewModel {
   }
 
   private void updateTotalCosts() {
-    updateTotalCosts(new Filter());
-  }
-  private void updateTotalCosts(Filter filter) {
-    totalClickCost.setValue("£" + selectedCampaign.getValue().getTotalClickCost(filter).setScale(2, RoundingMode.CEILING).toPlainString());
-    totalImpresCost.setValue("£" + selectedCampaign.getValue().getTotalImpressionCost(filter).setScale(2, RoundingMode.CEILING).toPlainString());
-    totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost(filter).setScale(2, RoundingMode.CEILING).toPlainString());
+    totalClickCost.setValue("£" + selectedCampaign.getValue().getTotalClickCost().setScale(2, RoundingMode.CEILING).toPlainString());
+    totalImpresCost.setValue("£" + selectedCampaign.getValue().getTotalImpressionCost().setScale(2, RoundingMode.CEILING).toPlainString());
+    totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost().setScale(2, RoundingMode.CEILING).toPlainString());
 
-    clickThroughRateText.setValue(selectedCampaign.getValue().getClickThroughRate(filter).setScale(2, RoundingMode.CEILING).toPlainString() + "%");
-    conversionsPerUniqueText.setValue(selectedCampaign.getValue().getConversionsPerUnique(filter).setScale(2, RoundingMode.CEILING).toPlainString());
+    clickThroughRateText.setValue(selectedCampaign.getValue().getClickThroughRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+    conversionsPerUniqueText.setValue(selectedCampaign.getValue().getConversionsPerUnique().setScale(2, RoundingMode.CEILING).toPlainString());
   }
 
   private void updateTotalMetrics() {
-    updateTotalMetrics(new Filter());
-  }
-  private void updateTotalMetrics(Filter filter) {
-    totalImpressionsText.setValue(String.valueOf(selectedCampaign.getValue().getImpressionDataCount(filter)));
-    totalClicksText.setValue(String.valueOf(selectedCampaign.getValue().getClickDataCount(filter)));
-    totalUniquesText.setValue(String.valueOf(selectedCampaign.getValue().getUniquesCount(filter)));
-    totalConversionsText.setValue(String.valueOf(selectedCampaign.getValue().getConversionsCount(filter)));
+    totalImpressionsText.setValue(String.valueOf(selectedCampaign.getValue().getImpressionDataCount()));
+    totalClicksText.setValue(String.valueOf(selectedCampaign.getValue().getClickDataCount()));
+    totalUniquesText.setValue(String.valueOf(selectedCampaign.getValue().getUniquesCount()));
+    totalConversionsText.setValue(String.valueOf(selectedCampaign.getValue().getConversionsCount()));
   }
 
-  private void updateBouncesCountDefault() {
-    updateBouncesCountByPages((byte) 1);
+  private void updateBouncesCountDefault(Filter filter) {
+    updateBouncesCountByPages((byte) 1, filter);
   }
 
-  private void updateBouncesCountByTime(long maxSeconds, boolean allowInf) {
-    selectedCampaign.getValue().updateBouncesByTime(maxSeconds, allowInf);
-    updateBounceMetrics();
+  private void updateBouncesCountByTime(long maxSeconds, boolean allowInf, Filter filter) {
+    selectedCampaign.getValue().updateBouncesByTime(maxSeconds, allowInf, filter);
+    updateBounceMetrics(filter);
   }
 
-  private void updateBouncesCountByPages(byte maxPages) {
-    selectedCampaign.getValue().updateBouncesByPages(maxPages);
-    updateBounceMetrics();
+  private void updateBouncesCountByPages(byte maxPages, Filter filter) {
+    selectedCampaign.getValue().updateBouncesByPages(maxPages, filter);
+    updateBounceMetrics(filter);
   }
 
-  private void updateBounceMetrics() {
+  private void updateBounceMetrics(Filter filter) {
     totalBouncesText.setValue(String.valueOf(selectedCampaign.getValue().getBouncesCount()));
     bounceRateText.setValue(selectedCampaign.getValue().getBounceRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
     bouncesPerConversionText.setValue(selectedCampaign.getValue().getBouncesPerConversion().setScale(2, RoundingMode.CEILING).toPlainString());
@@ -240,7 +236,7 @@ public class PrimaryViewModel implements ViewModel {
     selectedCampaign.setValue(Campaign.getCampaigns().get(0));
   }
 
-  private void setupAverageSelector() {
+  private void setupAverageSelector(Filter filter) {
     selectedAverage.addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
         Optional<String> matchingAverage = averages.stream().filter(newVal::equals).findFirst();
@@ -248,23 +244,26 @@ public class PrimaryViewModel implements ViewModel {
       } else {
         selectedAverage.setValue(avgCostClick);
       }
-      switch (selectedAverage.getValue()) {
-        case avgCostClick:
-          updateLineChartData(selectedCampaign.getValue().getDatedClickCostAverages());
-          break;
-        case avgCostImpr:
-          updateLineChartData(selectedCampaign.getValue().getDatedImpressionCostAverages());
-          break;
-        case avgCostAcq:
-          updateLineChartData(selectedCampaign.getValue().getDatedAcquisitionCostAverages());
-          break;
-      }
+      updateAverages();
     });
 
     selectedAverage.setValue(avgCostClick);
   }
+  private void updateAverages() {
+    switch (selectedAverage.getValue()) {
+      case avgCostClick:
+        updateLineChartData(selectedCampaign.getValue().getDatedClickCostAverages());
+        break;
+      case avgCostImpr:
+        updateLineChartData(selectedCampaign.getValue().getDatedImpressionCostAverages());
+        break;
+      case avgCostAcq:
+        updateLineChartData(selectedCampaign.getValue().getDatedAcquisitionCostAverages());
+        break;
+    }
+  }
 
-  private void setUpTotalsSelector(){
+  private void setUpTotalsSelector(Filter filter){
     selectedTotals.addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
         Optional<String> matchingAverage = totals.stream().filter(newVal::equals).findFirst();
@@ -272,29 +271,33 @@ public class PrimaryViewModel implements ViewModel {
       } else {
         selectedTotals.setValue(totalImpressions);
       }
-      switch (selectedTotals.getValue()) {
-        case totalImpressions:
-          updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedImpressionTotals());
-          break;
-        case totalClicks:
-          updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedClickTotals());
-          break;
-        case totalUniques:
-          updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedUniqueTotals());
-          break;
-        case totalBounces:
-          updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedBounceTotals());
-          break;
-        case totalConversions:
-          updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedAcquisitionTotals());
-          break;
-      }
+      updateTotals();
     });
 
     selectedTotals.setValue(totalImpressions);
   }
+  private void updateTotals() {
+    //TODO refactor into one method like demographics
+    switch (selectedTotals.getValue()) {
+      case totalImpressions:
+        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedImpressionTotals());
+        break;
+      case totalClicks:
+        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedClickTotals());
+        break;
+      case totalUniques:
+        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedUniqueTotals());
+        break;
+      case totalBounces:
+        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedBounceTotals());
+        break;
+      case totalConversions:
+        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedAcquisitionTotals());
+        break;
+    }
+  }
 
-  private void setupDemographicSelector() {
+  private void setupDemographicSelector(Filter filter) {
     selectedDemographic.addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
         Optional<Demographic> matchingDemographic = Stream.of(Demographics.Demographic.values()).filter(newVal::equals).findFirst();
@@ -350,15 +353,18 @@ public class PrimaryViewModel implements ViewModel {
         String incomeString = (String) payload[4];
         String contextString = (String) payload[5];*/
         Filter filter = (Filter) payload[0];
-        //TODO call applyFilter() in Campaign, then update methods with a boolean for use filtered cache data
+        selectedCampaign.getValue().clearCache();
+        selectedCampaign.getValue().cacheData(filter);
 
-        //
-
-        updateTotalMetrics(filter);
-        updateTotalCosts(filter);
+        updateTotalMetrics();
+        updateTotalCosts();
         //TODO change to apply correct bounce method
-        //updateBouncesCountDefault(filter);
-        //TODO add graph updates
+        updateBouncesCountDefault(filter);
+
+        updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
+        updateTotals();
+        updateAverages();
+
       } catch (ClassCastException e) {
         e.printStackTrace();
         Logger.log("Invalid filter received");

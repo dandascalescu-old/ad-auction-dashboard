@@ -4,6 +4,7 @@ import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.GUIStarter;
 import com.comp2211.dashboard.viewmodel.LoginViewModel;
 import com.comp2211.dashboard.viewmodel.MainViewModel;
+import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel.Filter;
 import com.jfoenix.controls.JFXButton;
 import animatefx.animation.AnimationFX;
 import animatefx.animation.FadeOut;
@@ -53,7 +54,7 @@ public class LoginView implements FxmlView<LoginViewModel> {
     viewModel.subscribe(LoginViewModel.SHOW_AUTHENTICATED_VIEW, (key, payload) -> {
       // TODO: get campaigns from UserSession
       Campaign campaign = new Campaign("Demo Campaign", GUIStarter.getDatabaseManager());
-      campaign.cacheData();
+      campaign.cacheData(new Filter());
 
       new FadeOut(signinPane).play();
       AnimationFX newAnimation = new FadeOutLeft(welcomePane);
