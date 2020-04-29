@@ -93,7 +93,7 @@ public class Campaign {
    * Fetches and caches entries from the database
    */
   public void cacheData(Filter filter) {
-    //TODO maybe cache IDs for certain demographics
+    //TODO maybe cache IDs for certain demographics?
     System.out.println("dbManager: " + dbManager);
     clickDataCount = dbManager.retrieveDataCount(DatabaseManager.Table.click_table, filter);
     impressionDataCount = dbManager.retrieveDataCount(DatabaseManager.Table.impression_table, filter);
