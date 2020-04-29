@@ -1,5 +1,10 @@
 package com.comp2211.dashboard.model.data;
 
+import com.comp2211.dashboard.util.Logger;
+
+import java.util.Arrays;
+import java.util.Collections;
+
 public class Demographics {
 
   public enum Demographic { Gender, Age, Income, Context }
@@ -58,6 +63,23 @@ public class Demographics {
         return ContextTypes;
       default:
         return GenderTypes;
+    }
+  }
+
+  public static int getDemographicInt(Demographic type, String string)  {
+    if (string == null) return -1;
+    switch(type) {
+      case Age:
+        return Arrays.asList(AgeTypes).indexOf(string);
+      case Income:
+        return Arrays.asList(IncomeTypes).indexOf(string);
+      case Context:
+        return Arrays.asList(ContextTypes).indexOf(string);
+      case Gender:
+        return Arrays.asList(GenderTypes).indexOf(string);
+      default:
+        Logger.log("Invalid demographic string <" + string + "> given.");
+        return -1;
     }
   }
 }

@@ -4,6 +4,8 @@ import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import com.comp2211.dashboard.util.Logger;
 import com.comp2211.dashboard.io.DatabaseManager;
 import com.comp2211.dashboard.io.DatabaseManager.Cost;
+import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel.Filter;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -155,7 +157,11 @@ public class Campaign {
     return totalClickCost;
   }
 
-  /**
+  public BigDecimal getTotalClickCost(Filter filter) {
+    return dbManager.retrieveTotalCost(Cost.Click_Cost, filter);
+  }
+
+                                      /**
    * Sums up all the costs of each impression.
    *
    * @return Total cost of all impressions in campaign.

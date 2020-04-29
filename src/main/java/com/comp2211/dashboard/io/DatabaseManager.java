@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import com.comp2211.dashboard.util.Logger;
+import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel;
+import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel.Filter;
 
 public abstract class DatabaseManager {
 
@@ -45,6 +47,8 @@ public abstract class DatabaseManager {
    * Retrieve the total cost (Click_Cost or Impression_Cost).
    */
   public abstract BigDecimal retrieveTotalCost(Cost type);
+
+  public abstract BigDecimal retrieveTotalCost(Cost type, Filter filter);
 
   /**
    * Retrieve the number of bounces by time

@@ -18,6 +18,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import javax.swing.ButtonGroup;
+
+import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel;
+import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel.Filter;
 import org.apache.commons.dbutils.DbUtils;
 
 public class MockDatabaseManager extends DatabaseManager {
@@ -85,6 +88,12 @@ public class MockDatabaseManager extends DatabaseManager {
   @Override
   public BigDecimal retrieveTotalCost(Cost type) {
     return new BigDecimal("50.0");
+  }
+
+  //TODO whatever you want for this fred
+  @Override
+  public BigDecimal retrieveTotalCost(Cost type, Filter filter) {
+    return null;
   }
 
   /**

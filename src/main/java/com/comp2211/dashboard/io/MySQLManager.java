@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 import com.comp2211.dashboard.util.Logger;
+import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel.Filter;
 import org.apache.commons.dbutils.DbUtils;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import com.comp2211.dashboard.model.data.Demographics;
@@ -122,7 +123,8 @@ public class MySQLManager extends DatabaseManager {
       Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 result, received " + resultsList.get(0).size() + ".");
     else
       try {
-        return Long.parseLong(resultsList.get(0).get(0));
+        if (resultsList.get(0).get(0) == null) return 0L;
+        else return Long.parseLong(resultsList.get(0).get(0));
       } catch (NumberFormatException e) {
         Logger.log("[ERROR] Invalid result returned from SQL query. Long conversion failed on value <" + resultsList.get(0).get(0) + ">.");
       }
@@ -136,7 +138,8 @@ public class MySQLManager extends DatabaseManager {
       Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 result, received " + resultsList.get(0).size() + ".");
     else
       try {
-        return BigDecimal.valueOf(Double.parseDouble(resultsList.get(0).get(0)));
+        if (resultsList.get(0).get(0) == null) return BigDecimal.ZERO;
+        else return BigDecimal.valueOf(Double.parseDouble(resultsList.get(0).get(0)));
       } catch (NumberFormatException e) {
         Logger.log("[ERROR] Invalid result returned from SQL query. Double conversion failed on value <" + resultsList.get(0).get(0) + ">.");
       }
@@ -182,6 +185,17 @@ public class MySQLManager extends DatabaseManager {
   public BigDecimal retrieveTotalCost(Cost type) {
     String statement = "SELECT SUM(" + type.toString() + ") AS SUM " +
             "FROM " + (type.equals(Cost.Click_Cost) ? click_table : impression_table);
+    return toBigDecimal(
+            retrieve(statement, new Object[]{}, new String[]{"SUM"})
+    );
+  }
+
+  public BigDecimal retrieveTotalCost(Cost type, Filter filter) {
+    String where = filterToWhere(filter, Table.impression_table);
+    String statement = "SELECT SUM(" + type.toString() + ") AS SUM " +
+            "FROM " + (type.equals(Cost.Click_Cost) ? click_table : impression_table) +
+            ( where.isEmpty() ? "" : " WHERE " + where );
+    System.out.println(statement);
     return toBigDecimal(
             retrieve(statement, new Object[]{}, new String[]{"SUM"})
     );
@@ -441,5 +455,25 @@ public class MySQLManager extends DatabaseManager {
       DbUtils.closeQuietly(stmt);
     }
     return false;
+  }
+
+  private static String filterToWhere(Filter filter, Table table) {
+    String dateTitle = "Date";
+    if (table.equals(Table.server_table)) dateTitle = "Entry_Date";
+
+    String where = "";
+    where += (filter.startDate != null ? "DATE(" + dateTitle + ") >= '" + filter.startDate.toString() + "'"                                                                         : "");
+    where += (filter.endDate   != null ? (where.isEmpty() ? "" : " AND ") + "DATE(" + dateTitle + ") <= '" + filter.endDate.toString() + "'"                                        : "");
+    where += (filter.gender    >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Gender = "  + filter.gender  + ")" : "");
+    where += (filter.age       >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Age = "     + filter.age     + ")" : "");
+    where += (filter.income    >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Income = "  + filter.income  + ")" : "");
+    where += (filter.context   >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Context = " + filter.context + ")" : "");
+
+    return where;
+  }
+
+  public void test() {
+    String statement = "SELECT * FROM impression_table WHERE DATE(Date) <= '2015-01-02'";
+    System.out.println(retrieve(statement, new Object[]{}, new String[]{"Date", "ID", "Gender", "Age", "Income", "Context"}));
   }
 }

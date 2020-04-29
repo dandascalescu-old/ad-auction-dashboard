@@ -4,11 +4,11 @@ import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.model.data.Demographics;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import com.comp2211.dashboard.util.Logger;
+import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel.Filter;
 import de.saxsys.mvvmfx.MvvmFX;
 import de.saxsys.mvvmfx.ViewModel;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -24,8 +24,6 @@ import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 
 public class PrimaryViewModel implements ViewModel {
-
-  private NotificationCenter notificationCenter;
 
   // TODO: Refactor to service and inject...
   private ObservableList<String> averages;
@@ -186,7 +184,10 @@ public class PrimaryViewModel implements ViewModel {
   }
 
   private void updateTotalCosts() {
-    totalClickCost.setValue("£" + selectedCampaign.getValue().getTotalClickCost().setScale(2, RoundingMode.CEILING).toPlainString());
+    updateTotalCosts(new Filter());
+  }
+  private void updateTotalCosts(Filter filter) {
+    totalClickCost.setValue("£" + selectedCampaign.getValue().getTotalClickCost(filter).setScale(2, RoundingMode.CEILING).toPlainString());
     totalImpresCost.setValue("£" + selectedCampaign.getValue().getTotalImpressionCost().setScale(2, RoundingMode.CEILING).toPlainString());
     totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost().setScale(2, RoundingMode.CEILING).toPlainString());
 
@@ -336,20 +337,21 @@ public class PrimaryViewModel implements ViewModel {
   }
 
   private void setupFilterReceiving() {
-    notificationCenter = MvvmFX.getNotificationCenter();
+    NotificationCenter notificationCenter = MvvmFX.getNotificationCenter();
     notificationCenter.subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION, (key, payload) -> {
       try {
-        LocalDate startDate = (LocalDate) payload[0];
+        /*LocalDate startDate = (LocalDate) payload[0];
         LocalDate endDate = (LocalDate) payload[1];
         String genderString = (String) payload[2];
         String ageString = (String) payload[3];
         String incomeString = (String) payload[4];
-        String contextString = (String) payload[5];
+        String contextString = (String) payload[5];*/
+        Filter filter = (Filter) payload[0];
 
         //
 
         updateTotalMetrics();
-        updateTotalCosts();
+        updateTotalCosts(filter);
         //TODO change to apply correct bounce method
         updateBouncesCountDefault();
         //TODO add graph updates

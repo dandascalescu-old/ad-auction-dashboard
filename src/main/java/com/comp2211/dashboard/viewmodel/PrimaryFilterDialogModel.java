@@ -12,6 +12,8 @@ import javafx.collections.ObservableList;
 
 import java.time.LocalDate;
 
+import static com.comp2211.dashboard.model.data.Demographics.*;
+
 public class PrimaryFilterDialogModel implements ViewModel {
 
     private NotificationCenter notificationCenter;
@@ -40,7 +42,7 @@ public class PrimaryFilterDialogModel implements ViewModel {
         genderList.addAll("Female", "Male");
         incomeList.addAll("Low", "Medium", "High");
         contextList.addAll("News", "Shopping", "Social Media", "Blog");
-        ageList.addAll("<25", "25-34", "35-44", "45-54", "<55");
+        ageList.addAll("<25", "25-34", "35-44", "45-54", ">54");
     }
 
     public ObservableList<String> genderList() {
@@ -85,7 +87,30 @@ public class PrimaryFilterDialogModel implements ViewModel {
 
     public void applyFilters() {
         notificationCenter.publish(FILTER_NOTIFICATION,
-                startDate.getValue(), endDate.getValue(),
-                genderString.getValue(), ageString.getValue(), incomeString.getValue(), contextString.getValue());
+                new Filter(
+                        startDate.getValue(), endDate.getValue(),
+                        genderString.getValue(), ageString.getValue(), incomeString.getValue(), contextString.getValue()
+                ));
+    }
+
+    public static class Filter {
+        public LocalDate startDate, endDate;
+        public int gender, age, income, context;
+
+        public Filter() {
+            this.gender = -1;
+            this.age = -1;
+            this.income = -1;
+            this.context = -1;
+        }
+
+        public Filter(LocalDate startDate, LocalDate endDate, String gender, String age, String income, String context) {
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.gender = getDemographicInt(Demographic.Gender, gender);
+            this.age = getDemographicInt(Demographic.Age, age);
+            this.income = getDemographicInt(Demographic.Income, income);
+            this.context = getDemographicInt(Demographic.Context, context);
+        }
     }
 }
