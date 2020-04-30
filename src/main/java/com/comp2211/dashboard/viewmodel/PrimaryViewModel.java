@@ -14,7 +14,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -89,9 +88,10 @@ public class PrimaryViewModel implements ViewModel {
     updateTotalCosts();
     updateBouncesCountDefault(filter);
 
-    setupDemographicSelector(filter);
-    setupAverageSelector(filter);
-    setUpTotalsSelector(filter);
+    setupDemographicSelector();
+    setupAverageSelector();
+    setUpTotalsSelector();
+
     setupFilterReceiving();
   }
 
@@ -236,7 +236,7 @@ public class PrimaryViewModel implements ViewModel {
     selectedCampaign.setValue(Campaign.getCampaigns().get(0));
   }
 
-  private void setupAverageSelector(Filter filter) {
+  private void setupAverageSelector() {
     selectedAverage.addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
         Optional<String> matchingAverage = averages.stream().filter(newVal::equals).findFirst();
@@ -263,7 +263,7 @@ public class PrimaryViewModel implements ViewModel {
     }
   }
 
-  private void setUpTotalsSelector(Filter filter){
+  private void setUpTotalsSelector(){
     selectedTotals.addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
         Optional<String> matchingAverage = totals.stream().filter(newVal::equals).findFirst();
@@ -297,7 +297,7 @@ public class PrimaryViewModel implements ViewModel {
     }
   }
 
-  private void setupDemographicSelector(Filter filter) {
+  private void setupDemographicSelector() {
     selectedDemographic.addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
         Optional<Demographic> matchingDemographic = Stream.of(Demographics.Demographic.values()).filter(newVal::equals).findFirst();
@@ -343,10 +343,15 @@ public class PrimaryViewModel implements ViewModel {
   }
 
   private void setupFilterReceiving() {
-    NotificationCenter notificationCenter = MvvmFX.getNotificationCenter();
-    notificationCenter.subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION, (key, payload) -> {
+    MvvmFX.getNotificationCenter().subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION, (key, payload) -> {
       try {
         Filter filter = (Filter) payload[0];
+
+        //Hacked solution to multiple subscribers being set up
+        if (selectedCampaign.getValue().hasAppliedFilter() && selectedCampaign.getValue().getAppliedFilter().isEqualTo(filter)) {
+          return;
+        }
+
         selectedCampaign.getValue().cacheData(filter);
 
         updateTotalMetrics();

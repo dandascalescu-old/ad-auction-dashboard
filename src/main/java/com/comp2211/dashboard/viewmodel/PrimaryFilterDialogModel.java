@@ -93,6 +93,7 @@ public class PrimaryFilterDialogModel implements ViewModel {
                 ));
     }
 
+    //TODO move to own class
     public static class Filter {
         public LocalDate startDate, endDate;
         public int gender, age, income, context;
