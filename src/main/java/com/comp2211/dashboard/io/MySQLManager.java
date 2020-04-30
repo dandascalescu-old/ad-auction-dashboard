@@ -472,12 +472,21 @@ public class MySQLManager extends DatabaseManager {
     if (table.equals(Table.server_table)) dateTitle = "Entry_Date";
 
     String where = "";
-    where += (filter.startDate != null ? "DATE(" + dateTitle + ") >= '" + filter.startDate.toString() + "'"                                                                         : "");
-    where += (filter.endDate   != null ? (where.isEmpty() ? "" : " AND ") + "DATE(" + dateTitle + ") <= '" + filter.endDate.toString() + "'"                                        : "");
-    where += (filter.gender    >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Gender = "  + filter.gender  + ")" : "");
+    where += (filter.startDate != null ?                                    "DATE(" + dateTitle + ") >= '" + filter.startDate.toString() + "'" : "");
+    where += (filter.endDate   != null ? (where.isEmpty() ? "" : " AND ") + "DATE(" + dateTitle + ") <= '" + filter.endDate.toString()   + "'" : "");
+
+    String ID = "";
+    ID += (filter.gender  >= 0 ?                                 "Gender = "  + filter.gender  : "");
+    ID += (filter.age     >= 0 ? (ID.isEmpty() ? "" : " AND ") + "Age = "     + filter.age     : "");
+    ID += (filter.income  >= 0 ? (ID.isEmpty() ? "" : " AND ") + "Income = "  + filter.income  : "");
+    ID += (filter.context >= 0 ? (ID.isEmpty() ? "" : " AND ") + "Context = " + filter.context : "");
+    /*where += (filter.gender    >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Gender = "  + filter.gender  + ")" : "");
     where += (filter.age       >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Age = "     + filter.age     + ")" : "");
     where += (filter.income    >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Income = "  + filter.income  + ")" : "");
-    where += (filter.context   >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Context = " + filter.context + ")" : "");
+    where += (filter.context   >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Context = " + filter.context + ")" : "");*/
+
+    ID = (ID.isEmpty() ? ID : "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE " + ID + ")");
+    where = (where.isEmpty() ? (ID.isEmpty() ? "" : ID) : (ID.isEmpty() ? where : where + " AND " + ID));
 
     return where;
   }

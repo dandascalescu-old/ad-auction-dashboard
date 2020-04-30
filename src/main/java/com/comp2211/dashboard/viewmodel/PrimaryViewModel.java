@@ -14,7 +14,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -78,20 +77,21 @@ public class PrimaryViewModel implements ViewModel {
     demographics.addAll(Demographics.Demographic.values());
     totals.addAll(totalImpressions, totalClicks, totalUniques, totalBounces, totalConversions);
 
-    Filter blankFilter = new Filter();
-
     setupCampaignSelector();
 
+    Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter());
+
     // This was in an runnable block, which has been removed to make testing more manageable
-    selectedCampaign.getValue().cacheData(blankFilter);
+    selectedCampaign.getValue().cacheData(filter);
 
     updateTotalMetrics();
     updateTotalCosts();
-    updateBouncesCountDefault(blankFilter);
+    updateBouncesCountDefault(filter);
 
-    setupDemographicSelector(blankFilter);
-    setupAverageSelector(blankFilter);
-    setUpTotalsSelector(blankFilter);
+    setupDemographicSelector();
+    setupAverageSelector();
+    setUpTotalsSelector();
+
     setupFilterReceiving();
   }
 
@@ -207,15 +207,15 @@ public class PrimaryViewModel implements ViewModel {
 
   private void updateBouncesCountByTime(long maxSeconds, boolean allowInf, Filter filter) {
     selectedCampaign.getValue().updateBouncesByTime(maxSeconds, allowInf, filter);
-    updateBounceMetrics(filter);
+    updateBounceMetrics();
   }
 
   private void updateBouncesCountByPages(byte maxPages, Filter filter) {
     selectedCampaign.getValue().updateBouncesByPages(maxPages, filter);
-    updateBounceMetrics(filter);
+    updateBounceMetrics();
   }
 
-  private void updateBounceMetrics(Filter filter) {
+  private void updateBounceMetrics() {
     totalBouncesText.setValue(String.valueOf(selectedCampaign.getValue().getBouncesCount()));
     bounceRateText.setValue(selectedCampaign.getValue().getBounceRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
     bouncesPerConversionText.setValue(selectedCampaign.getValue().getBouncesPerConversion().setScale(2, RoundingMode.CEILING).toPlainString());
@@ -236,7 +236,7 @@ public class PrimaryViewModel implements ViewModel {
     selectedCampaign.setValue(Campaign.getCampaigns().get(0));
   }
 
-  private void setupAverageSelector(Filter filter) {
+  private void setupAverageSelector() {
     selectedAverage.addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
         Optional<String> matchingAverage = averages.stream().filter(newVal::equals).findFirst();
@@ -263,7 +263,7 @@ public class PrimaryViewModel implements ViewModel {
     }
   }
 
-  private void setUpTotalsSelector(Filter filter){
+  private void setUpTotalsSelector(){
     selectedTotals.addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
         Optional<String> matchingAverage = totals.stream().filter(newVal::equals).findFirst();
@@ -297,7 +297,7 @@ public class PrimaryViewModel implements ViewModel {
     }
   }
 
-  private void setupDemographicSelector(Filter filter) {
+  private void setupDemographicSelector() {
     selectedDemographic.addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
         Optional<Demographic> matchingDemographic = Stream.of(Demographics.Demographic.values()).filter(newVal::equals).findFirst();
@@ -343,17 +343,9 @@ public class PrimaryViewModel implements ViewModel {
   }
 
   private void setupFilterReceiving() {
-    NotificationCenter notificationCenter = MvvmFX.getNotificationCenter();
-    notificationCenter.subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION, (key, payload) -> {
+    MvvmFX.getNotificationCenter().subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION, (key, payload) -> {
       try {
-        /*LocalDate startDate = (LocalDate) payload[0];
-        LocalDate endDate = (LocalDate) payload[1];
-        String genderString = (String) payload[2];
-        String ageString = (String) payload[3];
-        String incomeString = (String) payload[4];
-        String contextString = (String) payload[5];*/
         Filter filter = (Filter) payload[0];
-        selectedCampaign.getValue().clearCache();
         selectedCampaign.getValue().cacheData(filter);
 
         updateTotalMetrics();

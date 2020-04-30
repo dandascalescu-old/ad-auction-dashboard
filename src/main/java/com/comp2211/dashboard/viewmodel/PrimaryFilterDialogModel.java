@@ -93,6 +93,7 @@ public class PrimaryFilterDialogModel implements ViewModel {
                 ));
     }
 
+    //TODO move to own class
     public static class Filter {
         public LocalDate startDate, endDate;
         public int gender, age, income, context;
@@ -111,6 +112,15 @@ public class PrimaryFilterDialogModel implements ViewModel {
             this.age = getDemographicInt(Demographic.Age, age);
             this.income = getDemographicInt(Demographic.Income, income);
             this.context = getDemographicInt(Demographic.Context, context);
+        }
+
+        public boolean isEqualTo(Filter other) {
+            return (this.startDate == null ? other.startDate == null : (other.startDate != null && this.startDate.isEqual(other.startDate))) &&
+                    (this.endDate == null ? other.endDate == null : (other.startDate != null && this.endDate.isEqual(other.endDate))) &&
+                    (this.gender == other.gender) &&
+                    (this.age == other.age) &&
+                    (this.income == other.income) &&
+                    (this.context == other.context);
         }
     }
 }

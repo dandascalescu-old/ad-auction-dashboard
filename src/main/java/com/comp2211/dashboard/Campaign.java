@@ -28,6 +28,8 @@ public class Campaign {
   private String campaignID;
   private DatabaseManager dbManager;
 
+  private Filter appliedFilter;
+
   private BigDecimal totalClickCost, totalImpressionCost, averageAcquisitionCost;
   private long clickDataCount, impressionDataCount, serverDataCount, uniquesCount, bouncesCount, conversionsCount;
 
@@ -89,10 +91,22 @@ public class Campaign {
     return campaignID;
   }
 
+  public boolean hasAppliedFilter() {
+    return appliedFilter != null;
+  }
+  public Filter getAppliedFilter() {
+    return appliedFilter;
+  }
+
   /**
    * Fetches and caches entries from the database
    */
   public void cacheData(Filter filter) {
+    if (appliedFilter != null && filter.isEqualTo(appliedFilter)) {
+      Logger.log("Data not cached - filter provided was identical to current applied filter.");
+      return;
+    }
+
     //TODO maybe cache IDs for certain demographics?
     System.out.println("dbManager: " + dbManager);
     clickDataCount = dbManager.retrieveDataCount(DatabaseManager.Table.click_table, filter);
@@ -104,6 +118,8 @@ public class Campaign {
     totalClickCost = dbManager.retrieveTotalCost(Cost.Click_Cost, filter);
     totalImpressionCost = dbManager.retrieveTotalCost(Cost.Impression_Cost, filter);
     averageAcquisitionCost = dbManager.retrieveAverageAcquisitionCost(filter);
+
+    clearCache();
 
     cachedDatedClickCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Click_Cost, filter));
     cachedDatedImpressionCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Impression_Cost, filter));
@@ -118,6 +134,8 @@ public class Campaign {
     cachedGenderPercentage.putAll(percentageMap(Demographic.Gender, dbManager.retrieveDemographics(Demographic.Gender, filter)));
     cachedIncomePercentage.putAll(percentageMap(Demographic.Income, dbManager.retrieveDemographics(Demographic.Income, filter)));
     cachedContextPercentage.putAll(percentageMap(Demographic.Context, dbManager.retrieveDemographics(Demographic.Context, filter)));
+
+    appliedFilter = filter;
 
     Logger.log("Data cached successfully.");
   }
