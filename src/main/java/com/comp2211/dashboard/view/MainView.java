@@ -29,7 +29,7 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
 
         //ViewTuple<PrimaryView, PrimaryViewModel> viewTuple1 = FluentViewLoader.fxmlView(PrimaryViewView.class).load();
 
-        viewTuple1 = FluentViewLoader.fxmlView(PrimaryView.class).load();
+        //viewTuple1 = FluentViewLoader.fxmlView(PrimaryView.class).load();
         mainPane.setCenter(viewTuple1.getView());
     }
 

@@ -207,15 +207,15 @@ public class PrimaryViewModel implements ViewModel {
 
   private void updateBouncesCountByTime(long maxSeconds, boolean allowInf, Filter filter) {
     selectedCampaign.getValue().updateBouncesByTime(maxSeconds, allowInf, filter);
-    updateBounceMetrics(filter);
+    updateBounceMetrics();
   }
 
   private void updateBouncesCountByPages(byte maxPages, Filter filter) {
     selectedCampaign.getValue().updateBouncesByPages(maxPages, filter);
-    updateBounceMetrics(filter);
+    updateBounceMetrics();
   }
 
-  private void updateBounceMetrics(Filter filter) {
+  private void updateBounceMetrics() {
     totalBouncesText.setValue(String.valueOf(selectedCampaign.getValue().getBouncesCount()));
     bounceRateText.setValue(selectedCampaign.getValue().getBounceRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
     bouncesPerConversionText.setValue(selectedCampaign.getValue().getBouncesPerConversion().setScale(2, RoundingMode.CEILING).toPlainString());
@@ -346,12 +346,6 @@ public class PrimaryViewModel implements ViewModel {
     MvvmFX.getNotificationCenter().subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION, (key, payload) -> {
       try {
         Filter filter = (Filter) payload[0];
-
-        //Hacked solution to multiple subscribers being set up
-        if (selectedCampaign.getValue().hasAppliedFilter() && selectedCampaign.getValue().getAppliedFilter().isEqualTo(filter)) {
-          return;
-        }
-
         selectedCampaign.getValue().cacheData(filter);
 
         updateTotalMetrics();
