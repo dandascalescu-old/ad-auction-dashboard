@@ -158,7 +158,7 @@
                   <!--</opaqueInsets>-->
                <!--</BarChart>-->
                <JFXComboBox fx:id="totalMetricCombobox" layoutX="333.0" layoutY="17.0" prefHeight="27.0" prefWidth="180.0" />
-                  <HoverLineChart fx:id="totalMetricsLineChart" layoutX="11.0" layoutY="58.0" prefHeight="258.0" prefWidth="585.0">
+                  <HoverLineChart fx:id="totalMetricsLineChart" animated="false" layoutX="11.0" layoutY="58.0" prefHeight="258.0" prefWidth="585.0">
                     <xAxis>
                       <CategoryAxis side="BOTTOM" />
                     </xAxis>

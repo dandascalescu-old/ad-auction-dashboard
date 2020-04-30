@@ -78,20 +78,20 @@ public class PrimaryViewModel implements ViewModel {
     demographics.addAll(Demographics.Demographic.values());
     totals.addAll(totalImpressions, totalClicks, totalUniques, totalBounces, totalConversions);
 
-    Filter blankFilter = new Filter();
-
     setupCampaignSelector();
 
+    Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter());
+
     // This was in an runnable block, which has been removed to make testing more manageable
-    selectedCampaign.getValue().cacheData(blankFilter);
+    selectedCampaign.getValue().cacheData(filter);
 
     updateTotalMetrics();
     updateTotalCosts();
-    updateBouncesCountDefault(blankFilter);
+    updateBouncesCountDefault(filter);
 
-    setupDemographicSelector(blankFilter);
-    setupAverageSelector(blankFilter);
-    setUpTotalsSelector(blankFilter);
+    setupDemographicSelector(filter);
+    setupAverageSelector(filter);
+    setUpTotalsSelector(filter);
     setupFilterReceiving();
   }
 
@@ -346,14 +346,7 @@ public class PrimaryViewModel implements ViewModel {
     NotificationCenter notificationCenter = MvvmFX.getNotificationCenter();
     notificationCenter.subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION, (key, payload) -> {
       try {
-        /*LocalDate startDate = (LocalDate) payload[0];
-        LocalDate endDate = (LocalDate) payload[1];
-        String genderString = (String) payload[2];
-        String ageString = (String) payload[3];
-        String incomeString = (String) payload[4];
-        String contextString = (String) payload[5];*/
         Filter filter = (Filter) payload[0];
-        selectedCampaign.getValue().clearCache();
         selectedCampaign.getValue().cacheData(filter);
 
         updateTotalMetrics();

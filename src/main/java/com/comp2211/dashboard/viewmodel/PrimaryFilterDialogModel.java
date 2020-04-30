@@ -112,5 +112,14 @@ public class PrimaryFilterDialogModel implements ViewModel {
             this.income = getDemographicInt(Demographic.Income, income);
             this.context = getDemographicInt(Demographic.Context, context);
         }
+
+        public boolean isEqualTo(Filter other) {
+            return (this.startDate == null ? other.startDate == null : this.startDate.isEqual(other.startDate)) &&
+                    (this.endDate == null ? other.endDate == null : this.endDate.isEqual(other.endDate)) &&
+                    (this.gender == other.gender) &&
+                    (this.age == other.age) &&
+                    (this.income == other.income) &&
+                    (this.context == other.context);
+        }
     }
 }

@@ -85,8 +85,6 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   @InjectViewModel
   private PrimaryViewModel viewModel;
 
-
-
   @FXML
   StackPane stackPane;
 
