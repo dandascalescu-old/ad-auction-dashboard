@@ -62,7 +62,6 @@ public class ExportDialog implements FxmlView<ExportDialogViewModel> {
 
         Stage stage = (Stage) dialogExportStack.getScene().getWindow();
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setInitialDirectory(new File("src"));
         File selectedDirectory = directoryChooser.showDialog(stage);
 
         absoluteExportPath = selectedDirectory.getAbsolutePath();
