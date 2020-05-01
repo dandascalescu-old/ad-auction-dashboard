@@ -71,7 +71,7 @@ public class ExportDialog implements FxmlView<ExportDialogViewModel> {
 
         export(selectedDirectory);
 
-        cancelExportDialogAction(event);
+        PrimaryView.cancelExportDialogAction();
     }
 
     private void export(File selectedDirectory) {
