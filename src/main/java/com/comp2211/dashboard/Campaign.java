@@ -25,7 +25,8 @@ public class Campaign {
   // Used as a singleton across app
   private static List<Campaign> allCampaigns = new ArrayList<>();
 
-  private String campaignID;
+  private String campaignName;
+  private int campaignID;
   private DatabaseManager dbManager;
 
   private Filter appliedFilter;
@@ -44,7 +45,7 @@ public class Campaign {
 
   public static Campaign getCampaignByID(String id){
     for(Campaign c : allCampaigns) {
-      if(c.getCampaignID().equals(id)) {
+      if(c.getCampaignName().equals(id)) {
         return c;
       }
     }
@@ -54,10 +55,11 @@ public class Campaign {
   /**
    * Constructor for a campaign.
    *
-   * @param campaignID The unique identifier for a given campaign. Must be given for each campaign.
+   * @param campaignName The unique identifier for a given campaign. Must be given for each campaign.
    */
-  public Campaign(String campaignID, DatabaseManager dbManager) {
+  public Campaign(int campaignID, String campaignName, DatabaseManager dbManager) {
     this.campaignID = campaignID;
+    this.campaignName = campaignName;
     this.dbManager = Objects.requireNonNull(dbManager, "dbManager must not be null");
 
     cachedDatedAcquisitionCostAverages = new LinkedHashMap<>();
@@ -80,15 +82,19 @@ public class Campaign {
 
   @Override
   public String toString(){
-    return getCampaignID();
+    return getCampaignName();
+  }
+
+  public int getCampaignID() {
+    return campaignID;
   }
 
   /**
    * Get the id of the campaign
    * @return the id
    */
-  public String getCampaignID() {
-    return campaignID;
+  public String getCampaignName() {
+    return campaignName;
   }
 
   public boolean hasAppliedFilter() {

@@ -1,5 +1,6 @@
 package com.comp2211.dashboard.io;
 
+import com.comp2211.dashboard.Campaign;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -18,7 +19,9 @@ import com.comp2211.dashboard.util.UserSession;
 public class MySQLManager extends DatabaseManager {
 
   public MySQLManager() {
-    this("64.227.36.253","3306","seg","seg23","exw3karpouziastinakri", Table.click_table.toString(), Table.impression_table.toString(), Table.server_table.toString());
+    this("64.227.36.253","3306","seg","seg23","exw3karpouziastinakri", Table.click_table.toString(), Table.impression_table.toString(), Table.server_table.toString(), Table.campaign_table.toString());
+//    this("64.227.36.253","3306","seg2020","seg23dev","12345", Table.click_table.toString(), Table.impression_table.toString(), Table.server_table.toString(), Table.campaign_table.toString());
+
   }
 
   public MySQLManager(final String host, final String port, final String db, final String user, final String pw) {
@@ -29,6 +32,7 @@ public class MySQLManager extends DatabaseManager {
     click_table = Table.click_table.toString();
     impression_table = Table.impression_table.toString();
     server_table = Table.server_table.toString();
+    campaign_table = Table.campaign_table.toString();
 
     if (sqlDatabase.getConnection() == null) {
       Logger.log("Cannot establish database connection. Exiting now.");
@@ -47,7 +51,8 @@ public class MySQLManager extends DatabaseManager {
       final String pw,
       final String c_table,
       final String i_table,
-      final String s_table) {
+      final String s_table,
+      final String camp_table) {
     this(host, port, db, user, pw);
   }
 
@@ -163,6 +168,10 @@ public class MySQLManager extends DatabaseManager {
       valid = false;
     }
     if (!sqlDatabase.tableExists(server_table)) {
+      Logger.log("Server table doesn't exist.");
+      valid = false;
+    }
+    if (!sqlDatabase.tableExists(campaign_table)) {
       Logger.log("Server table doesn't exist.");
       valid = false;
     }
@@ -472,7 +481,8 @@ public class MySQLManager extends DatabaseManager {
     if (table.equals(Table.server_table)) dateTitle = "Entry_Date";
 
     String where = "";
-    where += (filter.startDate != null ?                                    "DATE(" + dateTitle + ") >= '" + filter.startDate.toString() + "'" : "");
+    where += "Campaign_ID = " + filter.campaignID;
+    where += (filter.startDate != null ? (where.isEmpty() ? "" : " AND ") + "DATE(" + dateTitle + ") >= '" + filter.startDate.toString() + "'" : "");
     where += (filter.endDate   != null ? (where.isEmpty() ? "" : " AND ") + "DATE(" + dateTitle + ") <= '" + filter.endDate.toString()   + "'" : "");
 
     String ID = "";
@@ -487,7 +497,7 @@ public class MySQLManager extends DatabaseManager {
 
     ID = (ID.isEmpty() ? ID : "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE " + ID + ")");
     where = (where.isEmpty() ? (ID.isEmpty() ? "" : ID) : (ID.isEmpty() ? where : where + " AND " + ID));
-
+    System.out.println(where);
     return where;
   }
 }

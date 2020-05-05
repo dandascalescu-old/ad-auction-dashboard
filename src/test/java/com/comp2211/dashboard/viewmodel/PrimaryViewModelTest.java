@@ -3,16 +3,13 @@ package com.comp2211.dashboard.viewmodel;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.comp2211.dashboard.Campaign;
-import com.comp2211.dashboard.GUIStarter;
 import com.comp2211.dashboard.io.DatabaseManager;
 import com.comp2211.dashboard.io.MockDatabaseManager;
 import com.comp2211.dashboard.model.data.Demographics;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import javafx.collections.FXCollections;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,8 +26,8 @@ class PrimaryViewModelTest {
     this.manager = new MockDatabaseManager();
 
     // Instantiates Campaign singleton with multiple campaigns
-    new Campaign("Demo Campaign 1", this.manager);
-    new Campaign("Demo Campaign 2", this.manager);
+    new Campaign(1,"Demo Campaign 1", this.manager);
+    new Campaign(2, "Demo Campaign 2", this.manager);
 
     this.viewModel = new PrimaryViewModel();
     this.viewModel.initialize();
@@ -50,7 +47,7 @@ class PrimaryViewModelTest {
     int i = 0;
     for (Iterator<Campaign> it = this.viewModel.campaignsList().iterator(); it.hasNext(); i++) {
       Campaign c = it.next();
-      if (!c.getCampaignID().equals(Campaign.getCampaigns().get(i).getCampaignID())) {
+      if (!c.getCampaignName().equals(Campaign.getCampaigns().get(i).getCampaignName())) {
         listMatches = false;
         break;
       }

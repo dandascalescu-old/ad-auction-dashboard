@@ -164,6 +164,7 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
   public void openFilterDialog(ActionEvent event) {
     primaryDialogView = FluentViewLoader.fxmlView(PrimaryFilterDialog.class).load();
+    primaryDialogView.getViewModel().setCampaignID(viewModel.selectedCampaignProperty().get().getCampaignID());
     JFXDialogLayout dialogLayout = new JFXDialogLayout();
     dialogLayout.setBody(primaryDialogView.getView());
     dialogFilter = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);

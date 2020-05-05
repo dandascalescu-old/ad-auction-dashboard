@@ -11,9 +11,9 @@ public abstract class DatabaseManager {
 
   protected Database sqlDatabase;
   protected boolean open = false;
-  protected String click_table, impression_table, server_table;
+  protected String click_table, impression_table, server_table, campaign_table;
 
-  public enum Table { click_table, impression_table, server_table }
+  public enum Table { click_table, impression_table, server_table, campaign_table }
   public enum Cost { Click_Cost, Impression_Cost }
 
   /**
@@ -41,6 +41,10 @@ public abstract class DatabaseManager {
 
   public String getServerTable() {
     return server_table;
+  }
+
+  public String getCampaign_table() {
+    return campaign_table;
   }
 
   /**

@@ -79,7 +79,7 @@ public class PrimaryViewModel implements ViewModel {
 
     setupCampaignSelector();
 
-    Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter());
+    Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter(selectedCampaign.get().getCampaignID()));
 
     // This was in an runnable block, which has been removed to make testing more manageable
     selectedCampaign.getValue().cacheData(filter);
@@ -341,6 +341,8 @@ public class PrimaryViewModel implements ViewModel {
     }
     totalMetricChartData.add(s);
   }
+
+
 
   private void setupFilterReceiving() {
     MvvmFX.getNotificationCenter().subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION, (key, payload) -> {
