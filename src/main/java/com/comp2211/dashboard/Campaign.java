@@ -90,8 +90,8 @@ public class Campaign {
   }
 
   /**
-   * Get the id of the campaign
-   * @return the id
+   * Get the name of the campaign
+   * @return the name
    */
   public String getCampaignName() {
     return campaignName;

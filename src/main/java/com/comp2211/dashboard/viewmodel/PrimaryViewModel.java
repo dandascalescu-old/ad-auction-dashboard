@@ -228,12 +228,18 @@ public class PrimaryViewModel implements ViewModel {
       if (newVal != null) {
         Optional<Campaign> matchingCampaign = Campaign.getCampaigns().stream().filter(newVal::equals).findFirst();
         matchingCampaign.ifPresent(cam -> selectedCampaign.setValue(cam));
+        //todo: update dashboard to show new data
       } else {
         selectedCampaign.setValue(Campaign.getCampaigns().get(0));
       }
+
     });
 
     selectedCampaign.setValue(Campaign.getCampaigns().get(0));
+  }
+
+  private void updateCampaign(){
+    
   }
 
   private void setupAverageSelector() {

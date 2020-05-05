@@ -57,6 +57,7 @@ public class MySQLManager extends DatabaseManager {
   }
 
   public List<List<String>> retrieve(String statement, Object[] params, String[] resultColumns) {
+    System.out.println(statement);
     PreparedStatement stmt = null;
     ResultSet rs = null;
     List<List<String>> results = new ArrayList<>();
@@ -490,7 +491,6 @@ public class MySQLManager extends DatabaseManager {
     if (table.equals(Table.server_table)) dateTitle = "Entry_Date";
 
     String where = "";
-    where += "Campaign_ID = " + filter.campaignID;
     where += (filter.startDate != null ? (where.isEmpty() ? "" : " AND ") + "DATE(" + dateTitle + ") >= '" + filter.startDate.toString() + "'" : "");
     where += (filter.endDate   != null ? (where.isEmpty() ? "" : " AND ") + "DATE(" + dateTitle + ") <= '" + filter.endDate.toString()   + "'" : "");
 
@@ -506,7 +506,7 @@ public class MySQLManager extends DatabaseManager {
 
     ID = (ID.isEmpty() ? ID : "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE " + ID + ")");
     where = (where.isEmpty() ? (ID.isEmpty() ? "" : ID) : (ID.isEmpty() ? where : where + " AND " + ID));
-    System.out.println(where);
+    where += (where.isEmpty() ? " Campaign_ID = "  + filter.getCampaignID() : " AND Campaign_ID = " + filter.getCampaignID());
     return where;
   }
 }
