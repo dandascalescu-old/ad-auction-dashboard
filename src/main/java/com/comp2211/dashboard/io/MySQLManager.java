@@ -1,6 +1,7 @@
 package com.comp2211.dashboard.io;
 
 import com.comp2211.dashboard.Campaign;
+import com.comp2211.dashboard.model.data.Filter;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -9,7 +10,6 @@ import java.sql.SQLException;
 import java.util.*;
 
 import com.comp2211.dashboard.util.Logger;
-import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel.Filter;
 import org.apache.commons.dbutils.DbUtils;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import com.comp2211.dashboard.model.data.Demographics;
@@ -444,6 +444,14 @@ public class MySQLManager extends DatabaseManager {
     );
   }
 
+
+  public String retrieveCampaignName(int campaignID){
+    String statement = "SELECT Name " +
+        "FROM " + campaign_table +
+        " WHERE Campaign_ID = " + campaignID;
+    return retrieve(statement, new Object[]{}, new String[]{"Name"}).get(0).get(0);
+  }
+
   /**
    * Attempt to login using given credentials and create UserSession
    * @param username the username to use during login
@@ -475,6 +483,7 @@ public class MySQLManager extends DatabaseManager {
     }
     return false;
   }
+
 
   private static String filterToWhere(Filter filter, Table table) {
     String dateTitle = "Date";

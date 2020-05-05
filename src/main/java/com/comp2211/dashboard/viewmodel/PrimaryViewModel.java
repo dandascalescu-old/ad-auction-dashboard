@@ -3,8 +3,8 @@ package com.comp2211.dashboard.viewmodel;
 import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.model.data.Demographics;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
+import com.comp2211.dashboard.model.data.Filter;
 import com.comp2211.dashboard.util.Logger;
-import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel.Filter;
 import de.saxsys.mvvmfx.MvvmFX;
 import de.saxsys.mvvmfx.ViewModel;
 import java.math.BigDecimal;
@@ -79,7 +79,7 @@ public class PrimaryViewModel implements ViewModel {
 
     setupCampaignSelector();
 
-    Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter(selectedCampaign.get().getCampaignID()));
+    Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter());
 
     // This was in an runnable block, which has been removed to make testing more manageable
     selectedCampaign.getValue().cacheData(filter);
@@ -348,6 +348,7 @@ public class PrimaryViewModel implements ViewModel {
     MvvmFX.getNotificationCenter().subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION, (key, payload) -> {
       try {
         Filter filter = (Filter) payload[0];
+        filter.setCampaignID(selectedCampaign.get().getCampaignID());
         selectedCampaign.getValue().cacheData(filter);
 
         updateTotalMetrics();

@@ -1,10 +1,10 @@
 package com.comp2211.dashboard;
 
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
+import com.comp2211.dashboard.model.data.Filter;
 import com.comp2211.dashboard.util.Logger;
 import com.comp2211.dashboard.io.DatabaseManager;
 import com.comp2211.dashboard.io.DatabaseManager.Cost;
-import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel.Filter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -43,9 +43,9 @@ public class Campaign {
   }
   public static void removeAllCampaigns() { allCampaigns = new ArrayList<>(); }
 
-  public static Campaign getCampaignByID(String id){
+  public static Campaign getCampaignByID(int id){
     for(Campaign c : allCampaigns) {
-      if(c.getCampaignName().equals(id)) {
+      if(c.getCampaignID() == id) {
         return c;
       }
     }

@@ -1,7 +1,9 @@
 package com.comp2211.dashboard.io;
 
+import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.model.data.Demographics;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
+import com.comp2211.dashboard.model.data.Filter;
 import com.comp2211.dashboard.util.Logger;
 import com.comp2211.dashboard.util.Security;
 import com.comp2211.dashboard.util.UserSession;
@@ -20,7 +22,6 @@ import java.util.List;
 import javax.swing.ButtonGroup;
 
 import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel;
-import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel.Filter;
 import org.apache.commons.dbutils.DbUtils;
 
 public class MockDatabaseManager extends DatabaseManager {
@@ -223,6 +224,11 @@ public class MockDatabaseManager extends DatabaseManager {
   @Override
   public long retrieveDataCount(Table table, boolean unique, Filter filter) {
     return 10;
+  }
+
+  @Override
+  public String retrieveCampaignName(int campaignID) {
+    return "Demo Campaign";
   }
 
   /**

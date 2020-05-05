@@ -1,11 +1,11 @@
 package com.comp2211.dashboard.io;
 
+import com.comp2211.dashboard.model.data.Filter;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import com.comp2211.dashboard.util.Logger;
 import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel;
-import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel.Filter;
 
 public abstract class DatabaseManager {
 
@@ -121,6 +121,8 @@ public abstract class DatabaseManager {
    * Retrieve the amount of entries in the specified database table
    */
   public abstract long retrieveDataCount(Table table, boolean unique, Filter filter);
+
+  public abstract String retrieveCampaignName(int campaignID);
 
   public long retrieveDataCount(Table table, Filter filter) {
     return retrieveDataCount(table, false, filter);
