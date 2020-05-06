@@ -57,13 +57,12 @@ public class MySQLManager extends DatabaseManager {
   }
 
   public List<List<String>> retrieve(String statement, Object[] params, String[] resultColumns) {
-    System.out.println(statement);
+    //System.out.println(statement);
     PreparedStatement stmt = null;
     ResultSet rs = null;
     List<List<String>> results = new ArrayList<>();
     try {
       stmt = sqlDatabase.getConnection().prepareStatement(statement);
-      //System.out.println(sb.toString());//test
 
       for (int i = 0; i < params.length; i++) {
         if (params[i] instanceof Byte)
@@ -445,7 +444,6 @@ public class MySQLManager extends DatabaseManager {
     );
   }
 
-
   public String retrieveCampaignName(int campaignID){
     String statement = "SELECT Name " +
         "FROM " + campaign_table +
@@ -484,7 +482,6 @@ public class MySQLManager extends DatabaseManager {
     }
     return false;
   }
-
 
   private static String filterToWhere(Filter filter, Table table) {
     String dateTitle = "Date";
