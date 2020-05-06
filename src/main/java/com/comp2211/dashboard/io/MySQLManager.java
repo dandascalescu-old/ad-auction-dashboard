@@ -1,5 +1,7 @@
 package com.comp2211.dashboard.io;
 
+import com.comp2211.dashboard.Campaign;
+import com.comp2211.dashboard.model.data.Filter;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -8,7 +10,6 @@ import java.sql.SQLException;
 import java.util.*;
 
 import com.comp2211.dashboard.util.Logger;
-import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel.Filter;
 import org.apache.commons.dbutils.DbUtils;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import com.comp2211.dashboard.model.data.Demographics;
@@ -18,7 +19,9 @@ import com.comp2211.dashboard.util.UserSession;
 public class MySQLManager extends DatabaseManager {
 
   public MySQLManager() {
-    this("64.227.36.253","3306","seg","seg23","exw3karpouziastinakri", Table.click_table.toString(), Table.impression_table.toString(), Table.server_table.toString());
+    this("64.227.36.253","3306","seg","seg23","exw3karpouziastinakri", Table.click_table.toString(), Table.impression_table.toString(), Table.server_table.toString(), Table.campaign_table.toString());
+//    this("64.227.36.253","3306","seg2020","seg23dev","12345", Table.click_table.toString(), Table.impression_table.toString(), Table.server_table.toString(), Table.campaign_table.toString());
+
   }
 
   public MySQLManager(final String host, final String port, final String db, final String user, final String pw) {
@@ -29,6 +32,7 @@ public class MySQLManager extends DatabaseManager {
     click_table = Table.click_table.toString();
     impression_table = Table.impression_table.toString();
     server_table = Table.server_table.toString();
+    campaign_table = Table.campaign_table.toString();
 
     if (sqlDatabase.getConnection() == null) {
       Logger.log("Cannot establish database connection. Exiting now.");
@@ -47,17 +51,18 @@ public class MySQLManager extends DatabaseManager {
       final String pw,
       final String c_table,
       final String i_table,
-      final String s_table) {
+      final String s_table,
+      final String camp_table) {
     this(host, port, db, user, pw);
   }
 
   public List<List<String>> retrieve(String statement, Object[] params, String[] resultColumns) {
+    //System.out.println(statement);
     PreparedStatement stmt = null;
     ResultSet rs = null;
     List<List<String>> results = new ArrayList<>();
     try {
       stmt = sqlDatabase.getConnection().prepareStatement(statement);
-      //System.out.println(sb.toString());//test
 
       for (int i = 0; i < params.length; i++) {
         if (params[i] instanceof Byte)
@@ -166,6 +171,10 @@ public class MySQLManager extends DatabaseManager {
       Logger.log("Server table doesn't exist.");
       valid = false;
     }
+    if (!sqlDatabase.tableExists(campaign_table)) {
+      Logger.log("Server table doesn't exist.");
+      valid = false;
+    }
     if(valid) {
       Logger.log("Verification complete.");
     }
@@ -183,7 +192,7 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public BigDecimal retrieveTotalCost(Cost type, Filter filter) {
-    String where = filterToWhere(filter, Table.impression_table);
+    String where = filterToWhere(filter, (type.equals(Cost.Click_Cost) ? Table.click_table : Table.impression_table));
     String statement = "SELECT SUM(" + type.toString() + ") AS SUM " +
             "FROM " + (type.equals(Cost.Click_Cost) ? click_table : impression_table) +
             ( where.isEmpty() ? "" : " WHERE " + where );
@@ -260,7 +269,7 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type, Filter filter) {
-    String where = filterToWhere(filter, Table.impression_table);
+    String where = filterToWhere(filter, (type.equals(Cost.Click_Cost) ? Table.click_table : Table.impression_table));
     String statement = "SELECT DATE(Date) AS DateOnly, AVG(" + type.toString() + ") AS AVG " +
             "FROM " + (type.equals(Cost.Click_Cost) ? click_table : impression_table) +
             ( where.isEmpty() ? "" : " WHERE " + where ) +
@@ -435,6 +444,13 @@ public class MySQLManager extends DatabaseManager {
     );
   }
 
+  public String retrieveCampaignName(int campaignID){
+    String statement = "SELECT Name " +
+        "FROM " + campaign_table +
+        " WHERE Campaign_ID = " + campaignID;
+    return retrieve(statement, new Object[]{}, new String[]{"Name"}).get(0).get(0);
+  }
+
   /**
    * Attempt to login using given credentials and create UserSession
    * @param username the username to use during login
@@ -480,14 +496,11 @@ public class MySQLManager extends DatabaseManager {
     ID += (filter.age     >= 0 ? (ID.isEmpty() ? "" : " AND ") + "Age = "     + filter.age     : "");
     ID += (filter.income  >= 0 ? (ID.isEmpty() ? "" : " AND ") + "Income = "  + filter.income  : "");
     ID += (filter.context >= 0 ? (ID.isEmpty() ? "" : " AND ") + "Context = " + filter.context : "");
-    /*where += (filter.gender    >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Gender = "  + filter.gender  + ")" : "");
-    where += (filter.age       >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Age = "     + filter.age     + ")" : "");
-    where += (filter.income    >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Income = "  + filter.income  + ")" : "");
-    where += (filter.context   >= 0    ? (where.isEmpty() ? "" : " AND ") + "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE Context = " + filter.context + ")" : "");*/
 
-    ID = (ID.isEmpty() ? ID : "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE " + ID + ")");
+    if (!table.equals(Table.impression_table))
+      ID = (ID.isEmpty() ? ID : "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE " + ID + ")");
     where = (where.isEmpty() ? (ID.isEmpty() ? "" : ID) : (ID.isEmpty() ? where : where + " AND " + ID));
-
+    where += (where.isEmpty() ? " Campaign_ID = "  + filter.getCampaignID() : " AND Campaign_ID = " + filter.getCampaignID());
     return where;
   }
 }

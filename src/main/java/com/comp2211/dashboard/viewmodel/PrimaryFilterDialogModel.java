@@ -1,9 +1,12 @@
 package com.comp2211.dashboard.viewmodel;
 
+import com.comp2211.dashboard.model.data.Filter;
 import de.saxsys.mvvmfx.MvvmFX;
 import de.saxsys.mvvmfx.ViewModel;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -30,6 +33,8 @@ public class PrimaryFilterDialogModel implements ViewModel {
     private StringProperty ageString = new SimpleStringProperty("");
     private StringProperty incomeString = new SimpleStringProperty("");
     private StringProperty contextString = new SimpleStringProperty("");
+
+    private IntegerProperty campaignID = new SimpleIntegerProperty(1);
 
     public void initialize() {
         notificationCenter = MvvmFX.getNotificationCenter();
@@ -87,40 +92,11 @@ public class PrimaryFilterDialogModel implements ViewModel {
 
     public void applyFilters() {
         notificationCenter.publish(FILTER_NOTIFICATION,
-                new Filter(
-                        startDate.getValue(), endDate.getValue(),
+                new Filter(startDate.getValue(), endDate.getValue(),
                         genderString.getValue(), ageString.getValue(), incomeString.getValue(), contextString.getValue()
                 ));
     }
 
-    //TODO move to own class
-    public static class Filter {
-        public LocalDate startDate, endDate;
-        public int gender, age, income, context;
 
-        public Filter() {
-            this.gender = -1;
-            this.age = -1;
-            this.income = -1;
-            this.context = -1;
-        }
 
-        public Filter(LocalDate startDate, LocalDate endDate, String gender, String age, String income, String context) {
-            this.startDate = startDate;
-            this.endDate = endDate;
-            this.gender = getDemographicInt(Demographic.Gender, gender);
-            this.age = getDemographicInt(Demographic.Age, age);
-            this.income = getDemographicInt(Demographic.Income, income);
-            this.context = getDemographicInt(Demographic.Context, context);
-        }
-
-        public boolean isEqualTo(Filter other) {
-            return (this.startDate == null ? other.startDate == null : (other.startDate != null && this.startDate.isEqual(other.startDate))) &&
-                    (this.endDate == null ? other.endDate == null : (other.startDate != null && this.endDate.isEqual(other.endDate))) &&
-                    (this.gender == other.gender) &&
-                    (this.age == other.age) &&
-                    (this.income == other.income) &&
-                    (this.context == other.context);
-        }
-    }
 }

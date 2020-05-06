@@ -3,8 +3,8 @@ package com.comp2211.dashboard.viewmodel;
 import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.model.data.Demographics;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
+import com.comp2211.dashboard.model.data.Filter;
 import com.comp2211.dashboard.util.Logger;
-import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel.Filter;
 import de.saxsys.mvvmfx.MvvmFX;
 import de.saxsys.mvvmfx.ViewModel;
 import java.math.BigDecimal;
@@ -228,12 +228,25 @@ public class PrimaryViewModel implements ViewModel {
       if (newVal != null) {
         Optional<Campaign> matchingCampaign = Campaign.getCampaigns().stream().filter(newVal::equals).findFirst();
         matchingCampaign.ifPresent(cam -> selectedCampaign.setValue(cam));
+        updateCampaign();
       } else {
         selectedCampaign.setValue(Campaign.getCampaigns().get(0));
       }
+
     });
 
     selectedCampaign.setValue(Campaign.getCampaigns().get(0));
+  }
+
+  private void updateCampaign(){
+    Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter());
+    updateTotalMetrics();
+    updateTotalCosts();
+    updateBouncesCountDefault(filter);
+
+    updatePieChartData(selectedCampaign.getValue().getPercentageMap(Demographic.Gender));
+    updateAverages();
+    updateTotals();
   }
 
   private void setupAverageSelector() {
@@ -342,10 +355,13 @@ public class PrimaryViewModel implements ViewModel {
     totalMetricChartData.add(s);
   }
 
+
+
   private void setupFilterReceiving() {
     MvvmFX.getNotificationCenter().subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION, (key, payload) -> {
       try {
         Filter filter = (Filter) payload[0];
+        filter.setCampaignID(selectedCampaign.get().getCampaignID());
         selectedCampaign.getValue().cacheData(filter);
 
         updateTotalMetrics();
