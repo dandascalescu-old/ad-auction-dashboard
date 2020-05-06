@@ -228,7 +228,7 @@ public class PrimaryViewModel implements ViewModel {
       if (newVal != null) {
         Optional<Campaign> matchingCampaign = Campaign.getCampaigns().stream().filter(newVal::equals).findFirst();
         matchingCampaign.ifPresent(cam -> selectedCampaign.setValue(cam));
-        //todo: update dashboard to show new data
+        updateCampaign();
       } else {
         selectedCampaign.setValue(Campaign.getCampaigns().get(0));
       }
@@ -239,7 +239,14 @@ public class PrimaryViewModel implements ViewModel {
   }
 
   private void updateCampaign(){
-    
+    Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter());
+    updateTotalMetrics();
+    updateTotalCosts();
+    updateBouncesCountDefault(filter);
+
+    updatePieChartData(selectedCampaign.getValue().getPercentageMap(Demographic.Gender));
+    updateAverages();
+    updateTotals();
   }
 
   private void setupAverageSelector() {
