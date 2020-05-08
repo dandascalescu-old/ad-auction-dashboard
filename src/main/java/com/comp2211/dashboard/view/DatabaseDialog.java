@@ -4,6 +4,7 @@ import com.comp2211.dashboard.GUIStarter;
 import com.comp2211.dashboard.io.DataImporter;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
+import de.saxsys.mvvmfx.MvvmFX;
 import java.sql.SQLException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -92,6 +93,7 @@ public class DatabaseDialog {
         }else{
             try{
             dataImporter.startImport(campaignTitle.getText(), new File(impressionFilePath), new File(clickFilePath), new File(serverFilePath));
+            MvvmFX.getNotificationCenter().publish("Imported");
             }catch (SQLException e){
                 e.printStackTrace();
             }

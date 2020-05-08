@@ -93,6 +93,7 @@ public class PrimaryViewModel implements ViewModel {
     setUpTotalsSelector();
 
     setupFilterReceiving();
+    setupCampaignReceiving();
   }
 
   public ObservableList<Campaign> campaignsList() {
@@ -378,6 +379,13 @@ public class PrimaryViewModel implements ViewModel {
         Logger.log("Invalid filter received");
       }
     });
+  }
+
+  private void setupCampaignReceiving(){
+    MvvmFX.getNotificationCenter().subscribe("Imported", (key, payload) -> {
+      campaigns.setAll(Campaign.getCampaigns());
+      System.out.println("campaigns set.");
+      });
   }
 
 }
