@@ -15,6 +15,7 @@ import javafx.scene.text.Text;
 import java.time.LocalDate;
 
 public class PrimaryFilterDialog implements FxmlView<PrimaryFilterDialogModel> {
+    //TODO include a 'clear selection' button
 
     @FXML
     private DatePicker startDatePicker, endDatePicker;
@@ -41,18 +42,18 @@ public class PrimaryFilterDialog implements FxmlView<PrimaryFilterDialogModel> {
 
     @FXML
     void cancelDialog(ActionEvent event) {
+        startDatePicker.valueProperty().setValue(null);
+        endDatePicker.valueProperty().setValue(null);
+        genderComboBox.valueProperty().setValue(null);
+        ageComboBox.valueProperty().setValue(null);
+        incomeComboBox.valueProperty().setValue(null);
+        contextComboBox.valueProperty().setValue(null);
+
         PrimaryView.cancelDialogAction();
     }
 
     @FXML
     void saveFilter(ActionEvent event){
-        /*LocalDate pickedStartDate = startDatePicker.getValue();
-        LocalDate pickedEndDate = endDatePicker.getValue();
-
-        String pickedGender = genderComboBox.getValue();
-        String pickedAge = ageComboBox.getValue();
-        String pickedIncome = incomeComboBox.getValue();
-        String pickedContext = contextComboBox.getValue();*/
         viewModel.applyFilters();
 
         PrimaryView.cancelDialogAction();

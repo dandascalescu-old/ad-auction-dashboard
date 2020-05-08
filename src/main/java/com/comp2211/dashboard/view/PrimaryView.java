@@ -3,8 +3,8 @@ package com.comp2211.dashboard.view;
 import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import com.comp2211.dashboard.viewmodel.ExportDialogViewModel;
-import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel;
 import com.comp2211.dashboard.viewmodel.PrimaryViewModel;
+import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDialog;
@@ -15,10 +15,8 @@ import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.ViewTuple;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.control.Button;
 import javafx.scene.chart.PieChart;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -164,7 +162,8 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
 
   public void openFilterDialog(ActionEvent event) {
-    primaryDialogView = FluentViewLoader.fxmlView(PrimaryFilterDialog.class).load();
+    if (primaryDialogView == null)
+      primaryDialogView = FluentViewLoader.fxmlView(PrimaryFilterDialog.class).load();
     JFXDialogLayout dialogLayout = new JFXDialogLayout();
     dialogLayout.setBody(primaryDialogView.getView());
     dialogFilter = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
@@ -173,7 +172,8 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   }
 
   public void openExportDataWindow(ActionEvent event) throws IOException {
-    exportDialogView = FluentViewLoader.fxmlView(ExportDialog.class).load();
+    if (exportDialogView == null)
+      exportDialogView = FluentViewLoader.fxmlView(ExportDialog.class).load();
     exportDialogView.getCodeBehind().setPrimaryView(this);
     JFXDialogLayout dialogLayout = new JFXDialogLayout();
     dialogLayout.setBody(exportDialogView.getView());

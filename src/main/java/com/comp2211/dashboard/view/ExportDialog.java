@@ -59,17 +59,19 @@ public class ExportDialog implements FxmlView<ExportDialogViewModel> {
     }
 
     public void exportFilesAction(ActionEvent event){
+        //TODO maybe move to viewmodel class
 
         Stage stage = (Stage) dialogExportStack.getScene().getWindow();
         DirectoryChooser directoryChooser = new DirectoryChooser();
         File selectedDirectory = directoryChooser.showDialog(stage);
 
+        //TODO fix possible nullpointer
         absoluteExportPath = selectedDirectory.getAbsolutePath();
         System.out.println(absoluteExportPath);
 
         export(selectedDirectory);
 
-        cancelExportDialogAction(event);
+        PrimaryView.cancelExportDialogAction();
     }
 
     private void export(File selectedDirectory) {
@@ -114,6 +116,14 @@ public class ExportDialog implements FxmlView<ExportDialogViewModel> {
     }
 
     public void cancelExportDialogAction(ActionEvent event) {
+        ctrExportCheckBox.selectedProperty().setValue(false);
+        convUniquesExportCheckBox.selectedProperty().setValue(false);
+        totalMetricsExportCheckBox.selectedProperty().setValue(false);
+        totalCostsExportCheckBox.selectedProperty().setValue(false);
+        totalOverTimeExportCheckBox.selectedProperty().setValue(false);
+        demographExportCheckBox.selectedProperty().setValue(false);
+        averageCostExportCheckBox.selectedProperty().setValue(false);
+
         PrimaryView.cancelExportDialogAction();
     }
 }
