@@ -132,6 +132,7 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     demographicsChart.setLegendVisible(false);
 
     totalMetricsLineChart.setData(viewModel.totalMetricChartData());
+    totalMetricsLineChart.setLegendVisible(false);
 
     totalImpressions.textProperty().bind(viewModel.getTotalImpressionsProperty());
     totalClicks.textProperty().bind(viewModel.getTotalClicksProperty());

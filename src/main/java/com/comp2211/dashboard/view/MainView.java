@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -27,31 +28,24 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
 
     public void openDashboardPane(ActionEvent actionEvent) throws IOException {
 
-        //ViewTuple<PrimaryView, PrimaryViewModel> viewTuple1 = FluentViewLoader.fxmlView(PrimaryViewView.class).load();
-
-        //viewTuple1 = FluentViewLoader.fxmlView(PrimaryView.class).load();
         mainPane.setCenter(viewTuple1.getView());
     }
 
     public void openDatabasePane(ActionEvent actionEvent) throws IOException {
-
-
-
         Parent root = FXMLLoader.load(getClass().getResource("DatabaseView.fxml"));
         mainPane.setCenter(root);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-
         viewTuple1 = FluentViewLoader.fxmlView(PrimaryView.class).load();
         mainPane.setCenter(viewTuple1.getView());
 
     }
 
-    public void openFilterDialog(){
-
+    public void openComparePane(ActionEvent actionEvent) throws IOException{
+        Parent root = FXMLLoader.load(getClass().getResource("CompareView.fxml"));
+        mainPane.setCenter(root);
     }
 
 }
