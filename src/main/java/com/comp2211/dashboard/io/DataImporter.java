@@ -4,14 +4,17 @@ import com.comp2211.dashboard.GUIStarter;
 import com.comp2211.dashboard.io.DatabaseManager.Table;
 import com.comp2211.dashboard.util.UserSession;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class DataImporter {
 
@@ -57,57 +60,74 @@ public class DataImporter {
   }
 
   private void importData(File file, Table table, String columnNames, int campaignID) throws SQLException {
-    ArrayList<String[]> list = readCSV(file);
+    LinkedList<String[]> list = readCSV(file);
+    long startTime = System.currentTimeMillis();
     String sql = "INSERT INTO " + table.toString() + " (" + columnNames + ") VALUES ";
     StringBuilder sb = new StringBuilder(sql);
-    String seperator = "";
+    String separator = "";
     for (String[] record : list) {
-      sb.append(seperator + "(");
-      seperator = ",";
+      sb.append(separator).append("(");
+      separator = ",";
       for (String value : record) {
         value = value.toLowerCase();
         if (value.contains(":")) {
           value = parseDate(value);
+        } else {
+          switch (value) {
+            case "n/a":
+              sb.append("NULL,");
+              continue;
+            case "male":
+            case "low":
+            case "blog":
+            case "no":
+            case "<25":
+              value = "0";
+              break;
+            case "female":
+            case "medium":
+            case "yes":
+            case "news":
+            case "25-34":
+              value = "1";
+              break;
+            case "high":
+            case "shopping":
+            case "35-44":
+              value = "2";
+              break;
+            case "social media":
+            case "45-54":
+              value = "3";
+              break;
+            case ">54":
+              value = "4";
+              break;
+          }
         }
-        if(value.equals("n/a")){
-          sb.append("NULL,");
-          continue;
-        }
-        if (value.equals("male") || value.equals("low") || value.equals("blog") || value.equals("no") || value.equals("<25")){
-          value = "0";
-        }
-        if (value.equals("female") || value.equals("medium") || value.equals("yes") || value.equals("news") || value.equals("25-34")){
-          value = "1";
-        }
-        if (value.equals("high") || value.equals("shopping")|| value.equals("35-44")){
-          value = "2";
-        }
-        if (value.equals("social media")|| value.equals("45-54")){
-          value = "3";
-        }
-        if(value.equals(">54")){
-          value = "4";
-        }
-        sb.append("'" + value + "'" + ",");
+        sb.append("'").append(value).append("'").append(",");
       }
-      sb.append(campaignID + ")");
+      sb.append(campaignID).append(")");
     }
     sql = sb.toString();
     PreparedStatement statement = GUIStarter.getDatabaseManager().sqlDatabase.getConnection().prepareStatement(sql);
-    System.out.println(statement);
+    System.out.println("importData (build statement): "+ (System.currentTimeMillis() - startTime));
+    startTime = System.currentTimeMillis();
     statement.executeUpdate();
+    System.out.println("importData (execute statement): "+ (System.currentTimeMillis() - startTime));
   }
 
   private String parseDate(String value) {
-    String dd = value.substring(0, 2);
-    String mm = value.substring(3, 5);
-    String yyyy = value.substring(6, 10);
-    return yyyy + "-" + mm + "-" + dd + value.substring(10);
+//    String dd = value.substring(0, 2);
+//    String mm = value.substring(3, 5);
+//    String yyyy = value.substring(6, 10);
+    return value.substring(6, 10) + "-" + value.substring(3, 5) + "-" + value.substring(0, 2) + value.substring(10);
   }
 
-  private ArrayList<String[]> readCSV(File file) {
+  private LinkedList<String[]> readCSV(File file) {
+    long startTime = System.currentTimeMillis();
     String line = "";
-    ArrayList<String[]> list = new ArrayList<>();
+    LinkedList<String[]> list = new LinkedList<>();
     BufferedReader bufferedReader = null;
     try {
       bufferedReader = new BufferedReader(new FileReader(file));
@@ -126,7 +146,8 @@ public class DataImporter {
         }
       }
     }
-    list.remove(0);
+    list.removeFirst();
+    System.out.println("readCSV: "+ (System.currentTimeMillis() - startTime));
     return list;
   }
 }
