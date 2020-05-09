@@ -11,6 +11,11 @@
 .default-color0.chart-line-symbol { -fx-background-color: #3c3f41, white; }
 .default-color0.chart-series-line { -fx-stroke: #3c3f41; }
 
+.chart-bar { -fx-bar-fill: #6e7477; }
+
+.default-color0.chart-bar { -fx-bar-color: #6e7477; }
+
+
 .axis {
     -fx-tick-label-fill: #3c3f41;
     -fx-font-family: SansSerif;
@@ -46,6 +51,10 @@
 
 .chart-horizontal-grid-lines {
     -fx-stroke: transparent;
+}
+
+.jfx-button{
+    -jfx-disable-visual-focus: true;
 }
 
 

@@ -26,6 +26,69 @@
          <children>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1342.0" prefWidth="1137.0">
                <children>
+                  <Pane fx:id="totalMetricsPane" layoutX="14.0" layoutY="476.0" prefHeight="330.0" prefWidth="322.0" style="-fx-background-color: #FFFFFF;">
+                     <children>
+                        <Line endX="846.0" layoutX="-493.0" layoutY="52.0" opacity="0.1" startX="493.0" />
+                        <Text fill="#3c3f41" layoutX="122.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TOTAL METRICS ">
+                           <font>
+                              <Font name="SansSerif Bold" size="13.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="totalImpressions" fill="#3c3f41" layoutX="215.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="32120">
+                           <font>
+                              <Font name="SansSerif Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="totalClicks" fill="#3c3f41" layoutX="215.0" layoutY="150.0" strokeType="OUTSIDE" strokeWidth="0.0" text="99832">
+                           <font>
+                              <Font name="SansSerif Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="totalUniques" fill="#3c3f41" layoutX="215.0" layoutY="195.0" strokeType="OUTSIDE" strokeWidth="0.0" text="12001">
+                           <font>
+                              <Font name="SansSerif Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="totalBounces" fill="#3c3f41" layoutX="215.0" layoutY="240.0" strokeType="OUTSIDE" strokeWidth="0.0" text="11142">
+                           <font>
+                              <Font name="SansSerif Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="totalConversions" fill="#3c3f41" layoutX="215.0" layoutY="285.0" strokeType="OUTSIDE" strokeWidth="0.0" text="9732">
+                           <font>
+                              <Font name="SansSerif Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#3c3f41" layoutX="99.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Impressions:">
+                           <font>
+                              <Font name="SansSerif Bold" size="13.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#3c3f41" layoutX="99.0" layoutY="150.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Clicks:">
+                           <font>
+                              <Font name="SansSerif Bold" size="13.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#3c3f41" layoutX="99.0" layoutY="195.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Uniques:">
+                           <font>
+                              <Font name="SansSerif Bold" size="13.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#3c3f41" layoutX="99.0" layoutY="240.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Bounces: ">
+                           <font>
+                              <Font name="SansSerif Bold" size="13.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#3c3f41" layoutX="99.0" layoutY="285.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Conversions: ">
+                           <font>
+                              <Font name="SansSerif Bold" size="13.0" />
+                           </font>
+                        </Text>
+                     </children>
+                     <effect>
+                        <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
+                     </effect>
+                  </Pane>
                   <Pane prefHeight="74.0" prefWidth="1246.0" style="-fx-background-color: #FCFCFC;">
                      <children>
                         <JFXComboBox fx:id="campaignComboboxLeft" focusColor="#474c49" layoutX="134.0" layoutY="21.0" prefHeight="32.0" prefWidth="180.0" stylesheets="@../css/style.css" />

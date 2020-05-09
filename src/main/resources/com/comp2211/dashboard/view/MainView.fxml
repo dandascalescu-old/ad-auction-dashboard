@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
@@ -14,10 +15,7 @@
     <children>
         <BorderPane fx:id="mainPane" prefHeight="849.0" prefWidth="1246.0">
             <center>
-                <Pane prefHeight="775.0" prefWidth="1167.0" style="-fx-background-color: #f0f3fb;" BorderPane.alignment="CENTER">
-                    <children>
-                    </children>
-                </Pane>
+                <Pane prefHeight="775.0" prefWidth="1167.0" style="-fx-background-color: #f0f3fb;" BorderPane.alignment="CENTER" />
             </center>
             <left>
                 <Pane prefHeight="775.0" prefWidth="86.0" style="-fx-background-color: #FCFCFC;" BorderPane.alignment="CENTER">
@@ -27,8 +25,9 @@
                                 <Font name="SansSerif Bold" size="10.0" />
                             </font>
                         </Text>
+                  <Rectangle fx:id="recDashboard" arcHeight="5.0" arcWidth="5.0" fill="#3c3f41" height="73.0" layoutY="81.0" stroke="#3c3f41" strokeType="INSIDE" width="4.0" />
                         <Line endX="-24.0" endY="718.0" layoutX="110.0" layoutY="131.0" opacity="0.1" startX="-25.0" startY="-131.0" strokeLineCap="BUTT" />
-                        <JFXButton fx:id="dashboardButton" alignment="CENTER" contentDisplay="CENTER" layoutX="11.0" layoutY="83.0" onAction="#openDashboardPane" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
+                        <JFXButton fx:id="dashboardButton" alignment="CENTER" contentDisplay="CENTER" layoutX="11.0" layoutY="83.0" onAction="#openDashboardPane" prefHeight="52.0" prefWidth="59.0" ripplerFill="TRANSPARENT" stylesheets="@../css/style.css" textAlignment="CENTER">
                             <graphic>
                                 <ImageView>
                                     <image>
@@ -36,7 +35,7 @@
                                     </image>
                                 </ImageView>
                             </graphic></JFXButton>
-                        <JFXButton fx:id="databaseButton" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="168.0" onAction="#openDatabasePane" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
+                        <JFXButton fx:id="databaseButton" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="168.0" onAction="#openDatabasePane" prefHeight="52.0" prefWidth="59.0" ripplerFill="TRANSPARENT" textAlignment="CENTER">
                             <graphic>
                                 <ImageView>
                                     <image>
@@ -44,6 +43,7 @@
                                     </image>
                                 </ImageView>
                             </graphic></JFXButton>
+                  <Rectangle fx:id="recDatabase" arcHeight="5.0" arcWidth="5.0" fill="#3c3f41" height="73.0" layoutY="168.0" stroke="#3c3f41" strokeType="INSIDE" width="4.0" />
                         <Text fill="#474c49" layoutX="15.0" layoutY="236.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DATABASE" wrappingWidth="59.34716796875">
                             <font>
                                 <Font name="SansSerif Bold" size="10.0" />
@@ -88,7 +88,7 @@
                                 <Font name="SansSerif Bold" size="10.0" />
                             </font>
                         </Text>
-                  <JFXButton fx:id="databaseButton1" alignment="CENTER" contentDisplay="CENTER" layoutX="12.0" layoutY="260.0" onAction="#openComparePane" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
+                  <JFXButton fx:id="databaseButton1" alignment="CENTER" contentDisplay="CENTER" layoutX="12.0" layoutY="260.0" onAction="#openComparePane" prefHeight="52.0" prefWidth="59.0" ripplerFill="TRANSPARENT" textAlignment="CENTER">
                      <graphic>
                         <ImageView disable="true">
                            <image>
@@ -103,6 +103,7 @@
                      </font>
                   </Text>
                   <Line endX="-120.0" endY="-74.0" layoutX="122.0" layoutY="149.0" opacity="0.1" startX="-38.5" startY="-74.0" strokeLineCap="BUTT" />
+                  <Rectangle fx:id="recCompare" arcHeight="5.0" arcWidth="5.0" fill="#3c3f41" height="73.0" layoutY="260.0" stroke="#3c3f41" strokeType="INSIDE" width="4.0" />
                     </children>
                 </Pane>
             </left>

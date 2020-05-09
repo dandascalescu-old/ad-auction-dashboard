@@ -22,9 +22,6 @@
                             </font>
                         </Text>
                     </children>
-                    <effect>
-                        <DropShadow color="#0000004a" offsetX="5.0" offsetY="5.0" spread="0.17" />
-                    </effect>
                 </Pane>
 
                 <Pane layoutX="27.0" layoutY="107.0" prefHeight="711.0" prefWidth="1082.0" style="-fx-background-color: #FFFFFF;">
