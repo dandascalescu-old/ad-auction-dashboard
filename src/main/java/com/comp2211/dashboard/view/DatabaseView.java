@@ -41,6 +41,16 @@ public class DatabaseView implements FxmlView<DatabaseViewModel>, Initializable 
         JFXTreeTableColumn<CampaignEntry, String> titleOfCampaignCol = new JFXTreeTableColumn<>("Title");
         titleOfCampaignCol.setPrefWidth(200);
         titleOfCampaignCol.setCellValueFactory(param -> param.getValue().getValue().titleOfCampaignProperty());
+
+
+        JFXTreeTableColumn<CampaignEntry, String> startDateCol = new JFXTreeTableColumn<>("Start Date");
+        startDateCol.setPrefWidth(310);
+        startDateCol.setCellValueFactory(param -> param.getValue().getValue().startDateProperty());
+
+        JFXTreeTableColumn<CampaignEntry, String> endDateCol = new JFXTreeTableColumn<>("End Date");
+        endDateCol.setPrefWidth(310);
+        endDateCol.setCellValueFactory(param -> param.getValue().getValue().endDateProperty());
+
 //
 //        JFXTreeTableColumn<CampaignEntry, String> fileNameCol = new JFXTreeTableColumn<>("File Name");
 //        fileNameCol.setPrefWidth(619);
@@ -53,7 +63,7 @@ public class DatabaseView implements FxmlView<DatabaseViewModel>, Initializable 
         final TreeItem<CampaignEntry> root = new RecursiveTreeItem<CampaignEntry>(viewModel.getCampaignData(), RecursiveTreeObject::getChildren);
         databaseTreeTable.setRoot(root);
         databaseTreeTable.setShowRoot(false);
-        databaseTreeTable.getColumns().setAll(titleOfCampaignCol, progressCol);
+        databaseTreeTable.getColumns().setAll(titleOfCampaignCol, startDateCol, endDateCol, progressCol);
 
     }
 

@@ -29,7 +29,7 @@ public class DatabaseViewModel implements ViewModel {
         if(campaignData == null){
             campaignData = FXCollections.observableArrayList();
         }
-        campaignData.add(new CampaignEntry(c.getCampaignName(), "Loading..."));
+        campaignData.add(new CampaignEntry(c.getCampaignName(), c.getCampaignStartDate().substring(0,10), c.getCampaignEndDate().substring(0,10), "Loading..."));
     }
 
 //    public static void addNewCampaign(String title, String files){

@@ -7,19 +7,30 @@ import javafx.beans.property.StringProperty;
 public class CampaignEntry extends RecursiveTreeObject<CampaignEntry> {
 
 
-    public StringProperty titleOfCampaign;
-    public StringProperty fileName;
-    public StringProperty progress;
+    private StringProperty titleOfCampaign;
+    private StringProperty fileName;
+    private StringProperty startDate;
+    private StringProperty endDate;
+    private StringProperty progress;
 
-    public CampaignEntry(String titleOfCampaign, String progress){
-
+    public CampaignEntry(String titleOfCampaign, String startDate, String endDate, String progress){
         this.titleOfCampaign = new SimpleStringProperty(titleOfCampaign);
+        this.startDate = new SimpleStringProperty(startDate);
+        this.endDate = new SimpleStringProperty(endDate);
         this.progress = new SimpleStringProperty(progress);
     }
 
     public StringProperty titleOfCampaignProperty(){ return titleOfCampaign; }
 
     public StringProperty fileNameProperty(){ return fileName; }
+
+    public StringProperty startDateProperty() {
+        return startDate;
+    }
+
+    public StringProperty endDateProperty() {
+        return endDate;
+    }
 
     public StringProperty progressProperty(){ return progress; }
 

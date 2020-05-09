@@ -451,6 +451,14 @@ public class Campaign {
     return cachedContextPercentage;
   }
 
+  public String getCampaignStartDate(){
+    return dbManager.retrieveCampaignStartDate(new Filter(getCampaignID()));
+  }
+
+  public String getCampaignEndDate(){
+    return dbManager.retrieveCampaignEndDate(new Filter(getCampaignID()));
+  }
+
   private HashMap<String, BigDecimal> percentageMap (Demographic demographic, HashMap<String, Long> dataMap) {
     HashMap<String, BigDecimal> resultMap = new LinkedHashMap<>();
     for (Entry<String, Long> entry : dataMap.entrySet()) {
