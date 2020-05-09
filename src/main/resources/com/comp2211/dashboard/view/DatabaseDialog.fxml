@@ -38,7 +38,7 @@
                <Font name="SansSerif Bold" size="19.0" />
             </font>
          </Text>
-         <TextField layoutX="95.0" layoutY="74.0" promptText="Title" />
+         <TextField fx:id="campaignTitle" layoutX="95.0" layoutY="74.0" promptText="Title" />
          <Text fx:id="alertAddingText" layoutX="88.0" layoutY="345.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER">
             <font>
                <Font name="SansSerif Bold" size="12.0" />

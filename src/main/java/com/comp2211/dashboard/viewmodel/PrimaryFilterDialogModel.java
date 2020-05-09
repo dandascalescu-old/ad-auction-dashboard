@@ -95,6 +95,8 @@ public class PrimaryFilterDialogModel implements ViewModel {
                 new Filter(startDate.getValue(), endDate.getValue(),
                         genderString.getValue(), ageString.getValue(), incomeString.getValue(), contextString.getValue()
                 ));
+
+
     }
 
 

@@ -23,7 +23,6 @@ public class App extends Application {
   @Override
   public void start(Stage stage) throws IOException {
     stage.setTitle("Ad Analytics Dashboard");
-
     viewTuple = FluentViewLoader.fxmlView(LoginView.class).load();
     Parent root = viewTuple.getView();
     stage.setScene(new Scene(root));
