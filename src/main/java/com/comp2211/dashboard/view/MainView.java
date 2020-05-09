@@ -1,9 +1,8 @@
 package com.comp2211.dashboard.view;
 
 import com.comp2211.dashboard.io.Database;
-import com.comp2211.dashboard.viewmodel.DatabaseViewModel;
-import com.comp2211.dashboard.viewmodel.MainViewModel;
-import com.comp2211.dashboard.viewmodel.PrimaryViewModel;
+import com.comp2211.dashboard.viewmodel.*;
+
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.ViewTuple;
@@ -20,7 +19,9 @@ import java.util.ResourceBundle;
 
 public class MainView implements Initializable, FxmlView<MainViewModel> {
 
-    ViewTuple<PrimaryView, PrimaryViewModel> viewTuple1;
+    ViewTuple<PrimaryView, PrimaryViewModel> primaryTutple;
+    ViewTuple<DatabaseView, DatabaseViewModel> databaseTuple;
+    ViewTuple<CompareView, CompareLeftViewModel> compareTuple;
 
     @FXML
     private BorderPane mainPane;
@@ -29,22 +30,22 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
 
         //ViewTuple<PrimaryView, PrimaryViewModel> viewTuple1 = FluentViewLoader.fxmlView(PrimaryViewView.class).load();
 
-        if (viewTuple1 == null)
-            viewTuple1 = FluentViewLoader.fxmlView(PrimaryView.class).load();
-        mainPane.setCenter(viewTuple1.getView());
+        if (primaryTutple == null)
+            primaryTutple = FluentViewLoader.fxmlView(PrimaryView.class).load();
+        mainPane.setCenter(primaryTutple.getView());
     }
 
     public void openDatabasePane(ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("DatabaseView.fxml"));
-        mainPane.setCenter(root);
+        databaseTuple = FluentViewLoader.fxmlView(DatabaseView.class).load();
+        mainPane.setCenter(databaseTuple.getView());
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
 
-        viewTuple1 = FluentViewLoader.fxmlView(PrimaryView.class).load();
-        mainPane.setCenter(viewTuple1.getView());
+        primaryTutple = FluentViewLoader.fxmlView(PrimaryView.class).load();
+        mainPane.setCenter(primaryTutple.getView());
 
     }
 
@@ -52,4 +53,8 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
 
     }
 
+    public void openComparePane(ActionEvent event) throws IOException {
+        compareTuple = FluentViewLoader.fxmlView(CompareView.class).load();
+        mainPane.setCenter(compareTuple.getView());
+    }
 }

@@ -28,6 +28,7 @@
 
 
   <dependencies>
+
     <dependency>
       <groupId>de.saxsys</groupId>
       <artifactId>mvvmfx</artifactId>

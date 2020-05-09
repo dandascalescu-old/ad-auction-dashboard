@@ -2,10 +2,12 @@ package com.comp2211.dashboard.view;
 
 import com.comp2211.dashboard.GUIStarter;
 import com.comp2211.dashboard.io.DataImporter;
+import com.comp2211.dashboard.viewmodel.DatabaseViewModel;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import de.saxsys.mvvmfx.MvvmFX;
 import java.sql.SQLException;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -34,6 +36,8 @@ public class DatabaseDialog {
     JFXButton importImpressionButton;
 
     private String impressionFilePath = "", serverFilePath = "", clickFilePath = "";
+
+    private String impressionFileName = "", serverFileName = "", clickFileName = "";
 
     private DataImporter dataImporter = new DataImporter(GUIStarter.getDatabaseManager());
 
@@ -70,12 +74,15 @@ public class DatabaseDialog {
             switch(logType){
                 case "Impression Log":
                     impressionFilePath = file.getAbsolutePath();
+                    impressionFileName = file.getName();
                     break;
                 case "Server Log":
                     serverFilePath = file.getAbsolutePath();
+                    serverFileName = file.getName();
                     break;
                 case "Click Log":
                     clickFilePath = file.getAbsolutePath();
+                    serverFileName = file.getName();
                     break;
             }
         }catch(Exception ignored){}
@@ -88,15 +95,23 @@ public class DatabaseDialog {
 
 
     public void createCampaignFromFiles(ActionEvent event){
-        if (impressionFilePath.equals("") || serverFilePath.equals("") || clickFilePath.equals("")){
-            alertAddingText.setText("BEFORE SAVING ADD ALL FILES!");
+        if (impressionFilePath.equals("") || serverFilePath.equals("") || clickFilePath.equals("") || campaignTitle.getText().equals("")){
+            alertAddingText.setText("BEFORE SAVING FILL ALL FIELDS!");
         }else{
-            try{
-            dataImporter.startImport(campaignTitle.getText(), new File(impressionFilePath), new File(clickFilePath), new File(serverFilePath));
-            MvvmFX.getNotificationCenter().publish("Imported");
-            }catch (SQLException e){
-                e.printStackTrace();
-            }
+            Thread t = new Thread(() -> {
+                try {
+                    dataImporter.startImport(campaignTitle.getText(), new File(impressionFilePath), new File(clickFilePath), new File(serverFilePath));
+                    Platform.runLater(() -> {
+                        DatabaseViewModel.addNewCampaign(campaignTitle.getText(), impressionFileName + " " + serverFileName + " " + clickFileName);
+                        MvvmFX.getNotificationCenter().publish("Imported");
+                        DatabaseViewModel.changeProgressToCompleted(campaignTitle.getText());
+                    });
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
+            t.start();
+            DatabaseView.cancelDialogAction();
         }
 
     }

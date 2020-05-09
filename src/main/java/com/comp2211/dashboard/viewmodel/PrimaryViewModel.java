@@ -9,18 +9,23 @@ import de.saxsys.mvvmfx.MvvmFX;
 import de.saxsys.mvvmfx.ViewModel;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.TreeTableColumn;
+import javafx.util.Callback;
 
 public class PrimaryViewModel implements ViewModel {
 
@@ -350,7 +355,18 @@ public class PrimaryViewModel implements ViewModel {
     Series<String, Number> s = new Series<>();
     s.setName(selectedCampaign.getValue().toString());
     for (Entry<String, Long> entry : dataMap.entrySet()) {
-      Data<String, Number> data = new XYChart.Data<>(entry.getKey(), entry.getValue());
+
+      SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd");
+      SimpleDateFormat myFormat = new SimpleDateFormat("MM/dd");
+      String reformattedStr = null;
+      try {
+
+        reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));
+      } catch (ParseException e) {
+        e.printStackTrace();
+      }
+
+      Data<String, Number> data = new XYChart.Data<>(reformattedStr, entry.getValue());
       s.getData().add(data);
     }
     totalMetricChartData.add(s);
