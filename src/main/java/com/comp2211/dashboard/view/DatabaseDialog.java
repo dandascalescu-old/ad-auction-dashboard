@@ -1,5 +1,6 @@
 package com.comp2211.dashboard.view;
 
+import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.GUIStarter;
 import com.comp2211.dashboard.io.DataImporter;
 import com.comp2211.dashboard.viewmodel.DatabaseViewModel;
@@ -96,15 +97,13 @@ public class DatabaseDialog {
 
     public void createCampaignFromFiles(ActionEvent event){
         if (impressionFilePath.equals("") || serverFilePath.equals("") || clickFilePath.equals("") || campaignTitle.getText().equals("")){
-            alertAddingText.setText("BEFORE SAVING FILL ALL FIELDS!");
+            alertAddingText.setText("ALL FIELDS MUST BE FILLED!");
         }else{
             Thread t = new Thread(() -> {
                 try {
-                    dataImporter.startImport(campaignTitle.getText(), new File(impressionFilePath), new File(clickFilePath), new File(serverFilePath));
+                    Campaign campaign = dataImporter.startImport(campaignTitle.getText(), new File(impressionFilePath), new File(clickFilePath), new File(serverFilePath));
                     Platform.runLater(() -> {
-                        DatabaseViewModel.addNewCampaign(campaignTitle.getText(), impressionFileName + " " + serverFileName + " " + clickFileName);
-                        MvvmFX.getNotificationCenter().publish("Imported");
-                        DatabaseViewModel.changeProgressToCompleted(campaignTitle.getText());
+                        MvvmFX.getNotificationCenter().publish("Imported", campaign);
                     });
                 } catch (SQLException e) {
                     e.printStackTrace();

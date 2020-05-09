@@ -400,6 +400,7 @@ public class PrimaryViewModel implements ViewModel {
   private void setupCampaignReceiving(){
     MvvmFX.getNotificationCenter().subscribe("Imported", (key, payload) -> {
       campaigns.setAll(Campaign.getCampaigns());
+      DatabaseViewModel.changeProgressToCompleted((Campaign) payload[0]);
       System.out.println("campaigns set.");
       });
   }

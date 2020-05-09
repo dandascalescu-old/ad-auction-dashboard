@@ -41,10 +41,10 @@ public class DatabaseView implements FxmlView<DatabaseViewModel>, Initializable 
         JFXTreeTableColumn<CampaignEntry, String> titleOfCampaignCol = new JFXTreeTableColumn<>("Title");
         titleOfCampaignCol.setPrefWidth(200);
         titleOfCampaignCol.setCellValueFactory(param -> param.getValue().getValue().titleOfCampaignProperty());
-
-        JFXTreeTableColumn<CampaignEntry, String> fileNameCol = new JFXTreeTableColumn<>("File Name");
-        fileNameCol.setPrefWidth(619);
-        fileNameCol.setCellValueFactory(param -> param.getValue().getValue().fileNameProperty());
+//
+//        JFXTreeTableColumn<CampaignEntry, String> fileNameCol = new JFXTreeTableColumn<>("File Name");
+//        fileNameCol.setPrefWidth(619);
+//        fileNameCol.setCellValueFactory(param -> param.getValue().getValue().fileNameProperty());
 
         JFXTreeTableColumn<CampaignEntry, String> progressCol = new JFXTreeTableColumn<>("Progress");
         progressCol.setPrefWidth(200);
@@ -53,7 +53,7 @@ public class DatabaseView implements FxmlView<DatabaseViewModel>, Initializable 
         final TreeItem<CampaignEntry> root = new RecursiveTreeItem<CampaignEntry>(viewModel.getCampaignData(), RecursiveTreeObject::getChildren);
         databaseTreeTable.setRoot(root);
         databaseTreeTable.setShowRoot(false);
-        databaseTreeTable.getColumns().setAll(titleOfCampaignCol, fileNameCol, progressCol);
+        databaseTreeTable.getColumns().setAll(titleOfCampaignCol, progressCol);
 
     }
 

@@ -11,10 +11,9 @@ public class CampaignEntry extends RecursiveTreeObject<CampaignEntry> {
     public StringProperty fileName;
     public StringProperty progress;
 
-    public CampaignEntry(String titleOfCampaign, String fileName, String progress){
+    public CampaignEntry(String titleOfCampaign, String progress){
 
         this.titleOfCampaign = new SimpleStringProperty(titleOfCampaign);
-        this.fileName = new SimpleStringProperty(fileName);
         this.progress = new SimpleStringProperty(progress);
     }
 

@@ -26,13 +26,14 @@ public class DataImporter {
     this.dbManager = dbManager;
   }
 
-  public void startImport(String title, File impression, File click, File server) throws SQLException {
+  public Campaign startImport(String title, File impression, File click, File server) throws SQLException {
     int campaignID = createCampaign(title); // set campaign id
+    Campaign c = new Campaign(campaignID, GUIStarter.getDatabaseManager().retrieveCampaignName(campaignID), GUIStarter.getDatabaseManager());
     importData(impression, Table.impression_table, "Date, ID, Gender, Age, Income, Context, Impression_Cost, Campaign_ID", campaignID);
     importData(click, Table.click_table,"Date, ID, Click_Cost, Campaign_ID", campaignID);
     importData(server, Table.server_table,"Entry_Date, ID, Exit_Date, Pages_Viewed, Conversion, Campaign_ID", campaignID);
-    Campaign c = new Campaign(campaignID, GUIStarter.getDatabaseManager().retrieveCampaignName(campaignID), GUIStarter.getDatabaseManager());
     c.cacheData(new Filter(campaignID));
+    return c;
   }
 
   private int createCampaign(String title) throws SQLException {

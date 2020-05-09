@@ -6,6 +6,7 @@ import com.comp2211.dashboard.util.Logger;
 import com.comp2211.dashboard.io.DatabaseManager;
 import com.comp2211.dashboard.io.DatabaseManager.Cost;
 
+import com.comp2211.dashboard.viewmodel.DatabaseViewModel;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -77,7 +78,7 @@ public class Campaign {
     cachedIncomePercentage = new LinkedHashMap<>();
     cachedContextPercentage = new LinkedHashMap<>();
 
-    allCampaigns.add(this);
+    DatabaseViewModel.addNewCampaign(this);
   }
 
   @Override
@@ -143,6 +144,8 @@ public class Campaign {
 
     appliedFilter = filter;
 
+    allCampaigns.add(this);
+    DatabaseViewModel.changeProgressToCompleted(this);
     Logger.log("Data cached successfully.");
   }
 
