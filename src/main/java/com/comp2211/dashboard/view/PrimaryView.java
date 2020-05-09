@@ -5,18 +5,18 @@ import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import com.comp2211.dashboard.viewmodel.ExportDialogViewModel;
 import com.comp2211.dashboard.viewmodel.PrimaryViewModel;
 import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel;
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXDialog;
-import com.jfoenix.controls.JFXDialogLayout;
+import com.jfoenix.controls.*;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.ViewTuple;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -26,6 +26,8 @@ import java.io.IOException;
 
 public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
+
+  final double SCALE_DELTA = 1.1;
   @FXML
   public Pane totalMetricsOverTimePane;
 
@@ -51,7 +53,7 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   private BorderPane mainPane;
 
   @FXML
-  private StackPane stackPane2;
+  private StackPane stackPane2, totalLineChartPane;
 
   @FXML
   private Pane databasePane, dashboardPane;
@@ -69,10 +71,10 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   private JFXComboBox<Demographic> demographicCombobox;
 
   @FXML
-  private HoverLineChart<String, Number> averageChart;
+  private LineChart<String, Number> averageChart;
 
   @FXML
-  private HoverLineChart<String, Number>  totalMetricsLineChart;
+  private LineChart<String, Number> totalMetricsLineChart;
 
   @FXML
   private PieChart demographicsChart;
@@ -94,6 +96,10 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
   @FXML
   Text ctrText, conversionUniquesText;
+
+  @FXML
+  JFXToggleNode totalMetricDay, totalMetricTwelve, totalMetricSix, averageDay, averageTwelve, averageSix;
+
 
   ViewTuple<ExportDialog, ExportDialogViewModel> exportDialogView;
 
@@ -125,18 +131,24 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
     averageChart.setData(viewModel.averageChartData());
     averageChart.setLegendVisible(false);
+    averageChart.getYAxis().setAutoRanging(true);
+    //averageChart.getXAxis().setTickLabelRotation(-30);
 
     demographicsChart.setData(viewModel.demographicsChartData());
     demographicsChart.setLegendVisible(false);
 
     totalMetricsLineChart.setData(viewModel.totalMetricChartData());
     totalMetricsLineChart.setLegendVisible(false);
+    totalMetricsLineChart.getXAxis().setTickLabelRotation(-30);
+    totalMetricsLineChart.getYAxis().setAutoRanging(true);
 
     totalImpressions.textProperty().bind(viewModel.getTotalImpressionsProperty());
     totalClicks.textProperty().bind(viewModel.getTotalClicksProperty());
     totalUniques.textProperty().bind(viewModel.getTotalUniquesProperty());
     totalBounces.textProperty().bind(viewModel.getTotalBouncesProperty());
     totalConversions.textProperty().bind(viewModel.getTotalConversionsProperty());
+
+
   }
 
 
@@ -157,6 +169,32 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   }
 
   public void openDatabasePane() {
+
+  }
+
+  public void changeTotalGran(ActionEvent event){
+
+          if (totalMetricSix.isSelected()){
+
+
+          }else if(totalMetricTwelve.isSelected()){
+
+
+          }else if(totalMetricDay.isSelected()){
+
+          }
+  }
+
+  public void changeAverageGran(ActionEvent event){
+          if(averageSix.isSelected()){
+
+
+          }else if(averageTwelve.isSelected()){
+
+
+          }else if(averageDay.isSelected()){
+
+          }
 
   }
 
@@ -188,5 +226,26 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
   static void cancelExportDialogAction(){
     dialogExport.close();
+  }
+
+  public void startZoom(MouseEvent event) {
+    if (event.getClickCount() == 2) {
+      totalMetricsLineChart.setScaleX(1.0);
+      totalMetricsLineChart.setScaleY(1.0);
+    }
+  }
+
+  public void endZoom(ScrollEvent event) {
+
+    event.consume();
+
+    if (event.getDeltaY() == 0) {
+      return;
+    }
+
+    double scaleFactor = (event.getDeltaY() > 0) ? SCALE_DELTA : 1 / SCALE_DELTA;
+
+    totalMetricsLineChart.setScaleX(totalMetricsLineChart.getScaleX() * scaleFactor);
+    totalMetricsLineChart.setScaleY(totalMetricsLineChart.getScaleY() * scaleFactor);
   }
 }
