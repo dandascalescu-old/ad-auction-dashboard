@@ -25,6 +25,7 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
     ViewTuple<PrimaryView, PrimaryViewModel> primaryTutple;
     ViewTuple<DatabaseView, DatabaseViewModel> databaseTuple;
     ViewTuple<CompareView, CompareLeftViewModel> compareTuple;
+    ViewTuple<SettingsView, SettingsViewModel> settingsTuple;
 
     @FXML
     Rectangle recDashboard, recDatabase, recCompare;
@@ -80,5 +81,11 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
 
         compareTuple = FluentViewLoader.fxmlView(CompareView.class).load();
         mainPane.setCenter(compareTuple.getView());
+    }
+
+    public void openSettingsPane(ActionEvent event) throws IOException{
+
+        settingsTuple = FluentViewLoader.fxmlView(SettingsView.class).load();
+        mainPane.setCenter(settingsTuple.getView());
     }
 }
