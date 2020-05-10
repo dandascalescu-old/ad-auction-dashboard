@@ -6,6 +6,7 @@ import com.comp2211.dashboard.util.Logger;
 import com.comp2211.dashboard.io.DatabaseManager;
 import com.comp2211.dashboard.io.DatabaseManager.Cost;
 
+import de.saxsys.mvvmfx.MvvmFX;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -242,6 +243,7 @@ public class Campaign {
     bouncesCount = dbManager.retrieveBouncesCountByTime(maxSeconds, allowInf, filter);
     cachedDatedBounceTotals.clear();
     cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByTime(maxSeconds, allowInf, filter));
+    MvvmFX.getNotificationCenter().publish("Bounce");
   }
 
   public void updateBouncesByPages(byte maxPages, Filter filter) {
@@ -257,6 +259,8 @@ public class Campaign {
     bouncesCount = dbManager.retrieveBouncesCountByPages(maxPages, filter);
     cachedDatedBounceTotals.clear();
     cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(maxPages, filter));
+
+    MvvmFX.getNotificationCenter().publish("Bounce");
   }
 
   /**

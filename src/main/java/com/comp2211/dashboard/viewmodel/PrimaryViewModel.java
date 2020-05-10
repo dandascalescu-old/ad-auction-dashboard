@@ -106,6 +106,7 @@ public class PrimaryViewModel implements ViewModel {
     setUpRatesSelector();
 
     setupFilterReceiving();
+    setupBounceReceiving();
   }
 
   public ObservableList<Campaign> campaignsList() {
@@ -428,6 +429,12 @@ public class PrimaryViewModel implements ViewModel {
         e.printStackTrace();
         Logger.log("Invalid filter received");
       }
+    });
+  }
+
+  private void setupBounceReceiving() {
+    MvvmFX.getNotificationCenter().subscribe("Bounce", (key, payload) -> {
+      updateBounceMetrics();
     });
   }
 

@@ -10,6 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import com.jfoenix.controls.JFXComboBox?>
 <StackPane fx:id="databasePane" prefHeight="796.0" prefWidth="1161.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.SettingsView">
 
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="794.0" prefWidth="1141.0">
@@ -33,7 +34,7 @@
                   </font>
                </Text>
                <Line endX="928.0" layoutX="100.0" layoutY="66.0" startX="-100.0" />
-               <Text fill="#3c3f41" layoutX="50.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Set your own definition for a bounce" wrappingWidth="310.34716796875">
+               <Text fill="#3c3f41" layoutX="50.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Set your own definition for a bounce (Any value below what is set is considered a bounce)" wrappingWidth="310.34716796875">
                   <font>
                      <Font name="SansSerif Regular" size="17.0" />
                   </font>
@@ -61,6 +62,12 @@
                   </font>
                </Text>
                <JFXButton layoutX="274.0" layoutY="235.0" onAction="#saveBounce" prefHeight="39.0" prefWidth="111.0" text="SAVE" />
+               <Text fx:id="alertAddingText" layoutX="88.0" layoutY="345.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER">
+                  <font>
+                     <Font name="SansSerif Bold" size="12.0" />
+                  </font>
+               </Text>
+               <JFXComboBox fx:id="campaignCombobox" focusColor="#474c49" layoutX="786.0" layoutY="21.0" prefHeight="32.0" prefWidth="180.0" stylesheets="@../css/style.css" />
             </children>
             <effect>
                <DropShadow color="#00000021" height="11.89" offsetX="5.0" offsetY="5.0" radius="5.445" width="11.89" />

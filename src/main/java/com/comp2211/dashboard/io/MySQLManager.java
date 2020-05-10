@@ -212,7 +212,8 @@ public class MySQLManager extends DatabaseManager {
     String where = filterToWhere(filter, Table.server_table);
     String statement = "SELECT COUNT(*) AS COUNT " +
             "FROM " + server_table +
-            "WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "((Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL)" : ")");
+            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "((Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL)" : ")");
+    System.out.println(statement);
     return toLong(
             retrieve(statement, new Object[]{maxSeconds}, new String[]{"COUNT"})
     );
