@@ -65,8 +65,8 @@ public class DataImporter {
     }
   }
 
-  private void importData(File file, Table table, String columnNames, int campaignID) throws SQLException {
-    LinkedList<String[]> list = readCSV(file);
+  private void importData(LinkedList<String[]> list, Table table, String columnNames, int campaignID) throws SQLException {
+    int count = 0;
     long startTime = System.currentTimeMillis();
     String sql = "INSERT INTO " + table.toString() + " (" + columnNames + ") VALUES ";
     StringBuilder sb = new StringBuilder(sql);
@@ -114,6 +114,11 @@ public class DataImporter {
         sb.append("'").append(value).append("'").append(",");
       }
       sb.append(campaignID).append(")");
+      count++;
+      if(count > 100000){
+        importData(new LinkedList<>(list.subList(count, list.size())), table, columnNames, campaignID);
+        break;
+      }
     }
     sql = sb.toString();
     PreparedStatement statement = GUIStarter.getDatabaseManager().sqlDatabase.getConnection().prepareStatement(sql);
@@ -121,6 +126,10 @@ public class DataImporter {
     startTime = System.currentTimeMillis();
     statement.executeUpdate();
     System.out.println("importData (execute statement): "+ (System.currentTimeMillis() - startTime));
+  }
+
+  private void importData(File file, Table table, String columnNames, int campaignID) throws SQLException {
+    importData(readCSV(file), table, columnNames, campaignID);
   }
 
   private String parseDate(String value) {
