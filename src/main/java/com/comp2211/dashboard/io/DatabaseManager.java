@@ -85,32 +85,32 @@ public abstract class DatabaseManager {
   /**
    * Retrieve the total number of impressions for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedImpressionTotals(Filter filter, byte hoursGranularity);
+  public abstract HashMap<String, Long> retrieveDatedImpressionTotals(byte hoursGranularity, Filter filter);
 
   /**
    * Retrieve the total number of clicks for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedClickTotals(Filter filter);
+  public abstract HashMap<String, Long> retrieveDatedClickTotals(byte hoursGranularity, Filter filter);
 
   /**
    * Retrieve the total number of uniques for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedUniqueTotals(Filter filter);
+  public abstract HashMap<String, Long> retrieveDatedUniqueTotals(byte hoursGranularity, Filter filter);
 
   /**
    * Retrieve the total number of bounces (by time) for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedBounceTotalsByTime(long maxSeconds, boolean allowInf, Filter filter);
+  public abstract HashMap<String, Long> retrieveDatedBounceTotalsByTime(byte hoursGranularity, long maxSeconds, boolean allowInf, Filter filter);
 
   /**
    * Retrieve the total number of bounces (by pages visited) for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte maxPages, Filter filter);
+  public abstract HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte hoursGranularity, byte maxPages, Filter filter);
 
   /**
    * Retrieve the total number of acquisitions for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedAcquisitionTotals(Filter filter);
+  public abstract HashMap<String, Long> retrieveDatedAcquisitionTotals(byte hoursGranularity, Filter filter);
 
   /**
    * Retrieve demographic info

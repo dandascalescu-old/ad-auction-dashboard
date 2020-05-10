@@ -154,7 +154,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedImpressionTotals(Filter filter, byte hoursGranularity) {
+  public HashMap<String, Long> retrieveDatedImpressionTotals(byte hoursGranularity, Filter filter) {
     return this.getLongTestData();
   }
 
@@ -163,7 +163,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedClickTotals(Filter filter) {
+  public HashMap<String, Long> retrieveDatedClickTotals(byte hoursGranularity, Filter filter) {
     return this.getLongTestData();
   }
 
@@ -172,7 +172,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedUniqueTotals(Filter filter) {
+  public HashMap<String, Long> retrieveDatedUniqueTotals(byte hoursGranularity, Filter filter) {
     return this.getLongTestData();
   }
 
@@ -183,7 +183,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedBounceTotalsByTime(long maxSeconds, boolean allowInf, Filter filter) {
+  public HashMap<String, Long> retrieveDatedBounceTotalsByTime(byte hoursGranularity, long maxSeconds, boolean allowInf, Filter filter) {
     return this.getLongTestData();
   }
 
@@ -193,7 +193,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte maxPages, Filter filter) {
+  public HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte hoursGranularity, byte maxPages, Filter filter) {
     return this.getLongTestData();
   }
 
@@ -202,7 +202,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedAcquisitionTotals(Filter filter) {
+  public HashMap<String, Long> retrieveDatedAcquisitionTotals(byte hoursGranularity, Filter filter) {
     return this.getLongTestData();
   }
 

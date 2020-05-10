@@ -189,19 +189,20 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   }
 
   public void changeTotalGran(ActionEvent event){
-          if (totalMetricSix.isSelected()){
-            MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION, (byte) 6);
-          }else if(totalMetricTwelve.isSelected()){
-          }else if(totalMetricDay.isSelected()){
-          }
+    if (totalMetricSix.isSelected()){
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION, (byte) 6);
+    } else if (totalMetricTwelve.isSelected()){
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION, (byte) 12);
+    } else if (totalMetricDay.isSelected()){
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION, (byte) 24);
+    }
   }
 
   public void changeAverageGran(ActionEvent event){
-          if(averageSix.isSelected()){
-          }else if(averageTwelve.isSelected()){
-          }else if(averageDay.isSelected()){
-          }
-
+    if (averageSix.isSelected()){
+    } else if (averageTwelve.isSelected()){
+    } else if (averageDay.isSelected()){
+    }
   }
 
 

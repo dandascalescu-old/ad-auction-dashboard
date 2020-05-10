@@ -134,14 +134,10 @@ public class Campaign {
     cachedDatedImpressionCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Impression_Cost, filter));
     cachedDatedAcquisitionCostAverages.putAll(dbManager.retrieveDatedAverageAcquisitionCost(filter));
 
-    cachedDatedImpressionTotals.putAll(dbManager.retrieveDatedImpressionTotals(filter, totalsGranularity));
-    for (Entry<String, Long> entry : cachedDatedImpressionTotals.entrySet()) {
-      System.out.println(entry.getKey() + ", " + entry.getValue());
-    }
-
-    cachedDatedClickTotals.putAll(dbManager.retrieveDatedClickTotals(filter));
-    cachedDatedUniqueTotals.putAll(dbManager.retrieveDatedUniqueTotals(filter));
-    cachedDatedAcquisitionTotals.putAll(dbManager.retrieveDatedAcquisitionTotals(filter));
+    cachedDatedImpressionTotals.putAll(dbManager.retrieveDatedImpressionTotals(totalsGranularity, filter));
+    cachedDatedClickTotals.putAll(dbManager.retrieveDatedClickTotals(totalsGranularity, filter));
+    cachedDatedUniqueTotals.putAll(dbManager.retrieveDatedUniqueTotals(totalsGranularity, filter));
+    cachedDatedAcquisitionTotals.putAll(dbManager.retrieveDatedAcquisitionTotals(totalsGranularity, filter));
 
     cachedAgePercentage.putAll(percentageMap(Demographic.Age, dbManager.retrieveDemographics(Demographic.Age, filter)));
     cachedGenderPercentage.putAll(percentageMap(Demographic.Gender, dbManager.retrieveDemographics(Demographic.Gender, filter)));
@@ -241,8 +237,16 @@ public class Campaign {
   public void updateTotalsGranularity(byte hoursGranularity) {
     totalsGranularity = hoursGranularity;
     cachedDatedImpressionTotals.clear();
-    cachedDatedImpressionTotals.putAll(dbManager.retrieveDatedImpressionTotals(appliedFilter, totalsGranularity));
-    //TODO add remaining re-caches
+    cachedDatedImpressionTotals.putAll(dbManager.retrieveDatedImpressionTotals(totalsGranularity, appliedFilter));
+    cachedDatedClickTotals.clear();
+    cachedDatedClickTotals.putAll(dbManager.retrieveDatedClickTotals(totalsGranularity, appliedFilter));
+    cachedDatedUniqueTotals.clear();
+    cachedDatedUniqueTotals.putAll(dbManager.retrieveDatedUniqueTotals(totalsGranularity, appliedFilter));
+    cachedDatedBounceTotals.clear();
+    //TODO use applied bounce method
+    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(totalsGranularity, (byte) 1, appliedFilter));
+    cachedDatedAcquisitionTotals.clear();
+    cachedDatedAcquisitionTotals.putAll(dbManager.retrieveDatedAcquisitionTotals(totalsGranularity, appliedFilter));
   }
 
   public void updateBouncesByTime(long maxSeconds, boolean allowInf, Filter filter) {
@@ -255,7 +259,7 @@ public class Campaign {
     }*/
     bouncesCount = dbManager.retrieveBouncesCountByTime(maxSeconds, allowInf, filter);
     cachedDatedBounceTotals.clear();
-    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByTime(maxSeconds, allowInf, filter));
+    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByTime(totalsGranularity, maxSeconds, allowInf, filter));
   }
 
   public void updateBouncesByPages(byte maxPages, Filter filter) {
@@ -270,7 +274,7 @@ public class Campaign {
     }*/
     bouncesCount = dbManager.retrieveBouncesCountByPages(maxPages, filter);
     cachedDatedBounceTotals.clear();
-    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(maxPages, filter));
+    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(totalsGranularity, maxPages, filter));
   }
 
   /**

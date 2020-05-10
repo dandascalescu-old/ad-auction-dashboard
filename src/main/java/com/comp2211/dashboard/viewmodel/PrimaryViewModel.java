@@ -437,7 +437,7 @@ public class PrimaryViewModel implements ViewModel {
       try {
         byte granularity = (byte) payload[0];
         selectedCampaign.getValue().updateTotalsGranularity(granularity);
-        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedImpressionTotals());
+        updateTotals();
 
       } catch (ClassCastException e) {
         e.printStackTrace();

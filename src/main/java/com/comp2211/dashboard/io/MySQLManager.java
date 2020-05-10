@@ -302,45 +302,13 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedImpressionTotals(Filter filter, byte hoursGranularity) {
+  public HashMap<String, Long> retrieveDatedImpressionTotals(byte hoursGranularity, Filter filter) {
     String where = filterToWhere(filter, Table.impression_table);
-    where = ( where.isEmpty() ? "" : " WHERE " + where );
-    /*String statement = "SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT " +
-            "FROM " + impression_table +
-            ( where.isEmpty() ? "" : " WHERE " + where ) +
-            " GROUP BY DateOnly";
-    return toLongMap(
-            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
-    );*/
-    String cas;
-    switch (hoursGranularity) {
-      case 6 :
-        cas = "WHEN TIME(Date) BETWEEN '00:00:00' AND '05:59:59' THEN CONCAT(DATE(Date), ' 00:00:00') " +
-                "WHEN TIME(Date) BETWEEN '06:00:00' AND '11:59:59' THEN CONCAT(DATE(Date), ' 06:00:00') " +
-                "WHEN TIME(Date) BETWEEN '12:00:00' AND '17:59:59' THEN CONCAT(DATE(Date), ' 12:00:00') " +
-                "WHEN TIME(Date) BETWEEN '18:00:00' AND '23:59:59' THEN CONCAT(DATE(Date), ' 18:00:00')";
-        break;
-      case 12 :
-        cas = "WHEN TIME(Date) BETWEEN '00:00:00' AND '11:59:59' THEN CONCAT(DATE(Date), ' 00:00:00') " +
-                "WHEN TIME(Date) BETWEEN '12:00:00' AND '23:59:59' THEN CONCAT(DATE(Date), ' 12:00:00')";
-        break;
-      case 24 :
-        cas = "WHEN TIME(Date) BETWEEN '00:00:00' AND '23:59:59' THEN CONCAT(DATE(Date), ' 00:00:00')";
-        break;
-      default:
-        String statement = "SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT " +
-                "FROM " + impression_table +
-                 where +
-                " GROUP BY DateOnly";
-        return toLongMap(
-                retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
-        );
-    }
-
+    String cas = hoursToCase(hoursGranularity, Table.impression_table);
     String statement = "SELECT groups.start AS START, COUNT(*) AS COUNT " +
             "FROM (" +
               "SELECT CASE " + cas + " END AS start " +
-              "FROM " + impression_table + " " + where + ") groups " +
+              "FROM " + impression_table + ( where.isEmpty() ? "" : " WHERE " + where ) + ") groups " +
             "GROUP BY START";
     return toLongMap(
             retrieve(statement, new Object[]{}, new String[]{"START", "COUNT"})
@@ -352,14 +320,16 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedClickTotals(Filter filter) {
+  public HashMap<String, Long> retrieveDatedClickTotals(byte hoursGranularity, Filter filter) {
     String where = filterToWhere(filter, Table.click_table);
-    String statement = "SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT " +
-            "FROM " + click_table +
-            ( where.isEmpty() ? "" : " WHERE " + where ) +
-            " GROUP BY DateOnly";
+    String cas = hoursToCase(hoursGranularity, Table.click_table);
+    String statement = "SELECT groups.start AS START, COUNT(*) AS COUNT " +
+            "FROM (" +
+            "SELECT CASE " + cas + " END AS start " +
+            "FROM " + click_table + ( where.isEmpty() ? "" : " WHERE " + where ) + ") groups " +
+            "GROUP BY START";
     return toLongMap(
-            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
+            retrieve(statement, new Object[]{}, new String[]{"START", "COUNT"})
     );
   }
 
@@ -368,14 +338,16 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedUniqueTotals(Filter filter) {
+  public HashMap<String, Long> retrieveDatedUniqueTotals(byte hoursGranularity, Filter filter) {
     String where = filterToWhere(filter, Table.click_table);
-    String statement = "SELECT DATE(Date) AS DateOnly, COUNT(DISTINCT ID) AS COUNT " +
-            "FROM " + click_table +
-            ( where.isEmpty() ? "" : " WHERE " + where ) +
-            " GROUP BY DateOnly";
+    String cas = hoursToCase(hoursGranularity, Table.click_table);
+    String statement = "SELECT groups.start AS START, COUNT(DISTINCT groups.ID) AS COUNT " +
+            "FROM (" +
+            "SELECT ID, CASE " + cas + " END AS start " +
+            "FROM " + click_table + ( where.isEmpty() ? "" : " WHERE " + where ) + ") groups " +
+            "GROUP BY START";
     return toLongMap(
-            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
+            retrieve(statement, new Object[]{}, new String[]{"START", "COUNT"})
     );
   }
 
@@ -386,14 +358,17 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedBounceTotalsByTime(long maxSeconds, boolean allowInf, Filter filter) {
+  public HashMap<String, Long> retrieveDatedBounceTotalsByTime(byte hoursGranularity, long maxSeconds, boolean allowInf, Filter filter) {
     String where = filterToWhere(filter, Table.server_table);
-    String statement = "SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT " +
-            "FROM " + server_table +
-            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "(Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL" : "") +
-            " GROUP BY DateOnly";
+    String cas = hoursToCase(hoursGranularity, Table.server_table);
+    String statement = "SELECT groups.start AS START, COUNT(*) AS COUNT " +
+            "FROM (" +
+            "SELECT CASE " + cas + " END AS start " +
+            "FROM " + server_table + " " +
+            "WHERE (Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL" : "") + ( where.isEmpty() ? "" : " AND " + where ) + ") groups " +
+            "GROUP BY START";
     return toLongMap(
-            retrieve(statement, new Object[]{maxSeconds}, new String[]{"DateOnly", "COUNT"})
+            retrieve(statement, new Object[]{maxSeconds}, new String[]{"START", "COUNT"})
     );
   }
 
@@ -403,14 +378,17 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte maxPages, Filter filter) {
+  public HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte hoursGranularity, byte maxPages, Filter filter) {
     String where = filterToWhere(filter, Table.server_table);
-    String statement = "SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT " +
-            "FROM " + server_table +
-            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "Pages_Viewed <= ?" +
-            " GROUP BY DateOnly";
+    String cas = hoursToCase(hoursGranularity, Table.server_table);
+    String statement = "SELECT groups.start AS START, COUNT(*) AS COUNT " +
+            "FROM (" +
+            "SELECT CASE " + cas + " END AS start " +
+            "FROM " + server_table + " " +
+            "WHERE Pages_Viewed <= ?" + ( where.isEmpty() ? "" : " AND " + where ) + ") groups " +
+            "GROUP BY START";
     return toLongMap(
-            retrieve(statement, new Object[]{maxPages}, new String[]{"DateOnly", "COUNT"})
+            retrieve(statement, new Object[]{maxPages}, new String[]{"START", "COUNT"})
     );
   }
 
@@ -419,14 +397,17 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedAcquisitionTotals(Filter filter) {
+  public HashMap<String, Long> retrieveDatedAcquisitionTotals(byte hoursGranularity, Filter filter) {
     String where = filterToWhere(filter, Table.server_table);
-    String statement = "SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT " +
-            "FROM " + server_table +
-            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "Conversion = 1" +
-            " GROUP BY DateOnly";
+    String cas = hoursToCase(hoursGranularity, Table.server_table);
+    String statement = "SELECT groups.start AS START, COUNT(*) AS COUNT " +
+            "FROM (" +
+            "SELECT CASE " + cas + " END AS start " +
+            "FROM " + server_table + " " +
+            "WHERE Conversion = 1" + ( where.isEmpty() ? "" : " AND " + where ) + ") groups " +
+            "GROUP BY START";
     return toLongMap(
-            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
+            retrieve(statement, new Object[]{}, new String[]{"START", "COUNT"})
     );
   }
 
@@ -537,5 +518,23 @@ public class MySQLManager extends DatabaseManager {
     where = (where.isEmpty() ? (ID.isEmpty() ? "" : ID) : (ID.isEmpty() ? where : where + " AND " + ID));
     where += (where.isEmpty() ? "Campaign_ID = "  + filter.getCampaignID() : " AND Campaign_ID = " + filter.getCampaignID());
     return where;
+  }
+
+  private static String hoursToCase(byte hoursGranularity, Table table) {
+    String dateTitle = "Date";
+    if (table.equals(Table.server_table)) dateTitle = "Entry_Date";
+
+    switch (hoursGranularity) {
+      case 6 :
+        return "WHEN TIME("+dateTitle+") BETWEEN '00:00:00' AND '05:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 00:00:00') " +
+                "WHEN TIME("+dateTitle+") BETWEEN '06:00:00' AND '11:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 06:00:00') " +
+                "WHEN TIME("+dateTitle+") BETWEEN '12:00:00' AND '17:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 12:00:00') " +
+                "WHEN TIME("+dateTitle+") BETWEEN '18:00:00' AND '23:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 18:00:00')";
+      case 12 :
+        return "WHEN TIME("+dateTitle+") BETWEEN '00:00:00' AND '11:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 00:00:00') " +
+                "WHEN TIME("+dateTitle+") BETWEEN '12:00:00' AND '23:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 12:00:00')";
+      default :
+        return "WHEN TIME("+dateTitle+") BETWEEN '00:00:00' AND '23:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 00:00:00')";
+    }
   }
 }
