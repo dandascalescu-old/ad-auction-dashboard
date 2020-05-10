@@ -57,7 +57,7 @@ public class MySQLManager extends DatabaseManager {
   }
 
   public List<List<String>> retrieve(String statement, Object[] params, String[] resultColumns) {
-    //System.out.println(statement);
+    System.out.println(statement);
     PreparedStatement stmt = null;
     ResultSet rs = null;
     List<List<String>> results = new ArrayList<>();
@@ -254,6 +254,7 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public BigDecimal retrieveAverageAcquisitionCost(Filter filter) {
+    //TODO make more efficent
     String where = filterToWhere(filter, Table.click_table);
     String statement = "SELECT AVG(Click_Cost) AS AVG " +
             "FROM " + click_table +
@@ -301,14 +302,48 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedImpressionTotals(Filter filter) {
+  public HashMap<String, Long> retrieveDatedImpressionTotals(Filter filter, byte hoursGranularity) {
     String where = filterToWhere(filter, Table.impression_table);
-    String statement = "SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT " +
+    where = ( where.isEmpty() ? "" : " WHERE " + where );
+    /*String statement = "SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT " +
             "FROM " + impression_table +
             ( where.isEmpty() ? "" : " WHERE " + where ) +
             " GROUP BY DateOnly";
     return toLongMap(
             retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
+    );*/
+    String cas;
+    switch (hoursGranularity) {
+      case 6 :
+        cas = "WHEN TIME(Date) BETWEEN '00:00:00' AND '05:59:59' THEN CONCAT(DATE(Date), ' 00:00:00') " +
+                "WHEN TIME(Date) BETWEEN '06:00:00' AND '11:59:59' THEN CONCAT(DATE(Date), ' 06:00:00') " +
+                "WHEN TIME(Date) BETWEEN '12:00:00' AND '17:59:59' THEN CONCAT(DATE(Date), ' 12:00:00') " +
+                "WHEN TIME(Date) BETWEEN '18:00:00' AND '23:59:59' THEN CONCAT(DATE(Date), ' 18:00:00')";
+        break;
+      case 12 :
+        cas = "WHEN TIME(Date) BETWEEN '00:00:00' AND '11:59:59' THEN CONCAT(DATE(Date), ' 00:00:00') " +
+                "WHEN TIME(Date) BETWEEN '12:00:00' AND '23:59:59' THEN CONCAT(DATE(Date), ' 12:00:00')";
+        break;
+      case 24 :
+        cas = "WHEN TIME(Date) BETWEEN '00:00:00' AND '23:59:59' THEN CONCAT(DATE(Date), ' 00:00:00')";
+        break;
+      default:
+        String statement = "SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT " +
+                "FROM " + impression_table +
+                 where +
+                " GROUP BY DateOnly";
+        return toLongMap(
+                retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
+        );
+    }
+
+    String statement = "SELECT groups.start AS START, COUNT(*) AS COUNT " +
+            "FROM (" +
+              "SELECT CASE " + cas + " END AS start " +
+              "FROM " + impression_table + " " + where + ") groups " +
+            "GROUP BY START";
+    return toLongMap(
+            retrieve(statement, new Object[]{}, new String[]{"START", "COUNT"})
     );
   }
 
@@ -500,7 +535,7 @@ public class MySQLManager extends DatabaseManager {
     if (!table.equals(Table.impression_table))
       ID = (ID.isEmpty() ? ID : "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE " + ID + ")");
     where = (where.isEmpty() ? (ID.isEmpty() ? "" : ID) : (ID.isEmpty() ? where : where + " AND " + ID));
-    where += (where.isEmpty() ? " Campaign_ID = "  + filter.getCampaignID() : " AND Campaign_ID = " + filter.getCampaignID());
+    where += (where.isEmpty() ? "Campaign_ID = "  + filter.getCampaignID() : " AND Campaign_ID = " + filter.getCampaignID());
     return where;
   }
 }

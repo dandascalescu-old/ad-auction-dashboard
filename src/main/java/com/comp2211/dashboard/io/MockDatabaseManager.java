@@ -154,7 +154,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedImpressionTotals(Filter filter) {
+  public HashMap<String, Long> retrieveDatedImpressionTotals(Filter filter, byte hoursGranularity) {
     return this.getLongTestData();
   }
 

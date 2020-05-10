@@ -6,10 +6,7 @@ import com.comp2211.dashboard.viewmodel.ExportDialogViewModel;
 import com.comp2211.dashboard.viewmodel.PrimaryViewModel;
 import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel;
 import com.jfoenix.controls.*;
-import de.saxsys.mvvmfx.FluentViewLoader;
-import de.saxsys.mvvmfx.FxmlView;
-import de.saxsys.mvvmfx.InjectViewModel;
-import de.saxsys.mvvmfx.ViewTuple;
+import de.saxsys.mvvmfx.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
@@ -27,6 +24,7 @@ import java.io.IOException;
 
 public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
+  public static final String GRAN_NOTIFICATION = "GRANULARITY";
 
   final double SCALE_DELTA = 1.1;
   @FXML
@@ -191,27 +189,17 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   }
 
   public void changeTotalGran(ActionEvent event){
-
           if (totalMetricSix.isSelected()){
-
-
+            MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION, (byte) 6);
           }else if(totalMetricTwelve.isSelected()){
-
-
           }else if(totalMetricDay.isSelected()){
-
           }
   }
 
   public void changeAverageGran(ActionEvent event){
           if(averageSix.isSelected()){
-
-
           }else if(averageTwelve.isSelected()){
-
-
           }else if(averageDay.isSelected()){
-
           }
 
   }

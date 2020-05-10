@@ -30,6 +30,7 @@ public class Campaign {
   private DatabaseManager dbManager;
 
   private Filter appliedFilter;
+  private byte totalsGranularity;
 
   private BigDecimal totalClickCost, totalImpressionCost, averageAcquisitionCost;
   private long clickDataCount, impressionDataCount, serverDataCount, uniquesCount, bouncesCount, conversionsCount;
@@ -61,6 +62,8 @@ public class Campaign {
     this.campaignID = campaignID;
     this.campaignName = campaignName;
     this.dbManager = Objects.requireNonNull(dbManager, "dbManager must not be null");
+
+    totalsGranularity = 24;
 
     cachedDatedAcquisitionCostAverages = new LinkedHashMap<>();
     cachedDatedImpressionCostAverages = new LinkedHashMap<>();
@@ -123,7 +126,7 @@ public class Campaign {
 
     totalClickCost = dbManager.retrieveTotalCost(Cost.Click_Cost, filter);
     totalImpressionCost = dbManager.retrieveTotalCost(Cost.Impression_Cost, filter);
-    averageAcquisitionCost = dbManager.retrieveAverageAcquisitionCost(filter);
+    //averageAcquisitionCost = dbManager.retrieveAverageAcquisitionCost(filter);
 
     clearCache();
 
@@ -131,7 +134,11 @@ public class Campaign {
     cachedDatedImpressionCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Impression_Cost, filter));
     cachedDatedAcquisitionCostAverages.putAll(dbManager.retrieveDatedAverageAcquisitionCost(filter));
 
-    cachedDatedImpressionTotals.putAll(dbManager.retrieveDatedImpressionTotals(filter));
+    cachedDatedImpressionTotals.putAll(dbManager.retrieveDatedImpressionTotals(filter, totalsGranularity));
+    for (Entry<String, Long> entry : cachedDatedImpressionTotals.entrySet()) {
+      System.out.println(entry.getKey() + ", " + entry.getValue());
+    }
+
     cachedDatedClickTotals.putAll(dbManager.retrieveDatedClickTotals(filter));
     cachedDatedUniqueTotals.putAll(dbManager.retrieveDatedUniqueTotals(filter));
     cachedDatedAcquisitionTotals.putAll(dbManager.retrieveDatedAcquisitionTotals(filter));
@@ -231,6 +238,13 @@ public class Campaign {
     return BigDecimal.valueOf(clickDataCount).divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
   }
 
+  public void updateTotalsGranularity(byte hoursGranularity) {
+    totalsGranularity = hoursGranularity;
+    cachedDatedImpressionTotals.clear();
+    cachedDatedImpressionTotals.putAll(dbManager.retrieveDatedImpressionTotals(appliedFilter, totalsGranularity));
+    //TODO add remaining re-caches
+  }
+
   public void updateBouncesByTime(long maxSeconds, boolean allowInf, Filter filter) {
     if (maxSeconds < 0) {
       Logger.log("Attempted bounce calculation with negative value");
@@ -293,28 +307,28 @@ public class Campaign {
     return getTotalClickCost().add(getTotalImpressionCost());
   }
 
-  /**
+  /*/**
    * Calculates the average cost per acquisition/conversion by summing all converted clicks and
    * dividing by the count.
    *
    * @return The average cost per acquisition given in pence.
    */
-  public BigDecimal getAvgCostPerAcquisition() {
+  /*public BigDecimal getAvgCostPerAcquisition() {
     return averageAcquisitionCost;
-  }
+  }*/
 
-  /**
+  /*/**
    * Calculates/estimates the cost per thousand impression by calculating the average cost of a
    * single impression multiplied by 1000
    *
    * @return The average cost per acquisition given in pence.
    */
-  public BigDecimal getCostPerThousandImpressions() {
+  /*public BigDecimal getCostPerThousandImpressions() {
     if (impressionDataCount == 0) {
       return BigDecimal.ZERO;
     }
     return getTotalImpressionCost().divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(1000));
-  }
+  }*/
 
   /**
    * Calculates the average acquisition cost for each date.

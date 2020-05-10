@@ -85,7 +85,7 @@ public abstract class DatabaseManager {
   /**
    * Retrieve the total number of impressions for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedImpressionTotals(Filter filter);
+  public abstract HashMap<String, Long> retrieveDatedImpressionTotals(Filter filter, byte hoursGranularity);
 
   /**
    * Retrieve the total number of clicks for each date.

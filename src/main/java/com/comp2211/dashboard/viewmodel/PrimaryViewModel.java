@@ -5,6 +5,7 @@ import com.comp2211.dashboard.model.data.Demographics;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import com.comp2211.dashboard.model.data.Filter;
 import com.comp2211.dashboard.util.Logger;
+import com.comp2211.dashboard.view.PrimaryView;
 import de.saxsys.mvvmfx.MvvmFX;
 import de.saxsys.mvvmfx.ViewModel;
 import java.math.BigDecimal;
@@ -106,6 +107,7 @@ public class PrimaryViewModel implements ViewModel {
     setUpRatesSelector();
 
     setupFilterReceiving();
+    setupGranReceiving();
   }
 
   public ObservableList<Campaign> campaignsList() {
@@ -390,14 +392,15 @@ public class PrimaryViewModel implements ViewModel {
     s.setName(selectedCampaign.getValue().toString());
     for (Entry<String, Long> entry : dataMap.entrySet()) {
 
-      SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd");
-      SimpleDateFormat myFormat = new SimpleDateFormat("MM/dd");
+      SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      //SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd");
+      SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/MM/dd - HHmm");
       String reformattedStr = null;
       try {
 
         reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));
       } catch (ParseException e) {
-        e.printStackTrace();
+        System.err.println(e);
       }
 
       Data<String, Number> data = new XYChart.Data<>(reformattedStr, entry.getValue());
@@ -405,8 +408,6 @@ public class PrimaryViewModel implements ViewModel {
     }
     totalMetricChartData.add(s);
   }
-
-
 
   private void setupFilterReceiving() {
     MvvmFX.getNotificationCenter().subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION, (key, payload) -> {
@@ -427,6 +428,20 @@ public class PrimaryViewModel implements ViewModel {
       } catch (ClassCastException e) {
         e.printStackTrace();
         Logger.log("Invalid filter received");
+      }
+    });
+  }
+
+  private void setupGranReceiving() {
+    MvvmFX.getNotificationCenter().subscribe(PrimaryView.GRAN_NOTIFICATION, (key, payload) -> {
+      try {
+        byte granularity = (byte) payload[0];
+        selectedCampaign.getValue().updateTotalsGranularity(granularity);
+        updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedImpressionTotals());
+
+      } catch (ClassCastException e) {
+        e.printStackTrace();
+        Logger.log("Invalid granularity received");
       }
     });
   }
