@@ -29,7 +29,8 @@ public class DatabaseViewModel implements ViewModel {
         if(campaignData == null){
             campaignData = FXCollections.observableArrayList();
         }
-        campaignData.add(new CampaignEntry(c.getCampaignName(), c.getCampaignStartDate().substring(0,10), c.getCampaignEndDate().substring(0,10), "Loading..."));
+        CampaignEntry ce = new CampaignEntry(c, "Checking...", "Checking...", "Loading...");
+        campaignData.add(ce);
     }
 
 //    public static void addNewCampaign(String title, String files){
@@ -40,7 +41,9 @@ public class DatabaseViewModel implements ViewModel {
     public static void changeProgressToCompleted(Campaign c){
 
         for (CampaignEntry campaignEntry: campaignData) {
-            if (campaignEntry.getTitle().equals(c.getCampaignName())){
+            if (campaignEntry.getCampaign().equals(c)){
+                campaignEntry.setStartDate(c.getCampaignStartDate());
+                campaignEntry.setEndDate(c.getCampaignEndDate());
                 campaignEntry.setProgress("Completed");
             }
         }

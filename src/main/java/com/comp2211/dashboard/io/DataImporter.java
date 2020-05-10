@@ -32,6 +32,7 @@ public class DataImporter {
     importData(impression, Table.impression_table, "Date, ID, Gender, Age, Income, Context, Impression_Cost, Campaign_ID", campaignID);
     importData(click, Table.click_table,"Date, ID, Click_Cost, Campaign_ID", campaignID);
     importData(server, Table.server_table,"Entry_Date, ID, Exit_Date, Pages_Viewed, Conversion, Campaign_ID", campaignID);
+//    Campaign c = new Campaign(campaignID, GUIStarter.getDatabaseManager().retrieveCampaignName(campaignID), GUIStarter.getDatabaseManager());
     c.cacheData(new Filter(campaignID));
     return c;
   }
