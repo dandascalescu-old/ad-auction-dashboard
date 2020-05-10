@@ -530,6 +530,7 @@ public class MySQLManager extends DatabaseManager {
     String dateTitle = "Date";
     if (table.equals(Table.server_table)) dateTitle = "Entry_Date";
 
+    //more options possible
     switch (hoursGranularity) {
       case 6 :
         return "WHEN TIME("+dateTitle+") BETWEEN '00:00:00' AND '05:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 00:00:00') " +
