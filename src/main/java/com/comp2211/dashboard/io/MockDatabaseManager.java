@@ -135,7 +135,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the avg for that date as a value
    */
   @Override
-  public HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type, Filter filter) {
+  public HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type, byte hoursGranularity, Filter filter) {
     return this.getBigDecimalTestData();
   }
 
@@ -144,7 +144,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the avg for that date as a value
    */
   @Override
-  public HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost(Filter filter) {
+  public HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost(byte hoursGranularity, Filter filter) {
     return this.getBigDecimalTestData();
   }
 

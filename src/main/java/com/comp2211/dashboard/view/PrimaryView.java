@@ -24,7 +24,8 @@ import java.io.IOException;
 
 public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
-  public static final String GRAN_NOTIFICATION = "GRANULARITY";
+  public static final String GRAN_NOTIFICATION = "TOTALS_GRANULARITY";
+  public static final String GRAN_NOTIFICATION_AVG = "AVGS_GRANULARITY";
 
   final double SCALE_DELTA = 1.1;
   @FXML
@@ -200,8 +201,11 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
   public void changeAverageGran(ActionEvent event){
     if (averageSix.isSelected()){
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION_AVG, (byte) 6);
     } else if (averageTwelve.isSelected()){
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION_AVG, (byte) 12);
     } else if (averageDay.isSelected()){
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION_AVG, (byte) 24);
     }
   }
 

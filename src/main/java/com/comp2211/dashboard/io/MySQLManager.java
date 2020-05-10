@@ -1,6 +1,5 @@
 package com.comp2211.dashboard.io;
 
-import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.model.data.Filter;
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -269,14 +268,18 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the avg for that date as a value
    */
   @Override
-  public HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type, Filter filter) {
-    String where = filterToWhere(filter, (type.equals(Cost.Click_Cost) ? Table.click_table : Table.impression_table));
-    String statement = "SELECT DATE(Date) AS DateOnly, AVG(" + type.toString() + ") AS AVG " +
+  public HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type, byte hoursGranularity, Filter filter) {
+    Table table = (type.equals(Cost.Click_Cost) ? Table.click_table : Table.impression_table);
+    String where = filterToWhere(filter, table);
+    String cas = hoursToCase(hoursGranularity, table);
+    String statement = "SELECT groups.start AS START, AVG(groups." + type.toString() + ") AS AVG " +
+            "FROM (" +
+            "SELECT " + type.toString() + ", CASE " + cas + " END AS start " +
             "FROM " + (type.equals(Cost.Click_Cost) ? click_table : impression_table) +
-            ( where.isEmpty() ? "" : " WHERE " + where ) +
-            " GROUP BY DateOnly";
+            ( where.isEmpty() ? "" : " WHERE " + where ) + ") groups " +
+            "GROUP BY START";
     return toBigDecimalMap(
-            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "AVG"})
+            retrieve(statement, new Object[]{}, new String[]{"START", "AVG"})
     );
   }
 
@@ -285,14 +288,17 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the avg for that date as a value
    */
   @Override
-  public HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost(Filter filter) {
+  public HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost(byte hoursGranularity, Filter filter) {
     String where = filterToWhere(filter, Table.click_table);
-    String statement = "SELECT DATE(Date) AS DateOnly, AVG(Click_Cost) AS AVG " +
-            "FROM " + click_table +
-            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "ID IN (SELECT DISTINCT ID FROM " + server_table + " WHERE Conversion = 1) " +
-            "GROUP BY DateOnly";
+    String cas = hoursToCase(hoursGranularity, Table.click_table);
+    String statement = "SELECT groups.start AS START, AVG(groups.Click_Cost) AS AVG " +
+            "FROM (" +
+            "SELECT Click_Cost, CASE " + cas + " END AS start " +
+            "FROM " + click_table + " " +
+            "WHERE ID IN (SELECT DISTINCT ID FROM " + server_table + " WHERE Conversion = 1) " + ( where.isEmpty() ? "" : " AND " + where) + ") groups " +
+            "GROUP BY START";
     return toBigDecimalMap(
-            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "AVG"})
+            retrieve(statement, new Object[]{}, new String[]{"START", "AVG"})
     );
   }
 

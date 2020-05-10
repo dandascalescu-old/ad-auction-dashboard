@@ -31,6 +31,7 @@ public class Campaign {
 
   private Filter appliedFilter;
   private byte totalsGranularity;
+  private byte avgsGranularity;
 
   private BigDecimal totalClickCost, totalImpressionCost, averageAcquisitionCost;
   private long clickDataCount, impressionDataCount, serverDataCount, uniquesCount, bouncesCount, conversionsCount;
@@ -64,6 +65,7 @@ public class Campaign {
     this.dbManager = Objects.requireNonNull(dbManager, "dbManager must not be null");
 
     totalsGranularity = 24;
+    avgsGranularity = 24;
 
     cachedDatedAcquisitionCostAverages = new LinkedHashMap<>();
     cachedDatedImpressionCostAverages = new LinkedHashMap<>();
@@ -130,9 +132,9 @@ public class Campaign {
 
     clearCache();
 
-    cachedDatedClickCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Click_Cost, filter));
-    cachedDatedImpressionCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Impression_Cost, filter));
-    cachedDatedAcquisitionCostAverages.putAll(dbManager.retrieveDatedAverageAcquisitionCost(filter));
+    cachedDatedClickCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Click_Cost, avgsGranularity, filter));
+    cachedDatedImpressionCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Impression_Cost, avgsGranularity, filter));
+    cachedDatedAcquisitionCostAverages.putAll(dbManager.retrieveDatedAverageAcquisitionCost(avgsGranularity, filter));
 
     cachedDatedImpressionTotals.putAll(dbManager.retrieveDatedImpressionTotals(totalsGranularity, filter));
     cachedDatedClickTotals.putAll(dbManager.retrieveDatedClickTotals(totalsGranularity, filter));
@@ -247,6 +249,16 @@ public class Campaign {
     cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(totalsGranularity, (byte) 1, appliedFilter));
     cachedDatedAcquisitionTotals.clear();
     cachedDatedAcquisitionTotals.putAll(dbManager.retrieveDatedAcquisitionTotals(totalsGranularity, appliedFilter));
+  }
+
+  public void updateAvgsGranularity(byte hoursGranularity) {
+    avgsGranularity = hoursGranularity;
+    cachedDatedImpressionCostAverages.clear();
+    cachedDatedImpressionCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Impression_Cost, avgsGranularity, appliedFilter));
+    cachedDatedClickCostAverages.clear();
+    cachedDatedClickCostAverages.putAll(dbManager.retrieveDatedAverageCost(Cost.Click_Cost, avgsGranularity, appliedFilter));
+    cachedDatedAcquisitionCostAverages.clear();
+    cachedDatedAcquisitionCostAverages.putAll(dbManager.retrieveDatedAverageAcquisitionCost(avgsGranularity, appliedFilter));
   }
 
   public void updateBouncesByTime(long maxSeconds, boolean allowInf, Filter filter) {

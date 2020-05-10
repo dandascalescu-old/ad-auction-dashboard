@@ -108,6 +108,7 @@ public class PrimaryViewModel implements ViewModel {
 
     setupFilterReceiving();
     setupGranReceiving();
+    setupGranAvgsReceiving();
   }
 
   public ObservableList<Campaign> campaignsList() {
@@ -438,6 +439,20 @@ public class PrimaryViewModel implements ViewModel {
         byte granularity = (byte) payload[0];
         selectedCampaign.getValue().updateTotalsGranularity(granularity);
         updateTotals();
+
+      } catch (ClassCastException e) {
+        e.printStackTrace();
+        Logger.log("Invalid granularity received");
+      }
+    });
+  }
+
+  private void setupGranAvgsReceiving() {
+    MvvmFX.getNotificationCenter().subscribe(PrimaryView.GRAN_NOTIFICATION_AVG, (key, payload) -> {
+      try {
+        byte granularity = (byte) payload[0];
+        selectedCampaign.getValue().updateAvgsGranularity(granularity);
+        updateAverages();
 
       } catch (ClassCastException e) {
         e.printStackTrace();

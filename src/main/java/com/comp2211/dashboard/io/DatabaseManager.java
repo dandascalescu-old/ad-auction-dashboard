@@ -75,12 +75,12 @@ public abstract class DatabaseManager {
   /**
    * Retrieve the average cost for each date for the specified type.
    */
-  public abstract HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type, Filter filter);
+  public abstract HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type, byte hoursGranularity, Filter filter);
 
   /**
    * Retrieve the average acquisition cost for each date.
    */
-  public abstract HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost(Filter filter);
+  public abstract HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost(byte hoursGranularity, Filter filter);
 
   /**
    * Retrieve the total number of impressions for each date.
