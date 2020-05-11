@@ -3,6 +3,7 @@ package com.comp2211.dashboard.util;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
@@ -46,8 +47,24 @@ public class Security {
     return false;
   }
 
+  /**
+   *
+   * @param username
+   * @return boolean indicating if validation was successful
+   */
   public static boolean validateText(String username) {
+    boolean pass = true;
 
-    return true;
+    // Check length is 3 or greater
+    if (username.length() < 3) {
+      pass = false;
+    }
+
+    // Check username only contains alphanumeric characters or the symbols '_', '.', '-'
+    if (!Pattern.matches("^[0-9a-zA-Z_.-]+$", username)) {
+      pass = false;
+    }
+
+    return pass;
   }
 }
