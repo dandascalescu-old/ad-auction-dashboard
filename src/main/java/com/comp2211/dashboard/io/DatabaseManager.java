@@ -75,42 +75,46 @@ public abstract class DatabaseManager {
   /**
    * Retrieve the average cost for each date for the specified type.
    */
-  public abstract HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type, Filter filter);
+  public abstract HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type, byte hoursGranularity, Filter filter);
 
   /**
    * Retrieve the average acquisition cost for each date.
    */
-  public abstract HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost(Filter filter);
+  public abstract HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost(byte hoursGranularity, Filter filter);
+
+  public abstract HashMap<String, BigDecimal> retrieveDatedCostTotals(Cost type, byte hoursGranularity, Filter filter);
 
   /**
    * Retrieve the total number of impressions for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedImpressionTotals(Filter filter);
+  public abstract HashMap<String, Long> retrieveDatedImpressionTotals(byte hoursGranularity, Filter filter);
 
   /**
    * Retrieve the total number of clicks for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedClickTotals(Filter filter);
+  public abstract HashMap<String, Long> retrieveDatedClickTotals(byte hoursGranularity, Filter filter);
 
   /**
    * Retrieve the total number of uniques for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedUniqueTotals(Filter filter);
+  public abstract HashMap<String, Long> retrieveDatedUniqueTotals(byte hoursGranularity, Filter filter);
 
   /**
    * Retrieve the total number of bounces (by time) for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedBounceTotalsByTime(long maxSeconds, boolean allowInf, Filter filter);
+  public abstract HashMap<String, Long> retrieveDatedBounceTotalsByTime(byte hoursGranularity, long maxSeconds, boolean allowInf, Filter filter);
 
   /**
    * Retrieve the total number of bounces (by pages visited) for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte maxPages, Filter filter);
+  public abstract HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte hoursGranularity, byte maxPages, Filter filter);
 
   /**
    * Retrieve the total number of acquisitions for each date.
    */
-  public abstract HashMap<String, Long> retrieveDatedAcquisitionTotals(Filter filter);
+  public abstract HashMap<String, Long> retrieveDatedAcquisitionTotals(byte hoursGranularity, Filter filter);
+
+  public abstract HashMap<String, Long> retrieveDatedServerTotals(byte hoursGranularity, Filter filter);
 
   /**
    * Retrieve demographic info

@@ -53,7 +53,7 @@
                   <Font name="SansSerif Bold" size="20.0" />
                </font>
             </Text>
-            <Text fill="WHITE" layoutX="290.0" layoutY="437.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ener your credentials!" wrappingWidth="241.96484375">
+            <Text fill="WHITE" layoutX="290.0" layoutY="437.0" strokeType="OUTSIDE" strokeWidth="0.0" text="enter your credentials!" wrappingWidth="241.96484375">
                <font>
                   <Font name="SansSerif Bold" size="20.0" />
                </font>
