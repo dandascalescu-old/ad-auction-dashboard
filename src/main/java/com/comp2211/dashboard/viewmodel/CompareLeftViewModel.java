@@ -57,6 +57,7 @@ public class CompareLeftViewModel implements ViewModel {
     private StringProperty selectedTotals = new SimpleStringProperty("");
     private ObjectProperty<Demographic> selectedDemographic = new SimpleObjectProperty<>();
     private ObjectProperty<Campaign> selectedCampaign = new SimpleObjectProperty<>();
+    private ObjectProperty<Campaign> selectedRightCampaign = new SimpleObjectProperty<>();
 
     private final String avgCostClick = "Average Cost of Click";
     private final String avgCostImpr = "Average Cost of Impression";
@@ -142,6 +143,10 @@ public class CompareLeftViewModel implements ViewModel {
 
     public ObjectProperty<Campaign> selectedCampaignProperty() {
         return selectedCampaign;
+    }
+
+    public ObjectProperty<Campaign> selectedRightCampaignProperty() {
+        return selectedRightCampaign;
     }
 
     public StringProperty totalClickCostProperty() {

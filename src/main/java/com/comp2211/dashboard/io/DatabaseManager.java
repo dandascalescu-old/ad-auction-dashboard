@@ -136,4 +136,8 @@ public abstract class DatabaseManager {
    * Attempt to login using given credentials and create UserSession
    */
   public abstract boolean attemptUserLogin(String username, String password);
+
+  public abstract String retrieveCampaignStartDate(Filter filter);
+
+  public abstract String retrieveCampaignEndDate(Filter filter);
 }

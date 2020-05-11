@@ -251,6 +251,16 @@ public class MockDatabaseManager extends DatabaseManager {
     return (username.equals(TEST_USERNAME) && password.equals(TEST_PASSWORD));
   }
 
+  @Override
+  public String retrieveCampaignStartDate(Filter filter) {
+    return "2015-01-01";
+  }
+
+  @Override
+  public String retrieveCampaignEndDate(Filter filter) {
+    return "2015-01-14";
+  }
+
   private HashMap<String, Long> getLongTestData() {
     String data = "2015-01-01 22049|2015-01-02 32773|2015-01-03 34919|2015-01-04 33111|2015-01-05 35758|2015-01-06 37379|2015-01-07 37958|2015-01-08 37311|2015-01-09 39031|2015-01-10 36562|2015-01-11 42014|2015-01-12 40945|2015-01-13 42159|2015-01-14 14135";
     String[] dataPoints = data.split("\\|");

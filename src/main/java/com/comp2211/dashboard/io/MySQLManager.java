@@ -463,6 +463,24 @@ public class MySQLManager extends DatabaseManager {
             retrieve(statement, new Object[]{}, new String[]{"COUNT"})
     );
   }
+  
+  @Override
+  public String retrieveCampaignStartDate(Filter filter) {
+    String statement = "SELECT MIN(Date) AS Date" +
+        " FROM " + impression_table +
+        " WHERE Campaign_ID = " + filter.getCampaignID() +
+        " LIMIT 1";
+    return retrieve(statement, new Object[]{}, new String[]{"Date"}).get(0).get(0);
+  }
+
+  @Override
+  public String retrieveCampaignEndDate(Filter filter) {
+    String statement = "SELECT MAX(Date) AS Date" +
+        " FROM " + impression_table +
+        " WHERE Campaign_ID = " + filter.getCampaignID() +
+        " LIMIT 1";
+    return retrieve(statement, new Object[]{}, new String[]{"Date"}).get(0).get(0);
+  }
 
   public String retrieveCampaignName(int campaignID){
     String statement = "SELECT Name " +

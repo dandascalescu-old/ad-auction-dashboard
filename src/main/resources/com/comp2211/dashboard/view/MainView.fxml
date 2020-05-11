@@ -65,7 +65,7 @@
                                     </image>
                                 </ImageView>
                             </graphic></JFXButton>
-                        <JFXButton fx:id="settingsButton" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="10.0" layoutY="655.0" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
+                        <JFXButton fx:id="settingsButton" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="655.0" onAction="#openSettingsPane" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
                             <graphic>
                                 <ImageView>
                                     <image>

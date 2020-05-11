@@ -26,7 +26,7 @@
 <content>
    <StackPane fx:id="stackPane2" minHeight="0.0" minWidth="0.0" prefHeight="1702.0" prefWidth="1137.0">
 
-   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1278.0" prefWidth="1137.0">
+   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1278.0" prefWidth="1137.0" stylesheets="@../css/style.css">
       <children>
 
             <Pane prefHeight="74.0" prefWidth="1246.0" style="-fx-background-color: #FCFCFC;">
@@ -121,7 +121,7 @@
                      <Font name="SansSerif Bold" size="13.0" />
                   </font>
                </Text>
-              <PieChart fx:id="demographicsChart" animated="false" layoutX="14.0" layoutY="62.0" legendSide="RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="259.0" prefWidth="408.0" style="-fx-background-radius: 20; -fx-vertical-grid-lines-visible: false;" styleClass="dashboard_table" stylesheets="@../css/style.css" />
+              <PieChart fx:id="demographicsChart" animated="false" layoutX="14.0" layoutY="62.0" legendSide="RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="259.0" prefWidth="408.0" style="-fx-background-radius: 20; -fx-vertical-grid-lines-visible: false;" styleClass="dashboard_table" />
               <JFXComboBox fx:id="demographicCombobox" focusColor="#474c49" layoutX="237.0" layoutY="17.0" prefHeight="27.0" prefWidth="180.0" stylesheets="@../css/style.css" />
             </children>
             <effect>

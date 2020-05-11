@@ -3,6 +3,7 @@ package com.comp2211.dashboard.view;
 import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.model.data.Demographics;
 import com.comp2211.dashboard.viewmodel.CompareLeftViewModel;
+import com.comp2211.dashboard.viewmodel.CompareRightViewModel;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleNode;
 import de.saxsys.mvvmfx.FxmlView;
@@ -21,7 +22,7 @@ import java.util.ResourceBundle;
 public class CompareView implements FxmlView<CompareLeftViewModel>, Initializable{
 
     @FXML
-    private JFXComboBox<Campaign> campaignComboboxLeft;
+    private JFXComboBox<Campaign> campaignComboboxLeft, campaignComboboxRight;
 
     @FXML
     private Text ctrTextLeft, bounceRateTextLeft, convUniqTxtLeft, bounceConvTextLeft;
@@ -60,7 +61,7 @@ public class CompareView implements FxmlView<CompareLeftViewModel>, Initializabl
     }
 
     private void initializeLeftSide() {
-
+        //
         campaignComboboxLeft.setItems(viewModelLeft.campaignsList());
         campaignComboboxLeft.valueProperty().bindBidirectional(viewModelLeft.selectedCampaignProperty());
 
@@ -89,6 +90,16 @@ public class CompareView implements FxmlView<CompareLeftViewModel>, Initializabl
         totalChart.setLegendVisible(false);
         totalChart.getXAxis().setTickLabelRotation(-30);
         totalChart.getYAxis().setAutoRanging(true);
+        //
+
+        campaignComboboxRight.setItems(viewModelLeft.campaignsList());
+        campaignComboboxRight.valueProperty().bindBidirectional(viewModelLeft.selectedRightCampaignProperty());
+
+        //ctrTextRight.textProperty().bind(viewModelRight.clickThroughRateTextProperty());
+
+
+
+
 
     }
 

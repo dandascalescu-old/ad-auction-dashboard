@@ -7,6 +7,7 @@ import com.comp2211.dashboard.io.DatabaseManager;
 import com.comp2211.dashboard.io.MockDatabaseManager;
 import com.comp2211.dashboard.model.data.Demographics;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
+import com.comp2211.dashboard.model.data.Filter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -26,8 +27,11 @@ class PrimaryViewModelTest {
     this.manager = new MockDatabaseManager();
 
     // Instantiates Campaign singleton with multiple campaigns
-    new Campaign(1,"Demo Campaign 1", this.manager);
-    new Campaign(2, "Demo Campaign 2", this.manager);
+    Campaign c1 = new Campaign(1,"Demo Campaign 1", this.manager);
+    c1.cacheData(new Filter(1));
+    Campaign c2 = new Campaign(2, "Demo Campaign 2", this.manager);
+    c2.cacheData(new Filter(1));
+
 
     this.viewModel = new PrimaryViewModel();
     this.viewModel.initialize();

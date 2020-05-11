@@ -116,6 +116,7 @@ public class PrimaryViewModel implements ViewModel {
     setupFilterReceiving();
     setupGranReceiving();
     setupGranAvgsReceiving();
+    setupCampaignReceiving();
   }
 
   public ObservableList<Campaign> campaignsList() {
@@ -535,6 +536,14 @@ public class PrimaryViewModel implements ViewModel {
         Logger.log("[ERROR] Invalid granularity received");
       }
     });
+  }
+
+  private void setupCampaignReceiving(){
+    MvvmFX.getNotificationCenter().subscribe("Imported", (key, payload) -> {
+      campaigns.setAll(Campaign.getCampaigns());
+      DatabaseViewModel.changeProgressToCompleted((Campaign) payload[0]);
+      System.out.println("campaigns set.");
+      });
   }
 
 }
