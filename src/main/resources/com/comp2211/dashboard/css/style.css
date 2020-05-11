@@ -4,12 +4,20 @@
     -fx-font-weight: bold
 }
 
+
+
 .chart-plot-background {
     -fx-background-color: transparent;
 }
 
+
 .default-color0.chart-line-symbol { -fx-background-color: #3c3f41, white; }
 .default-color0.chart-series-line { -fx-stroke: #3c3f41; }
+
+.chart-bar { -fx-bar-fill: #bdc0c2; }
+
+.default-color0.chart-bar { -fx-bar-color: #bdc0c2; }
+
 
 .axis {
     -fx-tick-label-fill: #3c3f41;
@@ -46,6 +54,10 @@
 
 .chart-horizontal-grid-lines {
     -fx-stroke: transparent;
+}
+
+.jfx-button{
+    -jfx-disable-visual-focus: true;
 }
 
 

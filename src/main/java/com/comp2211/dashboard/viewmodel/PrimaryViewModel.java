@@ -34,6 +34,7 @@ public class PrimaryViewModel implements ViewModel {
   private ObservableList<Demographic> demographics;
   private ObservableList<Campaign> campaigns;
   private ObservableList<String> totals;
+  private ObservableList<String> rates;
 
   private ObservableList<Series<String, Number>> averageChartData;
   private ObservableList<PieChart.Data> demographicsChartData;
@@ -55,6 +56,7 @@ public class PrimaryViewModel implements ViewModel {
 
   private StringProperty selectedAverage = new SimpleStringProperty("");
   private StringProperty selectedTotals = new SimpleStringProperty("");
+  private StringProperty selectedRate = new SimpleStringProperty("");
   private ObjectProperty<Demographic> selectedDemographic = new SimpleObjectProperty<>();
   private ObjectProperty<Campaign> selectedCampaign = new SimpleObjectProperty<>();
 
@@ -68,6 +70,9 @@ public class PrimaryViewModel implements ViewModel {
   private final String totalBounces = "Bounces";
   private final String totalConversions = "Conversions";
 
+  private final String rateBounce = "Bounce Rate";
+  private final String rateCTR = "Click Through Rate";
+
   public void initialize() {
     campaigns = FXCollections.observableArrayList();
     averages = FXCollections.observableArrayList();
@@ -76,11 +81,13 @@ public class PrimaryViewModel implements ViewModel {
     demographicsChartData = FXCollections.observableArrayList();
     totals = FXCollections.observableArrayList();
     totalMetricChartData = FXCollections.observableArrayList();
+    rates = FXCollections.observableArrayList();
 
     campaigns.addAll(Campaign.getCampaigns());
     averages.addAll(avgCostClick, avgCostImpr, avgCostAcq);
     demographics.addAll(Demographics.Demographic.values());
     totals.addAll(totalImpressions, totalClicks, totalUniques, totalBounces, totalConversions);
+    rates.addAll(rateBounce, rateCTR);
 
     setupCampaignSelector();
 
@@ -96,6 +103,7 @@ public class PrimaryViewModel implements ViewModel {
     setupDemographicSelector();
     setupAverageSelector();
     setUpTotalsSelector();
+    setUpRatesSelector();
 
     setupFilterReceiving();
   }
@@ -103,6 +111,8 @@ public class PrimaryViewModel implements ViewModel {
   public ObservableList<Campaign> campaignsList() {
     return campaigns;
   }
+
+  public ObservableList<String> ratesList() {return rates; }
 
   public ObservableList<String> totalList() {
     return totals;
@@ -132,6 +142,8 @@ public class PrimaryViewModel implements ViewModel {
     return selectedAverage;
   }
 
+  public StringProperty selectedRatePropery() { return selectedRate; }
+
   public StringProperty selectedTotalMetricProperty() {
     return selectedTotals;
   }
@@ -139,6 +151,7 @@ public class PrimaryViewModel implements ViewModel {
   public ObjectProperty<Demographic> selectedDemographicProperty() {
     return selectedDemographic;
   }
+
 
   public ObjectProperty<Campaign> selectedCampaignProperty() {
     return selectedCampaign;
@@ -267,6 +280,8 @@ public class PrimaryViewModel implements ViewModel {
 
     selectedAverage.setValue(avgCostClick);
   }
+
+
   private void updateAverages() {
     switch (selectedAverage.getValue()) {
       case avgCostClick:
@@ -279,6 +294,26 @@ public class PrimaryViewModel implements ViewModel {
         updateLineChartData(selectedCampaign.getValue().getDatedAcquisitionCostAverages());
         break;
     }
+  }
+
+  private void setUpRatesSelector() {
+    selectedRate.addListener((obs, oldVal, newVal) -> {
+      if (newVal != null) {
+        Optional<String> matchingAverage = rates.stream().filter(newVal::equals).findFirst();
+        matchingAverage.ifPresent(avg -> selectedRate.setValue(avg));
+      } else {
+        selectedRate.setValue(rateBounce);
+      }
+      updateRates();
+    });
+
+    selectedRate.setValue(rateBounce);
+  }
+
+  //TODO :: Need to finish updating the graph ()
+  private void updateRates(){
+
+
   }
 
   private void setUpTotalsSelector(){

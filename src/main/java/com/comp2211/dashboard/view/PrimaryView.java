@@ -12,6 +12,7 @@ import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.ViewTuple;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
@@ -65,16 +66,22 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   private JFXComboBox<Campaign> campaignCombobox;
 
   @FXML
-  private JFXComboBox<String> averageCombobox, totalMetricCombobox;
+  private JFXComboBox<String> averageCombobox, totalMetricCombobox, rateCombobox;
 
   @FXML
   private JFXComboBox<Demographic> demographicCombobox;
 
   @FXML
-  private LineChart<String, Number> averageChart;
+  private BarChart<String, Number> averageChart;
+
+  @FXML
+  private LineChart<String, Number> rateChart;
 
   @FXML
   private LineChart<String, Number> totalMetricsLineChart;
+
+  @FXML
+  private LineChart<String, Number> totalCostChart;
 
   @FXML
   private PieChart demographicsChart;
@@ -148,9 +155,20 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     totalBounces.textProperty().bind(viewModel.getTotalBouncesProperty());
     totalConversions.textProperty().bind(viewModel.getTotalConversionsProperty());
 
+    rateCombobox.setItems(viewModel.ratesList());
+    rateCombobox.valueProperty().bindBidirectional(viewModel.selectedRatePropery());
+
+    //TODO:: uncomment when primaryviewmodel is ready to read data.
+    /*rateChart.setData(viewModel.rateChartData());
+    rateChart.setLegendVisible(false);
+    rateChart.getXAxis().setTickLabelRotation(-30);*/
+
+    //TODO:: uncomment when primaryviewmodel is ready to read data.
+    /*totalCostChart.setData(viewModel.totalCostChartData());
+    totalCostChart.setLegendVisible(false);
+    totalCostChart.getXAxis().setTickLabelRotation(-30);*/
 
   }
-
 
   public void campaignComboboxController() {
     System.out.println("campaignComboboxController");
@@ -205,7 +223,7 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     JFXDialogLayout dialogLayout = new JFXDialogLayout();
     dialogLayout.setBody(primaryDialogView.getView());
     dialogFilter = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
-    dialogFilter.setTranslateY(-200);
+    dialogFilter.setTranslateY(-400);
     dialogFilter.show();
   }
 
@@ -216,7 +234,7 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     JFXDialogLayout dialogLayout = new JFXDialogLayout();
     dialogLayout.setBody(exportDialogView.getView());
     dialogExport = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
-    dialogExport.setTranslateY(-200);
+    dialogExport.setTranslateY(-400);
     dialogExport.show();
   }
 
@@ -228,24 +246,4 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     dialogExport.close();
   }
 
-  public void startZoom(MouseEvent event) {
-    if (event.getClickCount() == 2) {
-      totalMetricsLineChart.setScaleX(1.0);
-      totalMetricsLineChart.setScaleY(1.0);
-    }
-  }
-
-  public void endZoom(ScrollEvent event) {
-
-    event.consume();
-
-    if (event.getDeltaY() == 0) {
-      return;
-    }
-
-    double scaleFactor = (event.getDeltaY() > 0) ? SCALE_DELTA : 1 / SCALE_DELTA;
-
-    totalMetricsLineChart.setScaleX(totalMetricsLineChart.getScaleX() * scaleFactor);
-    totalMetricsLineChart.setScaleY(totalMetricsLineChart.getScaleY() * scaleFactor);
-  }
 }
