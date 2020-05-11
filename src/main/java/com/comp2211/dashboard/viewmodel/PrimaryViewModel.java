@@ -422,14 +422,17 @@ public class PrimaryViewModel implements ViewModel {
 
       //TODO change format for each chart
       SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-      //SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd");
+      SimpleDateFormat previousFormat2 = new SimpleDateFormat("yyyy-MM-dd");
       SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/MM/dd - HHmm");
       String reformattedStr = null;
       try {
-
         reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));
       } catch (ParseException e) {
-        System.err.println(e);
+        try {
+          reformattedStr = myFormat.format(previousFormat2.parse(entry.getKey()));
+        } catch (ParseException e2) {
+          System.err.println(e2);
+        }
       }
 
       Data<String, Number> data = new XYChart.Data<>(reformattedStr, entry.getValue().doubleValue());
@@ -445,14 +448,17 @@ public class PrimaryViewModel implements ViewModel {
     for (Entry<String, BigDecimal> entry : dataMap.entrySet()) {
 
       SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-      //SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd");
+      SimpleDateFormat previousFormat2 = new SimpleDateFormat("yyyy-MM-dd");
       SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/MM/dd - HHmm");
       String reformattedStr = null;
       try {
-
         reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));
       } catch (ParseException e) {
-        System.err.println(e);
+        try {
+          reformattedStr = myFormat.format(previousFormat2.parse(entry.getKey()));
+        } catch (ParseException e2) {
+          System.err.println(e2);
+        }
       }
 
       Data<String, Number> data = new XYChart.Data<>(reformattedStr, entry.getValue());
@@ -468,14 +474,17 @@ public class PrimaryViewModel implements ViewModel {
     for (Entry<String, BigDecimal> entry : dataMap.entrySet()) {
 
       SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-      //SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd");
+      SimpleDateFormat previousFormat2 = new SimpleDateFormat("yyyy-MM-dd");
       SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/MM/dd - HHmm");
       String reformattedStr = null;
       try {
-
         reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));
       } catch (ParseException e) {
-        System.err.println(e);
+        try {
+          reformattedStr = myFormat.format(previousFormat2.parse(entry.getKey()));
+        } catch (ParseException e2) {
+          System.err.println(e2);
+        }
       }
 
       Data<String, Number> data = new XYChart.Data<>(reformattedStr, entry.getValue());

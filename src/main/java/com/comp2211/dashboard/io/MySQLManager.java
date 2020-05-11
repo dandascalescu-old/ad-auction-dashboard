@@ -463,7 +463,8 @@ public class MySQLManager extends DatabaseManager {
             retrieve(statement, new Object[]{}, new String[]{"COUNT"})
     );
   }
-  
+
+  //TODO add toString method
   @Override
   public String retrieveCampaignStartDate(Filter filter) {
     String statement = "SELECT MIN(Date) AS Date" +
