@@ -148,6 +148,10 @@ public class MockDatabaseManager extends DatabaseManager {
     return this.getBigDecimalTestData();
   }
 
+  @Override
+  public HashMap<String, BigDecimal> retrieveDatedCostTotals(Cost type, byte hoursGranularity, Filter filter) {
+    return this.getBigDecimalTestData();
+  }
 
   /**
    * Retrieve the total number of impressions for each date.
@@ -203,6 +207,11 @@ public class MockDatabaseManager extends DatabaseManager {
    */
   @Override
   public HashMap<String, Long> retrieveDatedAcquisitionTotals(byte hoursGranularity, Filter filter) {
+    return this.getLongTestData();
+  }
+
+  @Override
+  public HashMap<String, Long> retrieveDatedServerTotals(byte hoursGranularity, Filter filter) {
     return this.getLongTestData();
   }
 

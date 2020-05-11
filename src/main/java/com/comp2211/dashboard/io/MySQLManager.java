@@ -55,6 +55,7 @@ public class MySQLManager extends DatabaseManager {
     this(host, port, db, user, pw);
   }
 
+  //TODO comment methods, also in other classes
   public List<List<String>> retrieve(String statement, Object[] params, String[] resultColumns) {
     System.out.println(statement);
     PreparedStatement stmt = null;
@@ -302,6 +303,38 @@ public class MySQLManager extends DatabaseManager {
     );
   }
 
+  @Override
+  public HashMap<String, BigDecimal> retrieveDatedCostTotals(Cost type, byte hoursGranularity, Filter filter) {
+    Table table = (type.equals(Cost.Click_Cost) ? Table.click_table : Table.impression_table);
+    String where = filterToWhere(filter, table);
+    String cas = hoursToCase(hoursGranularity, table);
+    String statement = "SELECT groups.start AS START, SUM(groups." + type.toString() + ") AS SUM " +
+            "FROM (" +
+            "SELECT " + type.toString() + ", CASE " + cas + " END AS start " +
+            "FROM " + (type.equals(Cost.Click_Cost) ? click_table : impression_table) + " " +
+            ( where.isEmpty() ? "" : " WHERE " + where) + ") groups " +
+            "GROUP BY START";
+    return toBigDecimalMap(
+            retrieve(statement, new Object[]{}, new String[]{"START", "SUM"})
+    );
+  }
+  /*public HashMap<String, BigDecimal> retrieveDatedCostTotals(byte hoursGranularity, Filter filter) {
+    String where = filterToWhere(filter, Table.impression_table);
+    where = ( where.isEmpty() ? "" : " WHERE " + where );
+    String cas = hoursToCase(hoursGranularity, Table.impression_table);
+    String statement = "SELECT imprGroups.start AS START, SUM(imprGroups." + Cost.Impression_Cost.toString() + ") + SUM(clickGroups." + Cost.Click_Cost.toString() + ") AS SUM " +
+            "FROM (" +
+            "SELECT CASE " + cas + " END AS start, " + Cost.Impression_Cost.toString() + " " +
+            "FROM " + impression_table +
+            where + ") imprGroups INNER JOIN (" +
+            "SELECT CASE " + cas + " END AS start, " + Cost.Click_Cost.toString() + " " +
+            "FROM " + click_table +
+            where + ") clickGroups ON imprGroups.start = clickGroups.start " +
+            "GROUP BY START";
+    return toBigDecimalMap(
+            retrieve(statement, new Object[]{}, new String[]{"START", "SUM"})
+    );
+  }*/
 
   /**
    * Retrieve the total number of impressions for each date.
@@ -411,6 +444,21 @@ public class MySQLManager extends DatabaseManager {
             "SELECT CASE " + cas + " END AS start " +
             "FROM " + server_table + " " +
             "WHERE Conversion = 1" + ( where.isEmpty() ? "" : " AND " + where ) + ") groups " +
+            "GROUP BY START";
+    return toLongMap(
+            retrieve(statement, new Object[]{}, new String[]{"START", "COUNT"})
+    );
+  }
+
+  @Override
+  public HashMap<String, Long> retrieveDatedServerTotals(byte hoursGranularity, Filter filter) {
+    String where = filterToWhere(filter, Table.server_table);
+    String cas = hoursToCase(hoursGranularity, Table.server_table);
+    String statement = "SELECT groups.start AS START, COUNT(*) AS COUNT " +
+            "FROM (" +
+            "SELECT CASE " + cas + " END AS start " +
+            "FROM " + server_table + " " +
+            ( where.isEmpty() ? "" : " WHERE " + where ) + ") groups " +
             "GROUP BY START";
     return toLongMap(
             retrieve(statement, new Object[]{}, new String[]{"START", "COUNT"})

@@ -39,6 +39,8 @@ public class Campaign {
   private HashMap<String, BigDecimal> cachedDatedAcquisitionCostAverages, cachedDatedImpressionCostAverages, cachedDatedClickCostAverages;
   private HashMap<String, Long> cachedDatedImpressionTotals, cachedDatedClickTotals, cachedDatedUniqueTotals, cachedDatedBounceTotals, cachedDatedAcquisitionTotals;
   private HashMap<String, BigDecimal> cachedAgePercentage, cachedGenderPercentage, cachedIncomePercentage, cachedContextPercentage;
+  private HashMap<String, BigDecimal> cachedDatedCostTotals;
+  private HashMap<String, BigDecimal> cachedDatedBounceRates, cachedDatedCTRs;
 
   public static List<Campaign> getCampaigns(){
     return allCampaigns;
@@ -81,6 +83,11 @@ public class Campaign {
     cachedGenderPercentage = new LinkedHashMap<>();
     cachedIncomePercentage = new LinkedHashMap<>();
     cachedContextPercentage = new LinkedHashMap<>();
+
+    cachedDatedCostTotals = new LinkedHashMap<>();
+
+    cachedDatedBounceRates = new LinkedHashMap<>();
+    cachedDatedCTRs = new LinkedHashMap<>();
 
     allCampaigns.add(this);
   }
@@ -146,6 +153,11 @@ public class Campaign {
     cachedIncomePercentage.putAll(percentageMap(Demographic.Income, dbManager.retrieveDemographics(Demographic.Income, filter)));
     cachedContextPercentage.putAll(percentageMap(Demographic.Context, dbManager.retrieveDemographics(Demographic.Context, filter)));
 
+    cachedDatedCostTotals.putAll(calcDatedSums(dbManager.retrieveDatedCostTotals(Cost.Impression_Cost, (byte) 24, filter), dbManager.retrieveDatedCostTotals(Cost.Click_Cost, (byte) 24, filter)));
+
+    cachedDatedBounceRates.putAll(calcDatedRates(cachedDatedBounceTotals, dbManager.retrieveDatedServerTotals((byte) 24, filter)));
+    cachedDatedCTRs.putAll(calcDatedRates(cachedDatedClickTotals, cachedDatedImpressionTotals));
+
     appliedFilter = filter;
 
     Logger.log("Data cached successfully.");
@@ -166,6 +178,11 @@ public class Campaign {
     cachedGenderPercentage.clear();
     cachedIncomePercentage.clear();
     cachedContextPercentage.clear();
+
+    cachedDatedCostTotals.clear();
+
+    cachedDatedBounceRates.clear();
+    cachedDatedCTRs.clear();
   }
 
   public long getClickDataCount() {
@@ -266,12 +283,11 @@ public class Campaign {
       Logger.log("Attempted bounce calculation with negative value");
       return;
     }
-    /*if (serverDataCount == 0) {
-      return;
-    }*/
     bouncesCount = dbManager.retrieveBouncesCountByTime(maxSeconds, allowInf, filter);
     cachedDatedBounceTotals.clear();
     cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByTime(totalsGranularity, maxSeconds, allowInf, filter));
+    cachedDatedBounceRates.clear();
+    cachedDatedBounceRates.putAll(calcDatedRates(cachedDatedBounceTotals, dbManager.retrieveDatedServerTotals((byte) 24, filter)));
   }
 
   public void updateBouncesByPages(byte maxPages, Filter filter) {
@@ -279,15 +295,14 @@ public class Campaign {
       Logger.log("Attempted bounce calculation with negative value, returning 0");
       return;
     }
-    /*if (serverDataCount == 0) {
-      bouncesCount = 0L;
-      cachedDatedBounceTotals.clear();
-      return;
-    }*/
     bouncesCount = dbManager.retrieveBouncesCountByPages(maxPages, filter);
     cachedDatedBounceTotals.clear();
     cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(totalsGranularity, maxPages, filter));
+    cachedDatedBounceRates.clear();
+    cachedDatedBounceRates.putAll(calcDatedRates(cachedDatedBounceTotals, dbManager.retrieveDatedServerTotals((byte) 24, filter)));
   }
+
+
 
   /**
    * Calculates the bounce rate as the percentage of server entries that result in a bounce
@@ -323,6 +338,7 @@ public class Campaign {
     return getTotalClickCost().add(getTotalImpressionCost());
   }
 
+  //TODO add these to dashboard?
   /*/**
    * Calculates the average cost per acquisition/conversion by summing all converted clicks and
    * dividing by the count.
@@ -489,5 +505,51 @@ public class Campaign {
       }
     }
     return resultMap;
+  }
+
+  public HashMap<String, BigDecimal> getDatedCostTotals() {
+    return cachedDatedCostTotals;
+  }
+
+  private static HashMap<String, BigDecimal> calcDatedSums(HashMap<String, BigDecimal> datedSums1, HashMap<String, BigDecimal> datedSums2) {
+    HashMap<String, BigDecimal> returnMap = new LinkedHashMap<>();
+    for (Entry<String, BigDecimal> sums1Entry : datedSums1.entrySet()) {
+      String date = sums1Entry.getKey();
+      BigDecimal sum1 = sums1Entry.getValue();
+      BigDecimal sum2 = BigDecimal.ZERO;
+      if (datedSums2.containsKey(date)) {
+        sum2 = datedSums2.get(date);
+      }
+      BigDecimal sum = sum1.add(sum2);
+      returnMap.put(date, sum);
+    }
+    return returnMap;
+  }
+
+  public HashMap<String, BigDecimal> getDatedBounceRates() {
+    return cachedDatedBounceRates;
+  }
+
+  public HashMap<String, BigDecimal> getDatedCTRs() {
+    return cachedDatedCTRs;
+  }
+
+  private static HashMap<String, BigDecimal> calcDatedRates(HashMap<String, Long> datedDividendTotals, HashMap<String, Long> datedDivisorTotals) {
+    HashMap<String, BigDecimal> returnMap = new LinkedHashMap<>();
+    for (Entry<String, Long> divisorEntry : datedDivisorTotals.entrySet()) {
+      String date = divisorEntry.getKey();
+      Long divisor = divisorEntry.getValue();
+      if (divisor == 0L) {
+        returnMap.put(date, BigDecimal.ZERO);
+      } else {
+        Long dividend = 0L;
+        if (datedDividendTotals.containsKey(date)) {
+          dividend = datedDividendTotals.get(date);
+        }
+        BigDecimal bounceRate = BigDecimal.valueOf(dividend).divide(BigDecimal.valueOf(divisor), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+        returnMap.put(date, bounceRate);
+      }
+    }
+    return returnMap;
   }
 }

@@ -157,15 +157,13 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     rateCombobox.setItems(viewModel.ratesList());
     rateCombobox.valueProperty().bindBidirectional(viewModel.selectedRatePropery());
 
-    //TODO:: uncomment when primaryviewmodel is ready to read data.
-    /*rateChart.setData(viewModel.rateChartData());
+    rateChart.setData(viewModel.rateChartData());
     rateChart.setLegendVisible(false);
-    rateChart.getXAxis().setTickLabelRotation(-30);*/
+    rateChart.getXAxis().setTickLabelRotation(-30);
 
-    //TODO:: uncomment when primaryviewmodel is ready to read data.
-    /*totalCostChart.setData(viewModel.totalCostChartData());
+    totalCostChart.setData(viewModel.totalCostChartData());
     totalCostChart.setLegendVisible(false);
-    totalCostChart.getXAxis().setTickLabelRotation(-30);*/
+    totalCostChart.getXAxis().setTickLabelRotation(-30);
 
   }
 

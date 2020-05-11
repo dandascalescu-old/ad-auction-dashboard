@@ -82,6 +82,8 @@ public abstract class DatabaseManager {
    */
   public abstract HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost(byte hoursGranularity, Filter filter);
 
+  public abstract HashMap<String, BigDecimal> retrieveDatedCostTotals(Cost type, byte hoursGranularity, Filter filter);
+
   /**
    * Retrieve the total number of impressions for each date.
    */
@@ -111,6 +113,8 @@ public abstract class DatabaseManager {
    * Retrieve the total number of acquisitions for each date.
    */
   public abstract HashMap<String, Long> retrieveDatedAcquisitionTotals(byte hoursGranularity, Filter filter);
+
+  public abstract HashMap<String, Long> retrieveDatedServerTotals(byte hoursGranularity, Filter filter);
 
   /**
    * Retrieve demographic info
