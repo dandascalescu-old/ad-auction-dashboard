@@ -483,6 +483,24 @@ public class MySQLManager extends DatabaseManager {
     return false;
   }
 
+  @Override
+  public String retrieveCampaignStartDate(Filter filter) {
+    String statement = "SELECT MIN(Date) AS Date" +
+        " FROM " + impression_table +
+        " WHERE Campaign_ID = " + filter.getCampaignID() +
+        " LIMIT 1";
+    return retrieve(statement, new Object[]{}, new String[]{"Date"}).get(0).get(0);
+  }
+
+  @Override
+  public String retrieveCampaignEndDate(Filter filter) {
+    String statement = "SELECT MAX(Date) AS Date" +
+        " FROM " + impression_table +
+        " WHERE Campaign_ID = " + filter.getCampaignID() +
+        " LIMIT 1";
+    return retrieve(statement, new Object[]{}, new String[]{"Date"}).get(0).get(0);
+  }
+
   private static String filterToWhere(Filter filter, Table table) {
     String dateTitle = "Date";
     if (table.equals(Table.server_table)) dateTitle = "Entry_Date";
