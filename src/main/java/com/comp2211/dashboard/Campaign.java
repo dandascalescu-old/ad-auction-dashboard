@@ -308,7 +308,7 @@ public class Campaign {
     cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(totalsGranularity, maxPages, filter));
     cachedDatedBounceRates.clear();
     cachedDatedBounceRates.putAll(calcDatedRates(cachedDatedBounceTotals, dbManager.retrieveDatedServerTotals((byte) 24, filter)));
-    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(maxPages, filter));
+    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(totalsGranularity, maxPages, filter));
 
     MvvmFX.getNotificationCenter().publish("Bounce");
   }
