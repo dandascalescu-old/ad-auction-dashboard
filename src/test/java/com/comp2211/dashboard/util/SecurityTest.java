@@ -61,5 +61,38 @@ class SecurityTest {
   }
 
   @Test
-  void validateText() {}
+  @Description("Boundary test: Min number of username characters")
+  void validateTextBoundaryMinNumChars() {
+    String testUsername = "hded";
+    Boolean passed = Security.validateText(testUsername);
+
+    assertTrue(passed);
+  }
+
+  @Test
+  @Description("Boundary test: Max number of username characters")
+  void validateTextBoundaryMaxNumChars() {
+    String testUsername = "12345678901234567890";
+    Boolean passed = Security.validateText(testUsername);
+
+    assertTrue(passed);
+  }
+
+  @Test
+  @Description("Boundary test: One too few characters in username")
+  void validateTextBoundaryTooFewChars() {
+    String testUsername = "hde";
+    Boolean passed = Security.validateText(testUsername);
+
+    assertFalse(passed);
+  }
+
+  @Test
+  @Description("Boundary test: One too many characters in username")
+  void validateTextBoundaryTooManyChars() {
+    String testUsername = "123456789012345678901";
+    Boolean passed = Security.validateText(testUsername);
+
+    assertFalse(passed);
+  }
 }

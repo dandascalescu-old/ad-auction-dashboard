@@ -55,8 +55,8 @@ public class Security {
   public static boolean validateText(String username) {
     boolean pass = true;
 
-    // Check length is 3 or greater
-    if (username.length() < 3) {
+    // Check length is 4 or greater, and less than or equal to 20
+    if (username.length() < 4 || username.length() > 20) {
       pass = false;
     }
 
