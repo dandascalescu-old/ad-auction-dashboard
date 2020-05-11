@@ -34,10 +34,10 @@ public class MySQLManager extends DatabaseManager {
     campaign_table = Table.campaign_table.toString();
 
     if (sqlDatabase.getConnection() == null) {
-      Logger.log("Cannot establish database connection. Exiting now.");
+      Logger.log("[ERROR] Cannot establish database connection. Exiting now.");
       return;
     }
-    Logger.log("Database connection established.");
+    Logger.log("[INFO] Database connection established.");
     open = true;
     verifyDatabaseTables();
   }
@@ -55,9 +55,44 @@ public class MySQLManager extends DatabaseManager {
     this(host, port, db, user, pw);
   }
 
+  @Override
+  public void verifyDatabaseTables() {
+    Logger.log("[INFO] Verifying database tables...");
+    boolean valid = true;
+    if (!sqlDatabase.tableExists("credentials")) {
+      Logger.log("[WARNING] Credentials table doesn't exist.");
+      valid = false;
+    }
+    if (!sqlDatabase.tableExists(click_table)) {
+      Logger.log("[WARNING] Click table doesn't exist.");
+      valid = false;
+    }
+    if (!sqlDatabase.tableExists(impression_table)) {
+      Logger.log("[WARNING] Impression table doesn't exist.");
+      valid = false;
+    }
+    if (!sqlDatabase.tableExists(server_table)) {
+      Logger.log("[WARNING] Server table doesn't exist.");
+      valid = false;
+    }
+    if (!sqlDatabase.tableExists(campaign_table)) {
+      Logger.log("[WARNING] Server table doesn't exist.");
+      valid = false;
+    }
+    if(valid) {
+      Logger.log("[INFO] Verification complete.");
+    }
+  }
+
+  @Override
+  public boolean isOpen() {
+    return open;
+  }
+
+
   //TODO comment methods, also in other classes
   public List<List<String>> retrieve(String statement, Object[] params, String[] resultColumns) {
-    System.out.println(statement);
+    //System.out.println(statement);
     PreparedStatement stmt = null;
     ResultSet rs = null;
     List<List<String>> results = new ArrayList<>();
@@ -74,10 +109,17 @@ public class MySQLManager extends DatabaseManager {
         else if (params[i] instanceof java.sql.Date)
           stmt.setDate(i+1, (Date) params[i]);
         else
-          System.err.println("Type not accounted for");
+          System.err.println("Type not accounted for.");
       }
 
+      Long start = System.currentTimeMillis();
       rs = stmt.executeQuery();
+      Long end = System.currentTimeMillis();
+      if (end - start > 1000)
+        Logger.log("[WARN] Last query took longer than 1 second to execute.\n" +
+                "     Query: \"" + statement + "\"\n" +
+                "     Time taken: " + (end - start )/1000 + "s");
+
       while (rs.next()) {
         List<String> result = new ArrayList<>();
         for (String col : resultColumns)
@@ -91,98 +133,6 @@ public class MySQLManager extends DatabaseManager {
       DbUtils.closeQuietly(stmt);
     }
     return results;
-  }
-
-  private HashMap<String, Long> toLongMap(List<List<String>> resultsList) {
-    HashMap<String, Long> resultMap = new LinkedHashMap<>();
-    for (List<String> result : resultsList)
-      if (result.size() != 2)
-        Logger.log("[ERROR] Invalid result returned from SQL query. Expected 2 columns, received " + result.size() + ".");
-      else
-        try {
-          resultMap.put(result.get(0), Long.valueOf(result.get(1)));
-        } catch (NumberFormatException e) {
-          Logger.log("[ERROR] Invalid result returned from SQL query. Long conversion failed on value <" + result.get(1) + ">.");
-        }
-    return resultMap;
-  }
-
-  private HashMap<String, BigDecimal> toBigDecimalMap(List<List<String>> resultsList) {
-    HashMap<String, BigDecimal> resultMap = new LinkedHashMap<>();
-    for (List<String> result : resultsList)
-      if (result.size() != 2)
-        Logger.log("[ERROR] Invalid result returned from SQL query. Expected 2 columns, received " + result.size() + ".");
-      else
-        try {
-          resultMap.put(result.get(0), BigDecimal.valueOf(Double.parseDouble(result.get(1))));
-        } catch (NumberFormatException e) {
-          Logger.log("[ERROR] Invalid result returned from SQL query. Double conversion failed on value <" + result.get(1) + ">.");
-        }
-    return resultMap;
-  }
-
-  private long toLong(List<List<String>> resultsList) {
-    if (resultsList.size() != 1)
-      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 columns, received " + resultsList.size() + ".");
-    else if (resultsList.get(0).size() != 1)
-      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 result, received " + resultsList.get(0).size() + ".");
-    else
-      try {
-        if (resultsList.get(0).get(0) == null) return 0L;
-        else return Long.parseLong(resultsList.get(0).get(0));
-      } catch (NumberFormatException e) {
-        Logger.log("[ERROR] Invalid result returned from SQL query. Long conversion failed on value <" + resultsList.get(0).get(0) + ">.");
-      }
-    return 0L;
-  }
-
-  private BigDecimal toBigDecimal(List<List<String>> resultsList) {
-    if (resultsList.size() != 1)
-      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 columns, received " + resultsList.size() + ".");
-    else if (resultsList.get(0).size() != 1)
-      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 result, received " + resultsList.get(0).size() + ".");
-    else
-      try {
-        if (resultsList.get(0).get(0) == null) return BigDecimal.ZERO;
-        else return BigDecimal.valueOf(Double.parseDouble(resultsList.get(0).get(0)));
-      } catch (NumberFormatException e) {
-        Logger.log("[ERROR] Invalid result returned from SQL query. Double conversion failed on value <" + resultsList.get(0).get(0) + ">.");
-      }
-    return BigDecimal.ZERO;
-  }
-
-  @Override
-  public void verifyDatabaseTables() {
-    Logger.log("Verifying database tables...");
-    boolean valid = true;
-    if (!sqlDatabase.tableExists("credentials")) {
-      Logger.log("Credentials table doesn't exist.");
-      valid = false;
-    }
-    if (!sqlDatabase.tableExists(click_table)) {
-      Logger.log("Click table doesn't exist.");
-      valid = false;
-    }
-    if (!sqlDatabase.tableExists(impression_table)) {
-      Logger.log("Impression table doesn't exist.");
-      valid = false;
-    }
-    if (!sqlDatabase.tableExists(server_table)) {
-      Logger.log("Server table doesn't exist.");
-      valid = false;
-    }
-    if (!sqlDatabase.tableExists(campaign_table)) {
-      Logger.log("Server table doesn't exist.");
-      valid = false;
-    }
-    if(valid) {
-      Logger.log("Verification complete.");
-    }
-  }
-
-  @Override
-  public boolean isOpen() {
-    return open;
   }
 
   /**
@@ -551,6 +501,64 @@ public class MySQLManager extends DatabaseManager {
       DbUtils.closeQuietly(stmt);
     }
     return false;
+  }
+
+  private static HashMap<String, Long> toLongMap(List<List<String>> resultsList) {
+    HashMap<String, Long> resultMap = new LinkedHashMap<>();
+    for (List<String> result : resultsList)
+      if (result.size() != 2)
+        Logger.log("[ERROR] Invalid result returned from SQL query. Expected 2 columns, received " + result.size() + ".");
+      else
+        try {
+          resultMap.put(result.get(0), Long.valueOf(result.get(1)));
+        } catch (NumberFormatException e) {
+          Logger.log("[ERROR] Invalid result returned from SQL query. Long conversion failed on value <" + result.get(1) + ">.");
+        }
+    return resultMap;
+  }
+
+  private static HashMap<String, BigDecimal> toBigDecimalMap(List<List<String>> resultsList) {
+    HashMap<String, BigDecimal> resultMap = new LinkedHashMap<>();
+    for (List<String> result : resultsList)
+      if (result.size() != 2)
+        Logger.log("[ERROR] Invalid result returned from SQL query. Expected 2 columns, received " + result.size() + ".");
+      else
+        try {
+          resultMap.put(result.get(0), BigDecimal.valueOf(Double.parseDouble(result.get(1))));
+        } catch (NumberFormatException e) {
+          Logger.log("[ERROR] Invalid result returned from SQL query. Double conversion failed on value <" + result.get(1) + ">.");
+        }
+    return resultMap;
+  }
+
+  private static long toLong(List<List<String>> resultsList) {
+    if (resultsList.size() != 1)
+      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 columns, received " + resultsList.size() + ".");
+    else if (resultsList.get(0).size() != 1)
+      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 result, received " + resultsList.get(0).size() + ".");
+    else
+      try {
+        if (resultsList.get(0).get(0) == null) return 0L;
+        else return Long.parseLong(resultsList.get(0).get(0));
+      } catch (NumberFormatException e) {
+        Logger.log("[ERROR] Invalid result returned from SQL query. Long conversion failed on value <" + resultsList.get(0).get(0) + ">.");
+      }
+    return 0L;
+  }
+
+  private static BigDecimal toBigDecimal(List<List<String>> resultsList) {
+    if (resultsList.size() != 1)
+      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 columns, received " + resultsList.size() + ".");
+    else if (resultsList.get(0).size() != 1)
+      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 result, received " + resultsList.get(0).size() + ".");
+    else
+      try {
+        if (resultsList.get(0).get(0) == null) return BigDecimal.ZERO;
+        else return BigDecimal.valueOf(Double.parseDouble(resultsList.get(0).get(0)));
+      } catch (NumberFormatException e) {
+        Logger.log("[ERROR] Invalid result returned from SQL query. Double conversion failed on value <" + resultsList.get(0).get(0) + ">.");
+      }
+    return BigDecimal.ZERO;
   }
 
   private static String filterToWhere(Filter filter, Table table) {

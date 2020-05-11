@@ -499,9 +499,10 @@ public class PrimaryViewModel implements ViewModel {
         updateTotals();
         updateAverages();
 
+        Logger.log("[INFO] Filter applied successfully.");
       } catch (ClassCastException e) {
         e.printStackTrace();
-        Logger.log("Invalid filter received");
+        Logger.log("[ERROR] Invalid filter received");
       }
     });
   }
@@ -513,9 +514,10 @@ public class PrimaryViewModel implements ViewModel {
         selectedCampaign.getValue().updateTotalsGranularity(granularity);
         updateTotals();
 
+        Logger.log("[INFO] Granularity changed successfully.");
       } catch (ClassCastException e) {
         e.printStackTrace();
-        Logger.log("Invalid granularity received");
+        Logger.log("[ERROR] Invalid granularity received");
       }
     });
   }
@@ -527,9 +529,10 @@ public class PrimaryViewModel implements ViewModel {
         selectedCampaign.getValue().updateAvgsGranularity(granularity);
         updateAverages();
 
+        Logger.log("[INFO] Granularity changed successfully.");
       } catch (ClassCastException e) {
         e.printStackTrace();
-        Logger.log("Invalid granularity received");
+        Logger.log("[ERROR] Invalid granularity received");
       }
     });
   }

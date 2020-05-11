@@ -120,13 +120,14 @@ public class Campaign {
    * Fetches and caches entries from the database
    */
   public void cacheData(Filter filter) {
+    //TODO Edit stdout/logs messages
     if (appliedFilter != null && filter.isEqualTo(appliedFilter)) {
-      Logger.log("Data not cached - filter provided was identical to current applied filter.");
+      Logger.log("[INFO] [Campaign " + this.campaignName + "] Data not cached - filter provided was identical to current applied filter.");
       return;
     }
 
     //TODO maybe cache IDs for certain demographics?
-    System.out.println("dbManager: " + dbManager);
+    //System.out.println("dbManager: " + dbManager);
     clickDataCount = dbManager.retrieveDataCount(DatabaseManager.Table.click_table, filter);
     impressionDataCount = dbManager.retrieveDataCount(DatabaseManager.Table.impression_table, filter);
     serverDataCount = dbManager.retrieveDataCount(DatabaseManager.Table.server_table, filter);
@@ -160,7 +161,7 @@ public class Campaign {
 
     appliedFilter = filter;
 
-    Logger.log("Data cached successfully.");
+    Logger.log("[INFO] [Campaign " + this.campaignName + "] Data cached successfully.");
   }
 
   public void clearCache() {
