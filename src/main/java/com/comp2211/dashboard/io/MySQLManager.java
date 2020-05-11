@@ -482,6 +482,7 @@ public class MySQLManager extends DatabaseManager {
     return retrieve(statement, new Object[]{}, new String[]{"Date"}).get(0).get(0);
   }
 
+  @Override
   public String retrieveCampaignName(int campaignID){
     String statement = "SELECT Name " +
         "FROM " + campaign_table +
