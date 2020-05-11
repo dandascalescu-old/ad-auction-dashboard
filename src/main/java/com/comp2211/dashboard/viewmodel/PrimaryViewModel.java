@@ -261,7 +261,8 @@ public class PrimaryViewModel implements ViewModel {
     Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter());
     updateTotalMetrics();
     updateTotalCosts();
-    updateBouncesCountDefault(filter);
+
+    updateBounceMetrics();
 
     updatePieChartData(selectedCampaign.getValue().getPercentageMap(Demographic.Gender));
     updateAverages();

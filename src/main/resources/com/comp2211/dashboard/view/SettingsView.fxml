@@ -34,7 +34,7 @@
                   </font>
                </Text>
                <Line endX="928.0" layoutX="100.0" layoutY="66.0" startX="-100.0" />
-               <Text fill="#3c3f41" layoutX="50.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Set your own definition for a bounce (Any value below what is set is considered a bounce)" wrappingWidth="310.34716796875">
+               <Text fill="#3c3f41" layoutX="50.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Set your own definition for a bounce (Any value below what is set is considered a bounce)" wrappingWidth="700">
                   <font>
                      <Font name="SansSerif Regular" size="17.0" />
                   </font>

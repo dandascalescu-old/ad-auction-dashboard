@@ -78,6 +78,7 @@ public class Campaign {
     cachedIncomePercentage = new LinkedHashMap<>();
     cachedContextPercentage = new LinkedHashMap<>();
 
+    updateBouncesByPages((byte)1, new Filter(campaignID));
     allCampaigns.add(this);
   }
 
