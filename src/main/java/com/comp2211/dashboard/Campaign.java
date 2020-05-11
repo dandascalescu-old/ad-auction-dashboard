@@ -90,7 +90,6 @@ public class Campaign {
     cachedDatedBounceRates = new LinkedHashMap<>();
     cachedDatedCTRs = new LinkedHashMap<>();
 
-    allCampaigns.add(this);
     DatabaseViewModel.addNewCampaign(this);
   }
 
