@@ -7,6 +7,7 @@ import com.comp2211.dashboard.io.DatabaseManager;
 import com.comp2211.dashboard.io.DatabaseManager.Cost;
 
 import de.saxsys.mvvmfx.MvvmFX;
+import com.comp2211.dashboard.viewmodel.DatabaseViewModel;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -79,7 +80,8 @@ public class Campaign {
     cachedContextPercentage = new LinkedHashMap<>();
 
     updateBouncesByPages((byte)1, new Filter(campaignID));
-    allCampaigns.add(this);
+//    allCampaigns.add(this); todo:check if needed
+    DatabaseViewModel.addNewCampaign(this);
   }
 
   @Override
@@ -145,6 +147,8 @@ public class Campaign {
 
     appliedFilter = filter;
 
+    allCampaigns.add(this);
+    DatabaseViewModel.changeProgressToCompleted(this);
     Logger.log("Data cached successfully.");
   }
 
@@ -451,6 +455,14 @@ public class Campaign {
    */
   private HashMap<String, BigDecimal> getContextPercentage() {
     return cachedContextPercentage;
+  }
+
+  public String getCampaignStartDate(){
+    return dbManager.retrieveCampaignStartDate(new Filter(getCampaignID()));
+  }
+
+  public String getCampaignEndDate(){
+    return dbManager.retrieveCampaignEndDate(new Filter(getCampaignID()));
   }
 
   private HashMap<String, BigDecimal> percentageMap (Demographic demographic, HashMap<String, Long> dataMap) {
