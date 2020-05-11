@@ -5,6 +5,7 @@ import com.comp2211.dashboard.model.data.Demographics;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import com.comp2211.dashboard.model.data.Filter;
 import com.comp2211.dashboard.util.Logger;
+import com.comp2211.dashboard.view.PrimaryView;
 import de.saxsys.mvvmfx.MvvmFX;
 import de.saxsys.mvvmfx.ViewModel;
 import java.math.BigDecimal;
@@ -39,6 +40,8 @@ public class PrimaryViewModel implements ViewModel {
   private ObservableList<Series<String, Number>> averageChartData;
   private ObservableList<PieChart.Data> demographicsChartData;
   private ObservableList<Series<String, Number>> totalMetricChartData;
+  private ObservableList<Series<String, Number>> rateChartData;
+  private ObservableList<Series<String, Number>> totalCostChartData;
 
   private StringProperty totalClickCost = new SimpleStringProperty("");
   private StringProperty totalImpresCost = new SimpleStringProperty("");
@@ -60,6 +63,7 @@ public class PrimaryViewModel implements ViewModel {
   private ObjectProperty<Demographic> selectedDemographic = new SimpleObjectProperty<>();
   private ObjectProperty<Campaign> selectedCampaign = new SimpleObjectProperty<>();
 
+  //TODO rename so they are the same as the totals below?
   private final String avgCostClick = "Average Cost of Click";
   private final String avgCostImpr = "Average Cost of Impression";
   private final String avgCostAcq = "Average Cost of Acquisition";
@@ -79,11 +83,14 @@ public class PrimaryViewModel implements ViewModel {
     demographics = FXCollections.observableArrayList();
     averageChartData = FXCollections.observableArrayList();
     demographicsChartData = FXCollections.observableArrayList();
-    totals = FXCollections.observableArrayList();
     totalMetricChartData = FXCollections.observableArrayList();
+    rateChartData = FXCollections.observableArrayList();
+    totalCostChartData = FXCollections.observableArrayList();
+    totals = FXCollections.observableArrayList();
     rates = FXCollections.observableArrayList();
 
     campaigns.addAll(Campaign.getCampaigns());
+    //TODO reorder so same as totals?
     averages.addAll(avgCostClick, avgCostImpr, avgCostAcq);
     demographics.addAll(Demographics.Demographic.values());
     totals.addAll(totalImpressions, totalClicks, totalUniques, totalBounces, totalConversions);
@@ -96,6 +103,7 @@ public class PrimaryViewModel implements ViewModel {
     // This was in an runnable block, which has been removed to make testing more manageable
     selectedCampaign.getValue().cacheData(filter);
 
+    //TODO put updates into fewer methods, where possible
     updateTotalMetrics();
     updateTotalCosts();
     updateBouncesCountDefault(filter);
@@ -106,6 +114,8 @@ public class PrimaryViewModel implements ViewModel {
     setUpRatesSelector();
 
     setupFilterReceiving();
+    setupGranReceiving();
+    setupGranAvgsReceiving();
     setupCampaignReceiving();
   }
 
@@ -137,6 +147,14 @@ public class PrimaryViewModel implements ViewModel {
 
   public ObservableList<PieChart.Data> demographicsChartData() {
     return demographicsChartData;
+  }
+
+  public ObservableList<Series<String, Number>> rateChartData() {
+    return rateChartData;
+  }
+
+  public ObservableList<Series<String, Number>> totalCostChartData() {
+    return totalCostChartData;
   }
 
   public StringProperty selectedAverageProperty() {
@@ -209,6 +227,8 @@ public class PrimaryViewModel implements ViewModel {
     totalImpresCost.setValue("£" + selectedCampaign.getValue().getTotalImpressionCost().setScale(2, RoundingMode.CEILING).toPlainString());
     totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost().setScale(2, RoundingMode.CEILING).toPlainString());
 
+    updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
+
     clickThroughRateText.setValue(selectedCampaign.getValue().getClickThroughRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
     conversionsPerUniqueText.setValue(selectedCampaign.getValue().getConversionsPerUnique().setScale(2, RoundingMode.CEILING).toPlainString());
   }
@@ -240,6 +260,8 @@ public class PrimaryViewModel implements ViewModel {
     bouncesPerConversionText.setValue(selectedCampaign.getValue().getBouncesPerConversion().setScale(2, RoundingMode.CEILING).toPlainString());
     if (selectedTotals.getValue().equals(totalBounces))
       updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedBounceTotals());
+    if (selectedRate.getValue().equals(rateBounce))
+      updateRates();
   }
 
   private void setupCampaignSelector() {
@@ -258,6 +280,7 @@ public class PrimaryViewModel implements ViewModel {
   }
 
   private void updateCampaign(){
+    //TODO move all selectors to correct positions when switching campaigns, maybe save all selectors' positions (such as time-gran/graphs) along with applied filter
     Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter());
     updateTotalMetrics();
     updateTotalCosts();
@@ -311,10 +334,15 @@ public class PrimaryViewModel implements ViewModel {
     selectedRate.setValue(rateBounce);
   }
 
-  //TODO :: Need to finish updating the graph ()
   private void updateRates(){
-
-
+    switch (selectedRate.getValue()) {
+      case rateBounce :
+        updateRatesLineChartData(selectedCampaign.getValue().getDatedBounceRates());
+        break;
+      case rateCTR :
+        updateRatesLineChartData(selectedCampaign.getValue().getDatedCTRs());
+        break;
+    }
   }
 
   private void setUpTotalsSelector(){
@@ -385,29 +413,85 @@ public class PrimaryViewModel implements ViewModel {
     averageChartData.add(s);
   }
 
+  //TODO factor out repeated code, add better checking of formats, add formatting to other chart updates
   private void updateTotalMetricLineChartData(HashMap<String, Long> dataMap) {
     totalMetricChartData.clear();
     Series<String, Number> s = new Series<>();
     s.setName(selectedCampaign.getValue().toString());
     for (Entry<String, Long> entry : dataMap.entrySet()) {
 
-      SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd");
-      SimpleDateFormat myFormat = new SimpleDateFormat("MM/dd");
+      //TODO change format for each chart
+      SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      SimpleDateFormat previousFormat2 = new SimpleDateFormat("yyyy-MM-dd");
+      SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/MM/dd - HHmm");
       String reformattedStr = null;
       try {
-
         reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));
       } catch (ParseException e) {
-        e.printStackTrace();
+        try {
+          reformattedStr = myFormat.format(previousFormat2.parse(entry.getKey()));
+        } catch (ParseException e2) {
+          System.err.println(e2);
+        }
       }
 
-      Data<String, Number> data = new XYChart.Data<>(reformattedStr, entry.getValue());
+      Data<String, Number> data = new XYChart.Data<>(reformattedStr, entry.getValue().doubleValue());
       s.getData().add(data);
     }
     totalMetricChartData.add(s);
   }
 
+  private void updateRatesLineChartData(HashMap<String, BigDecimal> dataMap) {
+    rateChartData.clear();
+    Series<String, Number> s = new Series<>();
+    s.setName(selectedCampaign.getValue().toString());
+    for (Entry<String, BigDecimal> entry : dataMap.entrySet()) {
 
+      SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      SimpleDateFormat previousFormat2 = new SimpleDateFormat("yyyy-MM-dd");
+      SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/MM/dd - HHmm");
+      String reformattedStr = null;
+      try {
+        reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));
+      } catch (ParseException e) {
+        try {
+          reformattedStr = myFormat.format(previousFormat2.parse(entry.getKey()));
+        } catch (ParseException e2) {
+          System.err.println(e2);
+        }
+      }
+
+      Data<String, Number> data = new XYChart.Data<>(reformattedStr, entry.getValue());
+      s.getData().add(data);
+    }
+    rateChartData.add(s);
+  }
+
+  private void updateTotalCostLineChartData(HashMap<String, BigDecimal> dataMap) {
+    totalCostChartData.clear();
+    Series<String, Number> s = new Series<>();
+    s.setName(selectedCampaign.getValue().toString());
+    for (Entry<String, BigDecimal> entry : dataMap.entrySet()) {
+
+      SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      SimpleDateFormat previousFormat2 = new SimpleDateFormat("yyyy-MM-dd");
+      SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/MM/dd - HHmm");
+      String reformattedStr = null;
+      try {
+        reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));
+      } catch (ParseException e) {
+        try {
+          reformattedStr = myFormat.format(previousFormat2.parse(entry.getKey()));
+        } catch (ParseException e2) {
+          System.err.println(e2);
+        }
+      }
+
+      Data<String, Number> data = new XYChart.Data<>(reformattedStr, entry.getValue());
+      s.getData().add(data);
+    }
+    totalCostChartData.add(s);
+  }
 
   private void setupFilterReceiving() {
     MvvmFX.getNotificationCenter().subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION, (key, payload) -> {
@@ -425,9 +509,40 @@ public class PrimaryViewModel implements ViewModel {
         updateTotals();
         updateAverages();
 
+        Logger.log("[INFO] Filter applied successfully.");
       } catch (ClassCastException e) {
         e.printStackTrace();
-        Logger.log("Invalid filter received");
+        Logger.log("[ERROR] Invalid filter received");
+      }
+    });
+  }
+
+  private void setupGranReceiving() {
+    MvvmFX.getNotificationCenter().subscribe(PrimaryView.GRAN_NOTIFICATION, (key, payload) -> {
+      try {
+        byte granularity = (byte) payload[0];
+        selectedCampaign.getValue().updateTotalsGranularity(granularity);
+        updateTotals();
+
+        Logger.log("[INFO] Granularity changed successfully.");
+      } catch (ClassCastException e) {
+        e.printStackTrace();
+        Logger.log("[ERROR] Invalid granularity received");
+      }
+    });
+  }
+
+  private void setupGranAvgsReceiving() {
+    MvvmFX.getNotificationCenter().subscribe(PrimaryView.GRAN_NOTIFICATION_AVG, (key, payload) -> {
+      try {
+        byte granularity = (byte) payload[0];
+        selectedCampaign.getValue().updateAvgsGranularity(granularity);
+        updateAverages();
+
+        Logger.log("[INFO] Granularity changed successfully.");
+      } catch (ClassCastException e) {
+        e.printStackTrace();
+        Logger.log("[ERROR] Invalid granularity received");
       }
     });
   }

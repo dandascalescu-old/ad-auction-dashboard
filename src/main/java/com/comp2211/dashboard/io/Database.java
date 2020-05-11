@@ -25,7 +25,7 @@ public class Database {
       final String url = "jdbc:mysql://" + host + ":" + port + "/" + database;
       connection = DriverManager.getConnection(url, user, password);
     } catch (final SQLException e) {
-      Logger.log("MYSQL exception during connection.");
+      Logger.log("[ERROR] MYSQL exception during connection.");
       e.printStackTrace();
     }
   }
