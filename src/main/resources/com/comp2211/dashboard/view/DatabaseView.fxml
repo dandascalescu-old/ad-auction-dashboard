@@ -9,14 +9,14 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<StackPane fx:id="databasePane" prefHeight="796.0" prefWidth="1161.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.DatabaseView">
+<StackPane fx:id="databasePane" prefHeight="796.0" prefWidth="1161.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.DatabaseView">
 
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="794.0" prefWidth="1141.0">
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="794.0" prefWidth="1141.0" styleClass="pane2">
             <children>
 
-                <Pane prefHeight="74.0" prefWidth="1161.0" style="-fx-background-color: #FCFCFC;">
+                <Pane prefHeight="74.0" prefWidth="1161.0" styleClass="pane-sides">
                     <children>
-                        <Text fill="#474c49" layoutX="26.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Database" wrappingWidth="96.34716796875">
+                        <Text fill="#474c49" layoutX="26.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Database" wrappingWidth="96.34716796875">
                             <font>
                                 <Font name="SansSerif Bold" size="17.0" />
                             </font>
@@ -24,22 +24,22 @@
                     </children>
                 </Pane>
 
-                <Pane layoutX="27.0" layoutY="107.0" prefHeight="711.0" prefWidth="1082.0" style="-fx-background-color: #FFFFFF;">
+                <Pane layoutX="27.0" layoutY="107.0" prefHeight="711.0" prefWidth="1082.0" styleClass="pane1">
                     <effect>
                         <DropShadow color="#0000004a" offsetX="5.0" offsetY="5.0" spread="0.07" />
                     </effect>
                     <children>
-                        <JFXTreeTableView fx:id="databaseTreeTable" layoutX="31.0" layoutY="109.0" prefHeight="585.0" prefWidth="1021.0" />
-                        <Text layoutX="31.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="CAMPAIGNS" wrappingWidth="293.22900390625">
+                        <JFXTreeTableView fx:id="databaseTreeTable" layoutX="31.0" layoutY="109.0" prefHeight="585.0" prefWidth="1021.0" styleClass="table-views" />
+                        <Text layoutX="31.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="CAMPAIGNS" wrappingWidth="293.22900390625">
                             <font>
                                 <Font name="SansSerif Bold" size="21.0" />
                             </font>
                         </Text>
-                        <JFXButton layoutX="878.0" layoutY="54.0" onAction="#importCampaignAction" prefHeight="42.0" prefWidth="174.0" style="-fx-background-color: #F5F5F5;" text="IMPORT CAMPAIGN" textFill="#474c49">
+                        <JFXButton buttonType="RAISED" layoutX="878.0" layoutY="54.0" onAction="#importCampaignAction" prefHeight="42.0" prefWidth="174.0" styleClass="jfx-button-custom" text="IMPORT CAMPAIGN" textFill="#474c49">
                   <font>
                      <Font name="SansSerif Regular" size="13.0" />
                   </font></JFXButton>
-               <Text layoutX="81.0" layoutY="89.0" strokeType="OUTSIDE" strokeWidth="0.0" text="You can import new campaigns and later view them in dashboard." wrappingWidth="826.22900390625">
+               <Text layoutX="81.0" layoutY="89.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="You can import new campaigns and later view them in dashboard." wrappingWidth="826.22900390625">
                   <font>
                      <Font name="SansSerif Bold" size="15.0" />
                   </font>

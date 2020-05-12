@@ -116,6 +116,7 @@ public class PrimaryViewModel implements ViewModel {
     setupFilterReceiving();
     setupGranReceiving();
     setupGranAvgsReceiving();
+    setupBounceReceiving();
     setupCampaignReceiving();
   }
 
@@ -171,7 +172,6 @@ public class PrimaryViewModel implements ViewModel {
     return selectedDemographic;
   }
 
-
   public ObjectProperty<Campaign> selectedCampaignProperty() {
     return selectedCampaign;
   }
@@ -191,6 +191,8 @@ public class PrimaryViewModel implements ViewModel {
   public StringProperty clickThroughRateTextProperty() {
     return clickThroughRateText;
   }
+
+
 
   public StringProperty bounceConversionTextProperty() { return bouncesPerConversionText; }
 
@@ -284,7 +286,8 @@ public class PrimaryViewModel implements ViewModel {
     Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter());
     updateTotalMetrics();
     updateTotalCosts();
-    updateBouncesCountDefault(filter);
+
+    updateBounceMetrics();
 
     updatePieChartData(selectedCampaign.getValue().getPercentageMap(Demographic.Gender));
     updateAverages();
@@ -553,6 +556,12 @@ public class PrimaryViewModel implements ViewModel {
       DatabaseViewModel.changeProgressToCompleted((Campaign) payload[0]);
       System.out.println("campaigns set.");
       });
+  }
+
+  private void setupBounceReceiving() {
+    MvvmFX.getNotificationCenter().subscribe("Bounce", (key, payload) -> {
+      updateBounceMetrics();
+    });
   }
 
 }

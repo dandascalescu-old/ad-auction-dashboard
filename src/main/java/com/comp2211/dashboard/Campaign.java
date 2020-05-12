@@ -6,6 +6,7 @@ import com.comp2211.dashboard.util.Logger;
 import com.comp2211.dashboard.io.DatabaseManager;
 import com.comp2211.dashboard.io.DatabaseManager.Cost;
 
+import de.saxsys.mvvmfx.MvvmFX;
 import com.comp2211.dashboard.viewmodel.DatabaseViewModel;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -90,6 +91,8 @@ public class Campaign {
     cachedDatedBounceRates = new LinkedHashMap<>();
     cachedDatedCTRs = new LinkedHashMap<>();
 
+    updateBouncesByPages((byte)1, new Filter(campaignID));
+//    allCampaigns.add(this); todo:check if needed
     DatabaseViewModel.addNewCampaign(this);
   }
 
@@ -292,6 +295,7 @@ public class Campaign {
     cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByTime(totalsGranularity, maxSeconds, allowInf, filter));
     cachedDatedBounceRates.clear();
     cachedDatedBounceRates.putAll(calcDatedRates(cachedDatedBounceTotals, dbManager.retrieveDatedServerTotals((byte) 24, filter)));
+    MvvmFX.getNotificationCenter().publish("Bounce");
   }
 
   public void updateBouncesByPages(byte maxPages, Filter filter) {
@@ -304,6 +308,9 @@ public class Campaign {
     cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(totalsGranularity, maxPages, filter));
     cachedDatedBounceRates.clear();
     cachedDatedBounceRates.putAll(calcDatedRates(cachedDatedBounceTotals, dbManager.retrieveDatedServerTotals((byte) 24, filter)));
+    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(totalsGranularity, maxPages, filter));
+
+    MvvmFX.getNotificationCenter().publish("Bounce");
   }
 
 
