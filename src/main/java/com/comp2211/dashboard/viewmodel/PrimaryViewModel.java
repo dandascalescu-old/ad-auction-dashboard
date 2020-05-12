@@ -225,9 +225,9 @@ public class PrimaryViewModel implements ViewModel {
   }
 
   private void updateTotalCosts() {
-    totalClickCost.setValue("£" + selectedCampaign.getValue().getTotalClickCost().setScale(2, RoundingMode.CEILING).toPlainString());
-    totalImpresCost.setValue("£" + selectedCampaign.getValue().getTotalImpressionCost().setScale(2, RoundingMode.CEILING).toPlainString());
-    totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost().setScale(2, RoundingMode.CEILING).toPlainString());
+    totalClickCost.setValue("£" + selectedCampaign.getValue().getTotalClickCost().divide(BigDecimal.valueOf(100L), RoundingMode.CEILING).setScale(2, RoundingMode.CEILING).toPlainString());
+    totalImpresCost.setValue("£" + selectedCampaign.getValue().getTotalImpressionCost().divide(BigDecimal.valueOf(100L), RoundingMode.CEILING).setScale(2, RoundingMode.CEILING).toPlainString());
+    totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost().divide(BigDecimal.valueOf(100L), RoundingMode.CEILING).setScale(2, RoundingMode.CEILING).toPlainString());
 
     updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
 
@@ -490,7 +490,7 @@ public class PrimaryViewModel implements ViewModel {
         }
       }
 
-      Data<String, Number> data = new XYChart.Data<>(reformattedStr, entry.getValue());
+      Data<String, Number> data = new XYChart.Data<>(reformattedStr, entry.getValue().divide(BigDecimal.valueOf(100L), RoundingMode.CEILING));
       s.getData().add(data);
     }
     totalCostChartData.add(s);

@@ -32,8 +32,7 @@ public class Campaign {
   private DatabaseManager dbManager;
 
   private Filter appliedFilter;
-  private byte totalsGranularity;
-  private byte avgsGranularity;
+  private byte totalsGranularity, avgsGranularity, costTotalsGranularity, ratesGranularity;
 
   private BigDecimal totalClickCost, totalImpressionCost, averageAcquisitionCost;
   private long clickDataCount, impressionDataCount, serverDataCount, uniquesCount, bouncesCount, conversionsCount;
@@ -70,6 +69,8 @@ public class Campaign {
 
     totalsGranularity = 24;
     avgsGranularity = 24;
+    costTotalsGranularity = 24;
+    ratesGranularity = 24;
 
     cachedDatedAcquisitionCostAverages = new LinkedHashMap<>();
     cachedDatedImpressionCostAverages = new LinkedHashMap<>();
@@ -158,10 +159,10 @@ public class Campaign {
     cachedIncomePercentage.putAll(percentageMap(Demographic.Income, dbManager.retrieveDemographics(Demographic.Income, filter)));
     cachedContextPercentage.putAll(percentageMap(Demographic.Context, dbManager.retrieveDemographics(Demographic.Context, filter)));
 
-    cachedDatedCostTotals.putAll(calcDatedSums(dbManager.retrieveDatedCostTotals(Cost.Impression_Cost, (byte) 24, filter), dbManager.retrieveDatedCostTotals(Cost.Click_Cost, (byte) 24, filter)));
+    cachedDatedCostTotals.putAll(calcDatedSums(dbManager.retrieveDatedCostTotals(Cost.Impression_Cost, costTotalsGranularity, filter), dbManager.retrieveDatedCostTotals(Cost.Click_Cost, costTotalsGranularity, filter)));
 
-    cachedDatedBounceRates.putAll(calcDatedRates(cachedDatedBounceTotals, dbManager.retrieveDatedServerTotals((byte) 24, filter)));
-    cachedDatedCTRs.putAll(calcDatedRates(cachedDatedClickTotals, cachedDatedImpressionTotals));
+    //cachedDatedBounceRates.putAll(calcDatedRates(cachedDatedBounceTotals, dbManager.retrieveDatedServerTotals(ratesGranularity, filter)));
+    cachedDatedCTRs.putAll(calcDatedRates(dbManager.retrieveDatedClickTotals(ratesGranularity, filter), dbManager.retrieveDatedImpressionTotals(ratesGranularity, filter)));
 
     appliedFilter = filter;
 
@@ -294,7 +295,7 @@ public class Campaign {
     cachedDatedBounceTotals.clear();
     cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByTime(totalsGranularity, maxSeconds, allowInf, filter));
     cachedDatedBounceRates.clear();
-    cachedDatedBounceRates.putAll(calcDatedRates(cachedDatedBounceTotals, dbManager.retrieveDatedServerTotals((byte) 24, filter)));
+    cachedDatedBounceRates.putAll(calcDatedRates(dbManager.retrieveDatedBounceTotalsByTime(ratesGranularity, maxSeconds, allowInf, filter), dbManager.retrieveDatedServerTotals(ratesGranularity, filter)));
     MvvmFX.getNotificationCenter().publish("Bounce");
   }
 
@@ -307,9 +308,7 @@ public class Campaign {
     cachedDatedBounceTotals.clear();
     cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(totalsGranularity, maxPages, filter));
     cachedDatedBounceRates.clear();
-    cachedDatedBounceRates.putAll(calcDatedRates(cachedDatedBounceTotals, dbManager.retrieveDatedServerTotals((byte) 24, filter)));
-    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(totalsGranularity, maxPages, filter));
-
+    cachedDatedBounceRates.putAll(calcDatedRates(dbManager.retrieveDatedBounceTotalsByPages(ratesGranularity, maxPages, filter), dbManager.retrieveDatedServerTotals(ratesGranularity, filter)));
     MvvmFX.getNotificationCenter().publish("Bounce");
   }
 
