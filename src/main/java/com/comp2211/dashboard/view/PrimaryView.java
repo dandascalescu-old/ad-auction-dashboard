@@ -170,6 +170,7 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     totalCostChart.setLegendVisible(false);
     totalCostChart.getXAxis().setTickLabelRotation(-30);
 
+    setupGranResetReceiving();
   }
 
   public void campaignComboboxController() {
@@ -262,5 +263,20 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     dialogExport.close();
   }
 
-
+  private void setupGranResetReceiving() {
+    MvvmFX.getNotificationCenter().subscribe(Campaign.RESET_GRAN, (key, payload) -> {
+      totalMetricDay.setSelected(true);
+      totalMetricTwelve.setSelected(false);
+      totalMetricSix.setSelected(false);
+      averageDay.setSelected(true);
+      averageTwelve.setSelected(false);
+      averageSix.setSelected(false);
+      totalCostDay.setSelected(true);
+      totalCostTwelve.setSelected(false);
+      totalCostSix.setSelected(false);
+      ratesDay.setSelected(true);
+      ratesTwelve.setSelected(false);
+      ratesSix.setSelected(false);
+    });
+  }
 }

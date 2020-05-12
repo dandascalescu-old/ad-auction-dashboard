@@ -162,8 +162,7 @@ public class MySQLManager extends DatabaseManager {
     String where = filterToWhere(filter, Table.server_table);
     String statement = "SELECT COUNT(*) AS COUNT " +
             "FROM " + server_table +
-            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "((Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL)" : ")");
-    System.out.println(statement);
+            " WHERE ((Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL)" : ")") + ( where.isEmpty() ? "" : " AND " + where);
     return toLong(
             retrieve(statement, new Object[]{maxSeconds}, new String[]{"COUNT"})
     );
@@ -355,7 +354,7 @@ public class MySQLManager extends DatabaseManager {
             "FROM (" +
             "SELECT CASE " + cas + " END AS start " +
             "FROM " + server_table + " " +
-            "WHERE (Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL" : "") + ( where.isEmpty() ? "" : " AND " + where ) + ") groups " +
+            "WHERE ((Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL)" : ")")  + ( where.isEmpty() ? "" : " AND " + where ) + ") groups " +
             "GROUP BY START";
     return toLongMap(
             retrieve(statement, new Object[]{maxSeconds}, new String[]{"START", "COUNT"})
