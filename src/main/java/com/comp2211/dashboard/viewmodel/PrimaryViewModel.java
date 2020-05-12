@@ -116,6 +116,8 @@ public class PrimaryViewModel implements ViewModel {
     setupFilterReceiving();
     setupGranReceiving();
     setupGranAvgsReceiving();
+    setupGranCostTotalsReceiving();
+    setupGranRatesReceiving();
     setupBounceReceiving();
     setupCampaignReceiving();
   }
@@ -541,6 +543,36 @@ public class PrimaryViewModel implements ViewModel {
         byte granularity = (byte) payload[0];
         selectedCampaign.getValue().updateAvgsGranularity(granularity);
         updateAverages();
+
+        Logger.log("[INFO] Granularity changed successfully.");
+      } catch (ClassCastException e) {
+        e.printStackTrace();
+        Logger.log("[ERROR] Invalid granularity received");
+      }
+    });
+  }
+
+  private void setupGranCostTotalsReceiving() {
+    MvvmFX.getNotificationCenter().subscribe(PrimaryView.GRAN_NOTIFICATION_COST_TOTAL, (key, payload) -> {
+      try {
+        byte granularity = (byte) payload[0];
+        selectedCampaign.getValue().updateCostTotalsGranularity(granularity);
+        updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
+
+        Logger.log("[INFO] Granularity changed successfully.");
+      } catch (ClassCastException e) {
+        e.printStackTrace();
+        Logger.log("[ERROR] Invalid granularity received");
+      }
+    });
+  }
+
+  private void setupGranRatesReceiving() {
+    MvvmFX.getNotificationCenter().subscribe(PrimaryView.GRAN_NOTIFICATION_RATES, (key, payload) -> {
+      try {
+        byte granularity = (byte) payload[0];
+        selectedCampaign.getValue().updateRatesGranularity(granularity);
+        updateRates();
 
         Logger.log("[INFO] Granularity changed successfully.");
       } catch (ClassCastException e) {

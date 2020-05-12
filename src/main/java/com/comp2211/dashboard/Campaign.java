@@ -286,6 +286,21 @@ public class Campaign {
     cachedDatedAcquisitionCostAverages.putAll(dbManager.retrieveDatedAverageAcquisitionCost(avgsGranularity, appliedFilter));
   }
 
+  public void updateCostTotalsGranularity(byte hoursGranularity) {
+    costTotalsGranularity = hoursGranularity;
+    cachedDatedCostTotals.clear();
+    cachedDatedCostTotals.putAll(calcDatedSums(dbManager.retrieveDatedCostTotals(Cost.Impression_Cost, costTotalsGranularity, appliedFilter), dbManager.retrieveDatedCostTotals(Cost.Click_Cost, costTotalsGranularity, appliedFilter)));
+  }
+
+  public void updateRatesGranularity(byte hoursGranularity) {
+    ratesGranularity = hoursGranularity;
+    cachedDatedBounceRates.clear();
+    //TODO apply correct bounce method
+    cachedDatedBounceRates.putAll(calcDatedRates(dbManager.retrieveDatedBounceTotalsByPages(ratesGranularity, (byte) 1, appliedFilter), dbManager.retrieveDatedServerTotals(ratesGranularity, appliedFilter)));
+    cachedDatedCTRs.clear();
+    cachedDatedCTRs.putAll(calcDatedRates(dbManager.retrieveDatedClickTotals(ratesGranularity, appliedFilter), dbManager.retrieveDatedImpressionTotals(ratesGranularity, appliedFilter)));
+  }
+
   public void updateBouncesByTime(long maxSeconds, boolean allowInf, Filter filter) {
     if (maxSeconds < 0) {
       Logger.log("Attempted bounce calculation with negative value");
