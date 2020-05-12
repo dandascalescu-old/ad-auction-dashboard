@@ -5,12 +5,13 @@
 <?import com.jfoenix.controls.JFXDialogLayout?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<StackPane fx:id="dialogDBStack" prefHeight="349.0" prefWidth="416.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.DatabaseDialog">
+<StackPane fx:id="dialogDBStack" prefHeight="349.0" prefWidth="416.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.DatabaseDialog">
 
     <JFXDialog fx:id="dialogs">
         <JFXDialogLayout>
@@ -26,22 +27,39 @@
             </actions>
         </JFXDialogLayout>
     </JFXDialog>
-   <Pane prefHeight="343.0" prefWidth="416.0">
+   <Pane prefHeight="343.0" prefWidth="416.0" styleClass="pane2">
       <children>
-         <JFXButton fx:id="importImpressionButton" buttonType="RAISED" layoutX="109.0" layoutY="126.0" onAction="#importImpressionAction" prefHeight="34.0" prefWidth="133.0" style="-fx-background-color: #FFFFFF;" text="Impression Log" />
-         <JFXButton buttonType="RAISED" layoutX="108.0" layoutY="177.0" onAction="#importClickAction" prefHeight="34.0" prefWidth="133.0" style="-fx-background-color: #FFFFFF;" text="Click Log" />
-         <JFXButton buttonType="RAISED" layoutX="108.0" layoutY="232.0" onAction="#importServerAction" prefHeight="34.0" prefWidth="133.0" style="-fx-background-color: #FFFFFF;" text="Server Log" />
-         <JFXButton buttonType="RAISED" layoutX="186.0" layoutY="289.0" onAction="#createCampaignFromFiles" prefHeight="34.0" prefWidth="88.0" style="-fx-background-color: #FFFFFF;" text="Save" />
-         <JFXButton buttonType="RAISED" layoutX="81.0" layoutY="289.0" onAction="#cancelDialogAction" prefHeight="34.0" prefWidth="88.0" style="-fx-background-color: #FFFFFF;" text="Cancel" />
-         <Text layoutX="112.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="FILE UPLOAD" textAlignment="CENTER">
+         <JFXButton fx:id="importImpressionButton" buttonType="RAISED" layoutX="109.0" layoutY="140.0" onAction="#importImpressionAction" prefHeight="34.0" prefWidth="133.0" styleClass="jfx-button-custom" text="Impression Log">
+            <font>
+               <Font name="SansSerif Regular" size="13.0" />
+            </font></JFXButton>
+         <JFXButton buttonType="RAISED" layoutX="108.0" layoutY="191.0" onAction="#importClickAction" prefHeight="34.0" prefWidth="133.0" styleClass="jfx-button-custom" text="Click Log">
+            <font>
+               <Font name="SansSerif Regular" size="13.0" />
+            </font></JFXButton>
+         <JFXButton buttonType="RAISED" layoutX="108.0" layoutY="242.0" onAction="#importServerAction" prefHeight="34.0" prefWidth="133.0" styleClass="jfx-button-custom" text="Server Log">
+            <font>
+               <Font name="SansSerif Regular" size="13.0" />
+            </font></JFXButton>
+         <JFXButton buttonType="RAISED" layoutX="186.0" layoutY="293.0" onAction="#createCampaignFromFiles" prefHeight="34.0" prefWidth="88.0" styleClass="jfx-button-custom" text="Save" />
+         <JFXButton buttonType="RAISED" layoutX="81.0" layoutY="293.0" onAction="#cancelDialogAction" prefHeight="34.0" prefWidth="88.0" styleClass="jfx-button-custom" text="Cancel" />
+         <Text layoutX="112.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="FILE UPLOAD" textAlignment="CENTER">
             <font>
                <Font name="SansSerif Bold" size="19.0" />
             </font>
          </Text>
-         <TextField fx:id="campaignTitle" layoutX="95.0" layoutY="74.0" promptText="Title" />
-         <Text fx:id="alertAddingText" layoutX="88.0" layoutY="345.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER">
+         <TextField fx:id="campaignTitle" layoutX="94.0" layoutY="67.0" promptText="Title" />
+         <Text fx:id="alertAddingText" layoutX="88.0" layoutY="345.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" textAlignment="CENTER">
             <font>
                <Font name="SansSerif Bold" size="12.0" />
+            </font>
+         </Text>
+         <ImageView fx:id="impressCheck" fitHeight="27.0" fitWidth="37.0" layoutX="256.0" layoutY="145.0" pickOnBounds="true" preserveRatio="true" styleClass="image-view-check" visible="false" />
+         <ImageView fx:id="clickCheck" fitHeight="27.0" fitWidth="37.0" layoutX="256.0" layoutY="196.0" pickOnBounds="true" preserveRatio="true" styleClass="image-view-check" visible="false" />
+         <ImageView fx:id="serverCheck" fitHeight="27.0" fitWidth="88.0" layoutX="256.0" layoutY="246.0" pickOnBounds="true" preserveRatio="true" styleClass="image-view-check" visible="false" />
+         <Text layoutX="125.0" layoutY="130.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Select CSV files" textAlignment="CENTER">
+            <font>
+               <Font name="SansSerif Bold" size="13.0" />
             </font>
          </Text>
       </children>

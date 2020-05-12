@@ -3,7 +3,6 @@ package com.comp2211.dashboard.view;
 import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.GUIStarter;
 import com.comp2211.dashboard.io.DataImporter;
-import com.comp2211.dashboard.viewmodel.DatabaseViewModel;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import de.saxsys.mvvmfx.MvvmFX;
@@ -12,6 +11,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -20,9 +20,6 @@ import javafx.stage.Stage;
 import java.io.File;
 
 public class DatabaseDialog {
-
-    @FXML
-    public TextField campaignTitle;
 
     @FXML
     StackPane dialogDBStack;
@@ -35,6 +32,12 @@ public class DatabaseDialog {
 
     @FXML
     JFXButton importImpressionButton;
+
+    @FXML
+    TextField campaignTitle;
+
+    @FXML
+    ImageView impressCheck, serverCheck, clickCheck;
 
     private String impressionFilePath = "", serverFilePath = "", clickFilePath = "";
 
@@ -51,6 +54,21 @@ public class DatabaseDialog {
 
     @FXML
     void importServerAction() {
+
+        Stage stage = (Stage) dialogDBStack.getScene().getWindow();
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Import Server Log");
+
+        File file = fileChooser.showOpenDialog(stage);
+        if (file != null) {
+            serverFilePath = file.getAbsolutePath();
+            serverFileName = file.getName();
+            serverCheck.setVisible(true);
+            System.out.println("Absolute path (Server): " + serverFilePath);
+
+        }
+
         chooseFile("Server Log");
     }
 
@@ -59,38 +77,44 @@ public class DatabaseDialog {
         chooseFile("Click Log");
     }
 
-    private void chooseFile(String logType){
+    private void chooseFile(String logType) {
         Stage stage = (Stage) dialogDBStack.getScene().getWindow();
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Import " + logType);
 
-        if(lastDirectory!=null){
-            fileChooser.setInitialDirectory(new File(lastDirectory));
-        }
-
         File file = fileChooser.showOpenDialog(stage);
-
-        try{
-            switch(logType){
-                case "Impression Log":
-                    impressionFilePath = file.getAbsolutePath();
-                    impressionFileName = file.getName();
-                    break;
-                case "Server Log":
-                    serverFilePath = file.getAbsolutePath();
-                    serverFileName = file.getName();
-                    break;
-                case "Click Log":
-                    clickFilePath = file.getAbsolutePath();
-                    serverFileName = file.getName();
-                    break;
-            }
-        }catch(Exception ignored){}
-
         if (file != null) {
-            lastDirectory = file.getParent();
-            System.out.println("Absolute path (" + logType + "): " + file.getAbsolutePath());
+            clickFilePath = file.getAbsolutePath();
+            clickFileName = file.getName();
+            clickCheck.setVisible(true);
+            System.out.println("Absolute path (Click): " + clickFilePath);
+            if (lastDirectory != null) {
+                fileChooser.setInitialDirectory(new File(lastDirectory));
+            }
+
+            try {
+                switch (logType) {
+                    case "Impression Log":
+                        impressionFilePath = file.getAbsolutePath();
+                        impressionFileName = file.getName();
+                        break;
+                    case "Server Log":
+                        serverFilePath = file.getAbsolutePath();
+                        serverFileName = file.getName();
+                        break;
+                    case "Click Log":
+                        clickFilePath = file.getAbsolutePath();
+                        serverFileName = file.getName();
+                        break;
+                }
+            } catch (Exception ignored) {
+            }
+
+            if (file != null) {
+                lastDirectory = file.getParent();
+                System.out.println("Absolute path (" + logType + "): " + file.getAbsolutePath());
+            }
         }
     }
 
