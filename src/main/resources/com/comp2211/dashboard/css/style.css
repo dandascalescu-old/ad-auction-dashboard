@@ -2,26 +2,26 @@
     -fx-text-fill: #3c3f41;
     -fx-font-family: SansSerif;
     -fx-font-weight: bold;
-
+    -jfx-focus-color: #bbbbbb;
+    -jfx-unfocus-color: #bbbbbb;
 }
 
 .jfx-combo-box {
-    -jfx-focus-color: #3c3f41;
-    -jfx-unfocus-color: #3c3f41;
+        -jfx-focus-color: #bbbbbb;
+        -jfx-unfocus-color: #bbbbbb;
 }
 
 .combo-box .combo-box-popup .list-cell:hover {
     -fx-background-color:  #494949 ;
-    -fx-text-fill: #bbbbbb;
 }
 
 .combo-box .combo-box-popup .list-cell:selected {
-    -fx-background-color: black;
+    -fx-background-color: #444444;
 }
 
 .combo-box .combo-box-popup .list-cell{
-    -fx-background-color: #bbbbbb ;
-    -fx-border-color:#bbbbbb;
+    -fx-background-color: #606060 ;
+    -fx-border-color:#606060;
 
 }
 
@@ -29,59 +29,59 @@
     -fx-background-color: transparent;
 }
 
-.default-color0.chart-line-symbol { -fx-background-color: #3c3f41, transparent; }
+.default-color0.chart-line-symbol { -fx-background-color: #bbbbbb, transparent; }
 .default-color0.chart-series-line { -fx-stroke: white; }
-.default-color1.chart-line-symbol { -fx-background-color: #3c3f41, transparent; }
+.default-color1.chart-line-symbol { -fx-background-color: #bbbbbb, transparent; }
 .default-color1.chart-series-line { -fx-stroke: white; }
 
 .axis:left {
-    -fx-border-color: transparent #3c3f41 transparent transparent;
+    -fx-border-color: transparent #bbbbbb transparent transparent;
 }
 .axis:bottom{
-    -fx-border-color: #3c3f41 transparent transparent;
+    -fx-border-color: #bbbbbb transparent transparent;
 }
 
-.chart-bar { -fx-bar-fill: #3c3f41; }
+.chart-bar { -fx-bar-fill: #6e7477; }
 
-.default-color0.chart-bar { -fx-bar-color: #3c3f41; }
+.default-color0.chart-bar { -fx-bar-color: #bdc0c2; }
 
 .axis {
-    -fx-tick-label-fill: #3c3f41;
+    -fx-tick-label-fill: #bbbbbb;
     -fx-font-family: SansSerif;
     -fx-font-weight: bold;
     -fx-tick-label-rotation: 45;
 }
 
 .scroll-pane{
-    -fx-background-color: #e1e1e1;
+    -fx-background-color: #606060;
 }
 .scroll-bar:horizontal .track,
 .scroll-bar:vertical .track{
-    -fx-background-color: #e1e1e1;
-    -fx-border-color: #e1e1e1;
+    -fx-background-color: #606060;
+    -fx-border-color: #606060;
     -fx-background-radius: 0em;
 }
 
 .scroll-bar:horizontal .thumb,
 .scroll-bar:vertical .thumb {
-    -fx-background-color: #ffffff;
+    -fx-background-color: #444444;
     -fx-background-radius: 5em;
 }
 
 .increment-button, .decrement-button {
-    -fx-background-color: #e1e1e1;
-    -fx-border-color: #ffffff;
+    -fx-background-color: #606060;
+    -fx-border-color: #444444;
 }
 
 .scroll-pane > .corner {
-    -fx-background-color: #e1e1e1;
+    -fx-background-color: #606060;
 }
 
 .axis-tick-mark {
-    -fx-stroke: #3c3f41;
+    -fx-stroke: #BBBBBB;
 }
 .axis-minor-tick-mark {
-    -fx-stroke: #3c3f41;
+    -fx-stroke: #BBBBBB;
 }
 
 .tick-label{
@@ -89,44 +89,44 @@
 }
 
 .text {
-    -fx-fill: #3c3f41;
+    -fx-fill: #FFFFFF;
 
 }
 
 .image-view-dashboard{
-    -fx-image: url("../img/dashboard3.png")
+    -fx-image: url("../img/dashboard3Light.png")
 }
 
 .image-view-database{
-    -fx-image: url("../img/database3.png")
+    -fx-image: url("../img/database3Light.png")
 }
 
 .image-view-compare{
-    -fx-image: url("../img/compare.png")
+    -fx-image: url("../img/compareLight.png")
 }
 
 .image-view-settings{
-    -fx-image: url("../img/settings.png")
+    -fx-image: url("../img/settingsLight.png")
 }
 
 .image-view-profile{
-    -fx-image: url("../img/profile3.png")
+    -fx-image: url("../img/profile3Light.png")
 }
 
 .image-view-exit{
-    -fx-image: url("../img/exit.png")
+    -fx-image: url("../img/exitLight.png")
 }
 
 .image-view-filter{
-    -fx-image: url("../img/filter.png")
+    -fx-image: url("../img/filterLight.png")
 }
 
 .image-view-export{
-    -fx-image: url("../img/exporti.png")
+    -fx-image: url("../img/exportiLight.png")
 }
 
 .image-view-check{
-    -fx-image: url("../img/check.png")
+    -fx-image: url("../img/checkLight.png")
 }
 
 .default-color0.chart-pie { -fx-pie-color: #565a5d; }
@@ -137,7 +137,7 @@
 .default-color5.chart-pie { -fx-pie-color: #d7d9da; }
 
 .chart-pie-label {
-    -fx-fill: #3c3f41;
+    -fx-fill: #BBBBBB;
     -fx-font-size: 1em;
     -fx-font-family: SansSerif;
 
@@ -149,11 +149,11 @@
 }
 
 .pane1 {
-    -fx-background-color: #ffffff;
+    -fx-background-color: #444444;
 }
 
 .pane2 {
-    -fx-background-color: #e1e1e1;
+    -fx-background-color: #606060;
 }
 
 .chart-plot-background {
@@ -165,16 +165,16 @@
 }
 
 .rectangle{
-    -fx-fill : #3c3f41;
+    -fx-fill : #bbbbbb;
 }
 
 .line{
-    -fx-fill: #3c3f41;
-    -fx-stroke: #3c3f41;
+    -fx-fill: #bbbbbb;
+    -fx-stroke: #bbbbbb;
 }
 
 .pane-sides{
-    -fx-background-color: #ffffff;
+    -fx-background-color: #494949;
 }
 
 .chart-horizontal-grid-lines {
@@ -186,39 +186,40 @@
 }
 
 .jfx-button-custom{
-         -fx-background-color: #c4c4c4;
-         -fx-text-fill: #ffffff;
+         -fx-background-color: #606060;
+         -fx-text-fill: #BBBBBB;
 }
 
 .jfx-dialog-overlay-pane > StackPane {
-    -fx-background-color: #e1e1e1;
+    -fx-background-color: #606060;
 }
 
 
 .table-views {
-    -fx-background-color: #ffffff;
-      -fx-font-family: SansSerif;
+    -fx-background-color: #606060;
+        -fx-font-family: SansSerif;
 
 }
 
 .tree-table-row-cell:selected {
-    -fx-background-color: #c4c4c4;
+    -fx-background-color: #494949;
         -fx-font-family: SansSerif;
 }
 
 .tree-table-row-cell {
-    -fx-background-color: #ffffff;
+    -fx-background-color: #606060;
     -fx-font-family: SansSerif;
    // -fx-border-color: black;
 }
 
 .jfx-toggle-node{
-    -fx-background-color: #fcfcfc;
+    -fx-background-color: #606060;
     -fx-background-radius: 40;
+    -jfx-rippler-fill: yellow;
 }
 
 .jfx-toggle-node:selected{
-    //-fx-background-color: #000000;
+    -fx-background-color: #494949;
 }
 
 
