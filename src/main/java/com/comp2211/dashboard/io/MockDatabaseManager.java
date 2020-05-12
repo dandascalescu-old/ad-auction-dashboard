@@ -135,7 +135,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the avg for that date as a value
    */
   @Override
-  public HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type, Filter filter) {
+  public HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type, byte hoursGranularity, Filter filter) {
     return this.getBigDecimalTestData();
   }
 
@@ -144,17 +144,21 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the avg for that date as a value
    */
   @Override
-  public HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost(Filter filter) {
+  public HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost(byte hoursGranularity, Filter filter) {
     return this.getBigDecimalTestData();
   }
 
+  @Override
+  public HashMap<String, BigDecimal> retrieveDatedCostTotals(Cost type, byte hoursGranularity, Filter filter) {
+    return this.getBigDecimalTestData();
+  }
 
   /**
    * Retrieve the total number of impressions for each date.
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedImpressionTotals(Filter filter) {
+  public HashMap<String, Long> retrieveDatedImpressionTotals(byte hoursGranularity, Filter filter) {
     return this.getLongTestData();
   }
 
@@ -163,7 +167,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedClickTotals(Filter filter) {
+  public HashMap<String, Long> retrieveDatedClickTotals(byte hoursGranularity, Filter filter) {
     return this.getLongTestData();
   }
 
@@ -172,7 +176,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedUniqueTotals(Filter filter) {
+  public HashMap<String, Long> retrieveDatedUniqueTotals(byte hoursGranularity, Filter filter) {
     return this.getLongTestData();
   }
 
@@ -183,7 +187,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedBounceTotalsByTime(long maxSeconds, boolean allowInf, Filter filter) {
+  public HashMap<String, Long> retrieveDatedBounceTotalsByTime(byte hoursGranularity, long maxSeconds, boolean allowInf, Filter filter) {
     return this.getLongTestData();
   }
 
@@ -193,7 +197,7 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte maxPages, Filter filter) {
+  public HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte hoursGranularity, byte maxPages, Filter filter) {
     return this.getLongTestData();
   }
 
@@ -202,7 +206,12 @@ public class MockDatabaseManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedAcquisitionTotals(Filter filter) {
+  public HashMap<String, Long> retrieveDatedAcquisitionTotals(byte hoursGranularity, Filter filter) {
+    return this.getLongTestData();
+  }
+
+  @Override
+  public HashMap<String, Long> retrieveDatedServerTotals(byte hoursGranularity, Filter filter) {
     return this.getLongTestData();
   }
 
@@ -240,6 +249,16 @@ public class MockDatabaseManager extends DatabaseManager {
   @Override
   public boolean attemptUserLogin(String username, String password) {
     return (username.equals(TEST_USERNAME) && password.equals(TEST_PASSWORD));
+  }
+
+  @Override
+  public String retrieveCampaignStartDate(Filter filter) {
+    return "2015-01-01";
+  }
+
+  @Override
+  public String retrieveCampaignEndDate(Filter filter) {
+    return "2015-01-14";
   }
 
   private HashMap<String, Long> getLongTestData() {

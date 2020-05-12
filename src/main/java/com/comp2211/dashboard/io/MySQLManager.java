@@ -1,6 +1,5 @@
 package com.comp2211.dashboard.io;
 
-import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.model.data.Filter;
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -35,10 +34,10 @@ public class MySQLManager extends DatabaseManager {
     campaign_table = Table.campaign_table.toString();
 
     if (sqlDatabase.getConnection() == null) {
-      Logger.log("Cannot establish database connection. Exiting now.");
+      Logger.log("[ERROR] Cannot establish database connection. Exiting now.");
       return;
     }
-    Logger.log("Database connection established.");
+    Logger.log("[INFO] Database connection established.");
     open = true;
     verifyDatabaseTables();
   }
@@ -56,6 +55,42 @@ public class MySQLManager extends DatabaseManager {
     this(host, port, db, user, pw);
   }
 
+  @Override
+  public void verifyDatabaseTables() {
+    Logger.log("[INFO] Verifying database tables...");
+    boolean valid = true;
+    if (!sqlDatabase.tableExists("credentials")) {
+      Logger.log("[WARNING] Credentials table doesn't exist.");
+      valid = false;
+    }
+    if (!sqlDatabase.tableExists(click_table)) {
+      Logger.log("[WARNING] Click table doesn't exist.");
+      valid = false;
+    }
+    if (!sqlDatabase.tableExists(impression_table)) {
+      Logger.log("[WARNING] Impression table doesn't exist.");
+      valid = false;
+    }
+    if (!sqlDatabase.tableExists(server_table)) {
+      Logger.log("[WARNING] Server table doesn't exist.");
+      valid = false;
+    }
+    if (!sqlDatabase.tableExists(campaign_table)) {
+      Logger.log("[WARNING] Server table doesn't exist.");
+      valid = false;
+    }
+    if(valid) {
+      Logger.log("[INFO] Verification complete.");
+    }
+  }
+
+  @Override
+  public boolean isOpen() {
+    return open;
+  }
+
+
+  //TODO comment methods, also in other classes
   public List<List<String>> retrieve(String statement, Object[] params, String[] resultColumns) {
     //System.out.println(statement);
     PreparedStatement stmt = null;
@@ -74,10 +109,17 @@ public class MySQLManager extends DatabaseManager {
         else if (params[i] instanceof java.sql.Date)
           stmt.setDate(i+1, (Date) params[i]);
         else
-          System.err.println("Type not accounted for");
+          System.err.println("Type not accounted for.");
       }
 
+      Long start = System.currentTimeMillis();
       rs = stmt.executeQuery();
+      Long end = System.currentTimeMillis();
+      if (end - start > 1000)
+        Logger.log("[WARN] Last query took longer than 1 second to execute.\n" +
+                "     Query: \"" + statement + "\"\n" +
+                "     Time taken: " + (end - start )/1000 + "s");
+
       while (rs.next()) {
         List<String> result = new ArrayList<>();
         for (String col : resultColumns)
@@ -91,98 +133,6 @@ public class MySQLManager extends DatabaseManager {
       DbUtils.closeQuietly(stmt);
     }
     return results;
-  }
-
-  private HashMap<String, Long> toLongMap(List<List<String>> resultsList) {
-    HashMap<String, Long> resultMap = new LinkedHashMap<>();
-    for (List<String> result : resultsList)
-      if (result.size() != 2)
-        Logger.log("[ERROR] Invalid result returned from SQL query. Expected 2 columns, received " + result.size() + ".");
-      else
-        try {
-          resultMap.put(result.get(0), Long.valueOf(result.get(1)));
-        } catch (NumberFormatException e) {
-          Logger.log("[ERROR] Invalid result returned from SQL query. Long conversion failed on value <" + result.get(1) + ">.");
-        }
-    return resultMap;
-  }
-
-  private HashMap<String, BigDecimal> toBigDecimalMap(List<List<String>> resultsList) {
-    HashMap<String, BigDecimal> resultMap = new LinkedHashMap<>();
-    for (List<String> result : resultsList)
-      if (result.size() != 2)
-        Logger.log("[ERROR] Invalid result returned from SQL query. Expected 2 columns, received " + result.size() + ".");
-      else
-        try {
-          resultMap.put(result.get(0), BigDecimal.valueOf(Double.parseDouble(result.get(1))));
-        } catch (NumberFormatException e) {
-          Logger.log("[ERROR] Invalid result returned from SQL query. Double conversion failed on value <" + result.get(1) + ">.");
-        }
-    return resultMap;
-  }
-
-  private long toLong(List<List<String>> resultsList) {
-    if (resultsList.size() != 1)
-      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 columns, received " + resultsList.size() + ".");
-    else if (resultsList.get(0).size() != 1)
-      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 result, received " + resultsList.get(0).size() + ".");
-    else
-      try {
-        if (resultsList.get(0).get(0) == null) return 0L;
-        else return Long.parseLong(resultsList.get(0).get(0));
-      } catch (NumberFormatException e) {
-        Logger.log("[ERROR] Invalid result returned from SQL query. Long conversion failed on value <" + resultsList.get(0).get(0) + ">.");
-      }
-    return 0L;
-  }
-
-  private BigDecimal toBigDecimal(List<List<String>> resultsList) {
-    if (resultsList.size() != 1)
-      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 columns, received " + resultsList.size() + ".");
-    else if (resultsList.get(0).size() != 1)
-      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 result, received " + resultsList.get(0).size() + ".");
-    else
-      try {
-        if (resultsList.get(0).get(0) == null) return BigDecimal.ZERO;
-        else return BigDecimal.valueOf(Double.parseDouble(resultsList.get(0).get(0)));
-      } catch (NumberFormatException e) {
-        Logger.log("[ERROR] Invalid result returned from SQL query. Double conversion failed on value <" + resultsList.get(0).get(0) + ">.");
-      }
-    return BigDecimal.ZERO;
-  }
-
-  @Override
-  public void verifyDatabaseTables() {
-    Logger.log("Verifying database tables...");
-    boolean valid = true;
-    if (!sqlDatabase.tableExists("credentials")) {
-      Logger.log("Credentials table doesn't exist.");
-      valid = false;
-    }
-    if (!sqlDatabase.tableExists(click_table)) {
-      Logger.log("Click table doesn't exist.");
-      valid = false;
-    }
-    if (!sqlDatabase.tableExists(impression_table)) {
-      Logger.log("Impression table doesn't exist.");
-      valid = false;
-    }
-    if (!sqlDatabase.tableExists(server_table)) {
-      Logger.log("Server table doesn't exist.");
-      valid = false;
-    }
-    if (!sqlDatabase.tableExists(campaign_table)) {
-      Logger.log("Server table doesn't exist.");
-      valid = false;
-    }
-    if(valid) {
-      Logger.log("Verification complete.");
-    }
-  }
-
-  @Override
-  public boolean isOpen() {
-    return open;
   }
 
   /**
@@ -254,6 +204,7 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public BigDecimal retrieveAverageAcquisitionCost(Filter filter) {
+    //TODO make more efficent
     String where = filterToWhere(filter, Table.click_table);
     String statement = "SELECT AVG(Click_Cost) AS AVG " +
             "FROM " + click_table +
@@ -268,14 +219,18 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the avg for that date as a value
    */
   @Override
-  public HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type, Filter filter) {
-    String where = filterToWhere(filter, (type.equals(Cost.Click_Cost) ? Table.click_table : Table.impression_table));
-    String statement = "SELECT DATE(Date) AS DateOnly, AVG(" + type.toString() + ") AS AVG " +
+  public HashMap<String, BigDecimal> retrieveDatedAverageCost(Cost type, byte hoursGranularity, Filter filter) {
+    Table table = (type.equals(Cost.Click_Cost) ? Table.click_table : Table.impression_table);
+    String where = filterToWhere(filter, table);
+    String cas = hoursToCase(hoursGranularity, table);
+    String statement = "SELECT groups.start AS START, AVG(groups." + type.toString() + ") AS AVG " +
+            "FROM (" +
+            "SELECT " + type.toString() + ", CASE " + cas + " END AS start " +
             "FROM " + (type.equals(Cost.Click_Cost) ? click_table : impression_table) +
-            ( where.isEmpty() ? "" : " WHERE " + where ) +
-            " GROUP BY DateOnly";
+            ( where.isEmpty() ? "" : " WHERE " + where ) + ") groups " +
+            "GROUP BY START";
     return toBigDecimalMap(
-            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "AVG"})
+            retrieve(statement, new Object[]{}, new String[]{"START", "AVG"})
     );
   }
 
@@ -284,31 +239,68 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the avg for that date as a value
    */
   @Override
-  public HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost(Filter filter) {
+  public HashMap<String, BigDecimal> retrieveDatedAverageAcquisitionCost(byte hoursGranularity, Filter filter) {
     String where = filterToWhere(filter, Table.click_table);
-    String statement = "SELECT DATE(Date) AS DateOnly, AVG(Click_Cost) AS AVG " +
-            "FROM " + click_table +
-            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "ID IN (SELECT DISTINCT ID FROM " + server_table + " WHERE Conversion = 1) " +
-            "GROUP BY DateOnly";
+    String cas = hoursToCase(hoursGranularity, Table.click_table);
+    String statement = "SELECT groups.start AS START, AVG(groups.Click_Cost) AS AVG " +
+            "FROM (" +
+            "SELECT Click_Cost, CASE " + cas + " END AS start " +
+            "FROM " + click_table + " " +
+            "WHERE ID IN (SELECT DISTINCT ID FROM " + server_table + " WHERE Conversion = 1) " + ( where.isEmpty() ? "" : " AND " + where) + ") groups " +
+            "GROUP BY START";
     return toBigDecimalMap(
-            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "AVG"})
+            retrieve(statement, new Object[]{}, new String[]{"START", "AVG"})
     );
   }
 
+  @Override
+  public HashMap<String, BigDecimal> retrieveDatedCostTotals(Cost type, byte hoursGranularity, Filter filter) {
+    Table table = (type.equals(Cost.Click_Cost) ? Table.click_table : Table.impression_table);
+    String where = filterToWhere(filter, table);
+    String cas = hoursToCase(hoursGranularity, table);
+    String statement = "SELECT groups.start AS START, SUM(groups." + type.toString() + ") AS SUM " +
+            "FROM (" +
+            "SELECT " + type.toString() + ", CASE " + cas + " END AS start " +
+            "FROM " + (type.equals(Cost.Click_Cost) ? click_table : impression_table) + " " +
+            ( where.isEmpty() ? "" : " WHERE " + where) + ") groups " +
+            "GROUP BY START";
+    return toBigDecimalMap(
+            retrieve(statement, new Object[]{}, new String[]{"START", "SUM"})
+    );
+  }
+  /*public HashMap<String, BigDecimal> retrieveDatedCostTotals(byte hoursGranularity, Filter filter) {
+    String where = filterToWhere(filter, Table.impression_table);
+    where = ( where.isEmpty() ? "" : " WHERE " + where );
+    String cas = hoursToCase(hoursGranularity, Table.impression_table);
+    String statement = "SELECT imprGroups.start AS START, SUM(imprGroups." + Cost.Impression_Cost.toString() + ") + SUM(clickGroups." + Cost.Click_Cost.toString() + ") AS SUM " +
+            "FROM (" +
+            "SELECT CASE " + cas + " END AS start, " + Cost.Impression_Cost.toString() + " " +
+            "FROM " + impression_table +
+            where + ") imprGroups INNER JOIN (" +
+            "SELECT CASE " + cas + " END AS start, " + Cost.Click_Cost.toString() + " " +
+            "FROM " + click_table +
+            where + ") clickGroups ON imprGroups.start = clickGroups.start " +
+            "GROUP BY START";
+    return toBigDecimalMap(
+            retrieve(statement, new Object[]{}, new String[]{"START", "SUM"})
+    );
+  }*/
 
   /**
    * Retrieve the total number of impressions for each date.
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedImpressionTotals(Filter filter) {
+  public HashMap<String, Long> retrieveDatedImpressionTotals(byte hoursGranularity, Filter filter) {
     String where = filterToWhere(filter, Table.impression_table);
-    String statement = "SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT " +
-            "FROM " + impression_table +
-            ( where.isEmpty() ? "" : " WHERE " + where ) +
-            " GROUP BY DateOnly";
+    String cas = hoursToCase(hoursGranularity, Table.impression_table);
+    String statement = "SELECT groups.start AS START, COUNT(*) AS COUNT " +
+            "FROM (" +
+              "SELECT CASE " + cas + " END AS start " +
+              "FROM " + impression_table + ( where.isEmpty() ? "" : " WHERE " + where ) + ") groups " +
+            "GROUP BY START";
     return toLongMap(
-            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
+            retrieve(statement, new Object[]{}, new String[]{"START", "COUNT"})
     );
   }
 
@@ -317,14 +309,16 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedClickTotals(Filter filter) {
+  public HashMap<String, Long> retrieveDatedClickTotals(byte hoursGranularity, Filter filter) {
     String where = filterToWhere(filter, Table.click_table);
-    String statement = "SELECT DATE(Date) AS DateOnly, COUNT(*) AS COUNT " +
-            "FROM " + click_table +
-            ( where.isEmpty() ? "" : " WHERE " + where ) +
-            " GROUP BY DateOnly";
+    String cas = hoursToCase(hoursGranularity, Table.click_table);
+    String statement = "SELECT groups.start AS START, COUNT(*) AS COUNT " +
+            "FROM (" +
+            "SELECT CASE " + cas + " END AS start " +
+            "FROM " + click_table + ( where.isEmpty() ? "" : " WHERE " + where ) + ") groups " +
+            "GROUP BY START";
     return toLongMap(
-            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
+            retrieve(statement, new Object[]{}, new String[]{"START", "COUNT"})
     );
   }
 
@@ -333,14 +327,16 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedUniqueTotals(Filter filter) {
+  public HashMap<String, Long> retrieveDatedUniqueTotals(byte hoursGranularity, Filter filter) {
     String where = filterToWhere(filter, Table.click_table);
-    String statement = "SELECT DATE(Date) AS DateOnly, COUNT(DISTINCT ID) AS COUNT " +
-            "FROM " + click_table +
-            ( where.isEmpty() ? "" : " WHERE " + where ) +
-            " GROUP BY DateOnly";
+    String cas = hoursToCase(hoursGranularity, Table.click_table);
+    String statement = "SELECT groups.start AS START, COUNT(DISTINCT groups.ID) AS COUNT " +
+            "FROM (" +
+            "SELECT ID, CASE " + cas + " END AS start " +
+            "FROM " + click_table + ( where.isEmpty() ? "" : " WHERE " + where ) + ") groups " +
+            "GROUP BY START";
     return toLongMap(
-            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
+            retrieve(statement, new Object[]{}, new String[]{"START", "COUNT"})
     );
   }
 
@@ -351,14 +347,17 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedBounceTotalsByTime(long maxSeconds, boolean allowInf, Filter filter) {
+  public HashMap<String, Long> retrieveDatedBounceTotalsByTime(byte hoursGranularity, long maxSeconds, boolean allowInf, Filter filter) {
     String where = filterToWhere(filter, Table.server_table);
-    String statement = "SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT " +
-            "FROM " + server_table +
-            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "(Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL" : "") +
-            " GROUP BY DateOnly";
+    String cas = hoursToCase(hoursGranularity, Table.server_table);
+    String statement = "SELECT groups.start AS START, COUNT(*) AS COUNT " +
+            "FROM (" +
+            "SELECT CASE " + cas + " END AS start " +
+            "FROM " + server_table + " " +
+            "WHERE (Exit_Date - Entry_Date) <= ?" + (allowInf ? " OR Exit_Date IS NULL" : "") + ( where.isEmpty() ? "" : " AND " + where ) + ") groups " +
+            "GROUP BY START";
     return toLongMap(
-            retrieve(statement, new Object[]{maxSeconds}, new String[]{"DateOnly", "COUNT"})
+            retrieve(statement, new Object[]{maxSeconds}, new String[]{"START", "COUNT"})
     );
   }
 
@@ -368,14 +367,17 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte maxPages, Filter filter) {
+  public HashMap<String, Long> retrieveDatedBounceTotalsByPages(byte hoursGranularity, byte maxPages, Filter filter) {
     String where = filterToWhere(filter, Table.server_table);
-    String statement = "SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT " +
-            "FROM " + server_table +
-            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "Pages_Viewed <= ?" +
-            " GROUP BY DateOnly";
+    String cas = hoursToCase(hoursGranularity, Table.server_table);
+    String statement = "SELECT groups.start AS START, COUNT(*) AS COUNT " +
+            "FROM (" +
+            "SELECT CASE " + cas + " END AS start " +
+            "FROM " + server_table + " " +
+            "WHERE Pages_Viewed <= ?" + ( where.isEmpty() ? "" : " AND " + where ) + ") groups " +
+            "GROUP BY START";
     return toLongMap(
-            retrieve(statement, new Object[]{maxPages}, new String[]{"DateOnly", "COUNT"})
+            retrieve(statement, new Object[]{maxPages}, new String[]{"START", "COUNT"})
     );
   }
 
@@ -384,14 +386,32 @@ public class MySQLManager extends DatabaseManager {
    * @return a map with each date as keys and the total for that date as a value
    */
   @Override
-  public HashMap<String, Long> retrieveDatedAcquisitionTotals(Filter filter) {
+  public HashMap<String, Long> retrieveDatedAcquisitionTotals(byte hoursGranularity, Filter filter) {
     String where = filterToWhere(filter, Table.server_table);
-    String statement = "SELECT DATE(Entry_Date) AS DateOnly, COUNT(*) AS COUNT " +
-            "FROM " + server_table +
-            " WHERE " + ( where.isEmpty() ? "" : where + " AND ") + "Conversion = 1" +
-            " GROUP BY DateOnly";
+    String cas = hoursToCase(hoursGranularity, Table.server_table);
+    String statement = "SELECT groups.start AS START, COUNT(*) AS COUNT " +
+            "FROM (" +
+            "SELECT CASE " + cas + " END AS start " +
+            "FROM " + server_table + " " +
+            "WHERE Conversion = 1" + ( where.isEmpty() ? "" : " AND " + where ) + ") groups " +
+            "GROUP BY START";
     return toLongMap(
-            retrieve(statement, new Object[]{}, new String[]{"DateOnly", "COUNT"})
+            retrieve(statement, new Object[]{}, new String[]{"START", "COUNT"})
+    );
+  }
+
+  @Override
+  public HashMap<String, Long> retrieveDatedServerTotals(byte hoursGranularity, Filter filter) {
+    String where = filterToWhere(filter, Table.server_table);
+    String cas = hoursToCase(hoursGranularity, Table.server_table);
+    String statement = "SELECT groups.start AS START, COUNT(*) AS COUNT " +
+            "FROM (" +
+            "SELECT CASE " + cas + " END AS start " +
+            "FROM " + server_table + " " +
+            ( where.isEmpty() ? "" : " WHERE " + where ) + ") groups " +
+            "GROUP BY START";
+    return toLongMap(
+            retrieve(statement, new Object[]{}, new String[]{"START", "COUNT"})
     );
   }
 
@@ -444,6 +464,26 @@ public class MySQLManager extends DatabaseManager {
     );
   }
 
+  //TODO add toString method
+  @Override
+  public String retrieveCampaignStartDate(Filter filter) {
+    String statement = "SELECT MIN(Date) AS Date" +
+        " FROM " + impression_table +
+        " WHERE Campaign_ID = " + filter.getCampaignID() +
+        " LIMIT 1";
+    return retrieve(statement, new Object[]{}, new String[]{"Date"}).get(0).get(0);
+  }
+
+  @Override
+  public String retrieveCampaignEndDate(Filter filter) {
+    String statement = "SELECT MAX(Date) AS Date" +
+        " FROM " + impression_table +
+        " WHERE Campaign_ID = " + filter.getCampaignID() +
+        " LIMIT 1";
+    return retrieve(statement, new Object[]{}, new String[]{"Date"}).get(0).get(0);
+  }
+
+  @Override
   public String retrieveCampaignName(int campaignID){
     String statement = "SELECT Name " +
         "FROM " + campaign_table +
@@ -483,6 +523,64 @@ public class MySQLManager extends DatabaseManager {
     return false;
   }
 
+  private static HashMap<String, Long> toLongMap(List<List<String>> resultsList) {
+    HashMap<String, Long> resultMap = new LinkedHashMap<>();
+    for (List<String> result : resultsList)
+      if (result.size() != 2)
+        Logger.log("[ERROR] Invalid result returned from SQL query. Expected 2 columns, received " + result.size() + ".");
+      else
+        try {
+          resultMap.put(result.get(0), Long.valueOf(result.get(1)));
+        } catch (NumberFormatException e) {
+          Logger.log("[ERROR] Invalid result returned from SQL query. Long conversion failed on value <" + result.get(1) + ">.");
+        }
+    return resultMap;
+  }
+
+  private static HashMap<String, BigDecimal> toBigDecimalMap(List<List<String>> resultsList) {
+    HashMap<String, BigDecimal> resultMap = new LinkedHashMap<>();
+    for (List<String> result : resultsList)
+      if (result.size() != 2)
+        Logger.log("[ERROR] Invalid result returned from SQL query. Expected 2 columns, received " + result.size() + ".");
+      else
+        try {
+          resultMap.put(result.get(0), BigDecimal.valueOf(Double.parseDouble(result.get(1))));
+        } catch (NumberFormatException e) {
+          Logger.log("[ERROR] Invalid result returned from SQL query. Double conversion failed on value <" + result.get(1) + ">.");
+        }
+    return resultMap;
+  }
+
+  private static long toLong(List<List<String>> resultsList) {
+    if (resultsList.size() != 1)
+      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 columns, received " + resultsList.size() + ".");
+    else if (resultsList.get(0).size() != 1)
+      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 result, received " + resultsList.get(0).size() + ".");
+    else
+      try {
+        if (resultsList.get(0).get(0) == null) return 0L;
+        else return Long.parseLong(resultsList.get(0).get(0));
+      } catch (NumberFormatException e) {
+        Logger.log("[ERROR] Invalid result returned from SQL query. Long conversion failed on value <" + resultsList.get(0).get(0) + ">.");
+      }
+    return 0L;
+  }
+
+  private static BigDecimal toBigDecimal(List<List<String>> resultsList) {
+    if (resultsList.size() != 1)
+      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 columns, received " + resultsList.size() + ".");
+    else if (resultsList.get(0).size() != 1)
+      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 result, received " + resultsList.get(0).size() + ".");
+    else
+      try {
+        if (resultsList.get(0).get(0) == null) return BigDecimal.ZERO;
+        else return BigDecimal.valueOf(Double.parseDouble(resultsList.get(0).get(0)));
+      } catch (NumberFormatException e) {
+        Logger.log("[ERROR] Invalid result returned from SQL query. Double conversion failed on value <" + resultsList.get(0).get(0) + ">.");
+      }
+    return BigDecimal.ZERO;
+  }
+
   private static String filterToWhere(Filter filter, Table table) {
     String dateTitle = "Date";
     if (table.equals(Table.server_table)) dateTitle = "Entry_Date";
@@ -500,7 +598,26 @@ public class MySQLManager extends DatabaseManager {
     if (!table.equals(Table.impression_table))
       ID = (ID.isEmpty() ? ID : "ID IN (SELECT DISTINCT ID FROM " + Table.impression_table + " WHERE " + ID + ")");
     where = (where.isEmpty() ? (ID.isEmpty() ? "" : ID) : (ID.isEmpty() ? where : where + " AND " + ID));
-    where += (where.isEmpty() ? " Campaign_ID = "  + filter.getCampaignID() : " AND Campaign_ID = " + filter.getCampaignID());
+    where += (where.isEmpty() ? "Campaign_ID = "  + filter.getCampaignID() : " AND Campaign_ID = " + filter.getCampaignID());
     return where;
+  }
+
+  private static String hoursToCase(byte hoursGranularity, Table table) {
+    String dateTitle = "Date";
+    if (table.equals(Table.server_table)) dateTitle = "Entry_Date";
+
+    //more options possible
+    switch (hoursGranularity) {
+      case 6 :
+        return "WHEN TIME("+dateTitle+") BETWEEN '00:00:00' AND '05:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 00:00:00') " +
+                "WHEN TIME("+dateTitle+") BETWEEN '06:00:00' AND '11:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 06:00:00') " +
+                "WHEN TIME("+dateTitle+") BETWEEN '12:00:00' AND '17:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 12:00:00') " +
+                "WHEN TIME("+dateTitle+") BETWEEN '18:00:00' AND '23:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 18:00:00')";
+      case 12 :
+        return "WHEN TIME("+dateTitle+") BETWEEN '00:00:00' AND '11:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 00:00:00') " +
+                "WHEN TIME("+dateTitle+") BETWEEN '12:00:00' AND '23:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 12:00:00')";
+      default :
+        return "WHEN TIME("+dateTitle+") BETWEEN '00:00:00' AND '23:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 00:00:00')";
+    }
   }
 }

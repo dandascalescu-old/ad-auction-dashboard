@@ -186,7 +186,7 @@
 }
 
 .jfx-button-custom{
-         -fx-background-color: #3c3f41;
+         -fx-background-color: #c4c4c4;
          -fx-text-fill: #ffffff;
 }
 
@@ -197,28 +197,28 @@
 
 .table-views {
     -fx-background-color: #ffffff;
-        -fx-font-family: SansSerif;
+      -fx-font-family: SansSerif;
 
 }
 
 .tree-table-row-cell:selected {
-    -fx-background-color: #494949;
+    -fx-background-color: #c4c4c4;
         -fx-font-family: SansSerif;
 }
 
 .tree-table-row-cell {
-    -fx-background-color: #606060;
+    -fx-background-color: #ffffff;
     -fx-font-family: SansSerif;
    // -fx-border-color: black;
 }
 
 .jfx-toggle-node{
-    -fx-background-color: #3c3f41;
+    -fx-background-color: #fcfcfc;
     -fx-background-radius: 40;
 }
 
 .jfx-toggle-node:selected{
-    -fx-background-color: #000000;
+    //-fx-background-color: #000000;
 }
 
 

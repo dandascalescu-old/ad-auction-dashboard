@@ -6,10 +6,7 @@ import com.comp2211.dashboard.viewmodel.ExportDialogViewModel;
 import com.comp2211.dashboard.viewmodel.PrimaryViewModel;
 import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel;
 import com.jfoenix.controls.*;
-import de.saxsys.mvvmfx.FluentViewLoader;
-import de.saxsys.mvvmfx.FxmlView;
-import de.saxsys.mvvmfx.InjectViewModel;
-import de.saxsys.mvvmfx.ViewTuple;
+import de.saxsys.mvvmfx.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
@@ -27,6 +24,8 @@ import java.io.IOException;
 
 public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
+  public static final String GRAN_NOTIFICATION = "TOTALS_GRANULARITY";
+  public static final String GRAN_NOTIFICATION_AVG = "AVGS_GRANULARITY";
 
   final double SCALE_DELTA = 1.1;
   @FXML
@@ -161,15 +160,13 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     rateCombobox.setItems(viewModel.ratesList());
     rateCombobox.valueProperty().bindBidirectional(viewModel.selectedRatePropery());
 
-    //TODO:: uncomment when primaryviewmodel is ready to read data.
-    /*rateChart.setData(viewModel.rateChartData());
+    rateChart.setData(viewModel.rateChartData());
     rateChart.setLegendVisible(false);
-    rateChart.getXAxis().setTickLabelRotation(-30);*/
+    rateChart.getXAxis().setTickLabelRotation(-30);
 
-    //TODO:: uncomment when primaryviewmodel is ready to read data.
-    /*totalCostChart.setData(viewModel.totalCostChartData());
+    totalCostChart.setData(viewModel.totalCostChartData());
     totalCostChart.setLegendVisible(false);
-    totalCostChart.getXAxis().setTickLabelRotation(-30);*/
+    totalCostChart.getXAxis().setTickLabelRotation(-30);
 
   }
 
@@ -194,29 +191,23 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   }
 
   public void changeTotalGran(ActionEvent event){
-
-          if (totalMetricSix.isSelected()){
-
-
-          }else if(totalMetricTwelve.isSelected()){
-
-
-          }else if(totalMetricDay.isSelected()){
-
-          }
+    if (totalMetricSix.isSelected()){
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION, (byte) 6);
+    } else if (totalMetricTwelve.isSelected()){
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION, (byte) 12);
+    } else if (totalMetricDay.isSelected()){
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION, (byte) 24);
+    }
   }
 
   public void changeAverageGran(ActionEvent event){
-          if(averageSix.isSelected()){
-
-
-          }else if(averageTwelve.isSelected()){
-
-
-          }else if(averageDay.isSelected()){
-
-          }
-
+    if (averageSix.isSelected()){
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION_AVG, (byte) 6);
+    } else if (averageTwelve.isSelected()){
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION_AVG, (byte) 12);
+    } else if (averageDay.isSelected()){
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION_AVG, (byte) 24);
+    }
   }
 
   public void changeTotalCostGran(ActionEvent event) {
