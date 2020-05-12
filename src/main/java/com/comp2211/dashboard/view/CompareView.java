@@ -9,10 +9,7 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXToggleNode;
-import de.saxsys.mvvmfx.FluentViewLoader;
-import de.saxsys.mvvmfx.FxmlView;
-import de.saxsys.mvvmfx.InjectViewModel;
-import de.saxsys.mvvmfx.ViewTuple;
+import de.saxsys.mvvmfx.*;
 import de.saxsys.mvvmfx.internal.viewloader.View;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -64,9 +61,6 @@ public class CompareView implements FxmlView<CompareLeftViewModel>, Initializabl
     private StackPane stackPane2;
 
 
-    @FXML
-    private JFXToggleNode averageSix, averageTwelve, averageDay;
-
 
     @InjectViewModel
     private CompareLeftViewModel viewModelLeft;
@@ -81,7 +75,12 @@ public class CompareView implements FxmlView<CompareLeftViewModel>, Initializabl
 
     static JFXDialog dialogFilterLeft, dialogFilterRight;
 
-
+    @FXML
+    JFXToggleNode totalDay, totalTwelve, totalSix,
+            averageDay, averageTwelve, averageSix,
+            totalCostRightSix, totalCostRightTwelve, totalCostRightDay,
+            rateSix, rateTwelve, rateDay,
+            totalCostLeftSix, totalCostLeftTwelve, totalCostLeftDay;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -163,18 +162,54 @@ public class CompareView implements FxmlView<CompareLeftViewModel>, Initializabl
     }
 
     public void changeAverageGran(ActionEvent event) {
+        if (averageSix.isSelected()){
+
+        } else if (averageTwelve.isSelected()){
+
+        } else if (averageDay.isSelected()){
+
+        }
     }
 
     public void changeTotalCostLeftGran(ActionEvent event) {
+        if (totalCostLeftSix.isSelected()){
+
+        } else if (totalCostLeftTwelve.isSelected()){
+
+        } else if (totalCostLeftDay.isSelected()){
+
+        }
     }
 
     public void changeTotalCostRightGran(ActionEvent event) {
+        if (totalCostRightSix.isSelected()){
+
+        } else if (totalCostRightTwelve.isSelected()){
+
+        } else if (totalCostRightDay.isSelected()){
+
+        }
     }
 
     public void changeRatesGran(ActionEvent event) {
+        if (rateSix.isSelected()){
+
+        }else if (rateTwelve.isSelected()){
+
+        }else if (rateDay.isSelected()){
+
+        }
     }
 
     public void changeTotalMetricsGran(ActionEvent event) {
+        if (totalSix.isSelected()){
+
+        }else if (totalTwelve.isSelected()){
+
+        }else if (totalDay.isSelected()){
+
+        }
+
     }
 
     public void openFilterDialogLeft(ActionEvent event) {
