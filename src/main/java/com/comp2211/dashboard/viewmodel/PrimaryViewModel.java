@@ -152,7 +152,6 @@ public class PrimaryViewModel implements ViewModel {
     return selectedDemographic;
   }
 
-
   public ObjectProperty<Campaign> selectedCampaignProperty() {
     return selectedCampaign;
   }
@@ -172,6 +171,8 @@ public class PrimaryViewModel implements ViewModel {
   public StringProperty clickThroughRateTextProperty() {
     return clickThroughRateText;
   }
+
+
 
   public StringProperty bounceConversionTextProperty() { return bouncesPerConversionText; }
 

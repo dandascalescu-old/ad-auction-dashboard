@@ -37,6 +37,7 @@ public class CompareLeftViewModel implements ViewModel {
 
     private ObservableList<Series<String, Number>> averageChartData;
     private ObservableList<PieChart.Data> demographicsChartData;
+    private ObservableList<PieChart.Data> demographicsChartDataRight;
     private ObservableList<Series<String, Number>> totalMetricChartData;
 
     private StringProperty totalClickCost = new SimpleStringProperty("");
@@ -53,11 +54,34 @@ public class CompareLeftViewModel implements ViewModel {
     private StringProperty totalBouncesText = new SimpleStringProperty("");
     private StringProperty totalConversionsText = new SimpleStringProperty("");
 
+
+    // ----------- Right Side ------------------
+    private StringProperty totalClickCostRight = new SimpleStringProperty("");
+    private StringProperty totalImpresCostRight = new SimpleStringProperty("");
+    private StringProperty totalCostRight = new SimpleStringProperty("");
+    private StringProperty clickThroughRateTextRight = new SimpleStringProperty("");
+    private StringProperty bounceRateTextRight = new SimpleStringProperty("");
+    private StringProperty conversionsPerUniqueTextRight = new SimpleStringProperty("");
+    private StringProperty bouncesPerConversionTextRight = new SimpleStringProperty("");
+
+    private StringProperty totalImpressionsTextRight = new SimpleStringProperty("");
+    private StringProperty totalClicksTextRight = new SimpleStringProperty("");
+    private StringProperty totalUniquesTextRight = new SimpleStringProperty("");
+    private StringProperty totalBouncesTextRight = new SimpleStringProperty("");
+    private StringProperty totalConversionsTextRight = new SimpleStringProperty("");
+
+    private ObjectProperty<Campaign> selectedCampaignRight = new SimpleObjectProperty<>();
+    private ObjectProperty<Demographic> selectedDemographicRight = new SimpleObjectProperty<>();
+    //------------------------------------------
+
     private StringProperty selectedAverage = new SimpleStringProperty("");
     private StringProperty selectedTotals = new SimpleStringProperty("");
     private ObjectProperty<Demographic> selectedDemographic = new SimpleObjectProperty<>();
     private ObjectProperty<Campaign> selectedCampaign = new SimpleObjectProperty<>();
     private ObjectProperty<Campaign> selectedRightCampaign = new SimpleObjectProperty<>();
+
+
+
 
     private final String avgCostClick = "Average Cost of Click";
     private final String avgCostImpr = "Average Cost of Impression";
@@ -75,6 +99,7 @@ public class CompareLeftViewModel implements ViewModel {
         demographics = FXCollections.observableArrayList();
         averageChartData = FXCollections.observableArrayList();
         demographicsChartData = FXCollections.observableArrayList();
+        demographicsChartDataRight = FXCollections.observableArrayList();
         totals = FXCollections.observableArrayList();
         totalMetricChartData = FXCollections.observableArrayList();
 
@@ -84,19 +109,29 @@ public class CompareLeftViewModel implements ViewModel {
         totals.addAll(totalImpressions, totalClicks, totalUniques, totalBounces, totalConversions);
 
         setupCampaignSelector();
+        setupCampaignSelectorRight();
 
         Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter());
+        Filter filterRight = (selectedCampaignRight.getValue().hasAppliedFilter() ? selectedCampaignRight.getValue().getAppliedFilter() : new Filter());
+
 
         // This was in an runnable block, which has been removed to make testing more manageable
         selectedCampaign.getValue().cacheData(filter);
+        selectedCampaignRight.getValue().cacheData(filter);
 
         updateTotalMetrics();
         updateTotalCosts();
         updateBouncesCountDefault(filter);
 
+        updateTotalCostsRight();
+        updateTotalMetricsRight();
+        updateBouncesCountDefaultRight(filter);
+
         setupDemographicSelector();
         setupAverageSelector();
         setUpTotalsSelector();
+
+        setupDemographicSelectorRight();
 
         setupFilterReceiving();
     }
@@ -129,6 +164,11 @@ public class CompareLeftViewModel implements ViewModel {
         return demographicsChartData;
     }
 
+    public ObservableList<PieChart.Data> demographicsChartDataRight() {
+        return demographicsChartDataRight;
+    }
+
+
     public StringProperty selectedAverageProperty() {
         return selectedAverage;
     }
@@ -141,59 +181,106 @@ public class CompareLeftViewModel implements ViewModel {
         return selectedDemographic;
     }
 
+    public ObjectProperty<Demographic> selectedDemographicPropertyRight() {
+        return selectedDemographicRight;
+    }
+
     public ObjectProperty<Campaign> selectedCampaignProperty() {
         return selectedCampaign;
     }
 
-    public ObjectProperty<Campaign> selectedRightCampaignProperty() {
-        return selectedRightCampaign;
+    public ObjectProperty<Campaign> selectedRightCampaignPropertyRight() {
+        return selectedCampaignRight;
     }
 
     public StringProperty totalClickCostProperty() {
         return totalClickCost;
     }
 
+    public StringProperty totalClickCostPropertyRight(){ return totalClickCostRight;}
+
     public StringProperty totalImpresCostProperty() {
         return totalImpresCost;
+    }
+
+    public StringProperty totalImpresCostPropertyRight() {
+        return totalImpresCostRight;
     }
 
     public StringProperty totalCostProperty() {
         return totalCost;
     }
 
+    public StringProperty totalCostPropertyRight() {
+        return totalCostRight;
+    }
+
     public StringProperty clickThroughRateTextProperty() {
         return clickThroughRateText;
     }
 
+    public StringProperty clickThroughRateTextPropertyRight() {
+        return clickThroughRateTextRight;
+    }
+
     public StringProperty bounceConversionTextProperty() { return bouncesPerConversionText; }
+
+    public StringProperty bounceConversionTextPropertyRight() { return bouncesPerConversionTextRight; }
 
     public StringProperty bounceRateTextProperty() {
         return bounceRateText;
+    }
+
+    public StringProperty bounceRateTextPropertyRight() {
+        return bounceRateTextRight;
     }
 
     public StringProperty getConversionUniquesProperty() {
         return conversionsPerUniqueText;
     }
 
+    public StringProperty getConversionUniquesPropertyRight() {
+        return conversionsPerUniqueTextRight;
+    }
+
     public StringProperty getTotalImpressionsProperty() {
         return totalImpressionsText;
+    }
+
+    public StringProperty getTotalImpressionsPropertyRight() {
+        return totalImpressionsTextRight;
     }
 
     public StringProperty getTotalClicksProperty() {
         return totalClicksText;
     }
 
+    public StringProperty getTotalClicksPropertyRight() {
+        return totalClicksTextRight;
+    }
+
     public StringProperty getTotalUniquesProperty() {
         return totalUniquesText;
     }
+
+    public StringProperty getTotalUniquesPropertyRight() { return totalUniquesTextRight; }
 
     public StringProperty getTotalBouncesProperty() {
         return totalBouncesText;
     }
 
+    public StringProperty getTotalBouncesPropertyRight() {
+        return totalBouncesTextRight;
+    }
+
     public StringProperty getTotalConversionsProperty() {
         return totalConversionsText;
     }
+
+    public StringProperty getTotalConversionsPropertyRight() {
+        return totalConversionsTextRight;
+    }
+
 
     private void updateTotalCosts() {
         totalClickCost.setValue("£" + selectedCampaign.getValue().getTotalClickCost().setScale(2, RoundingMode.CEILING).toPlainString());
@@ -211,9 +298,34 @@ public class CompareLeftViewModel implements ViewModel {
         totalConversionsText.setValue(String.valueOf(selectedCampaign.getValue().getConversionsCount()));
     }
 
+
+    private void updateTotalCostsRight() {
+
+        totalClickCostRight.setValue("£" + selectedCampaignRight.getValue().getTotalClickCost().setScale(2, RoundingMode.CEILING).toPlainString());
+        totalImpresCostRight.setValue("£" + selectedCampaignRight.getValue().getTotalImpressionCost().setScale(2, RoundingMode.CEILING).toPlainString());
+        totalCostRight.setValue("£" + selectedCampaignRight.getValue().getTotalCost().setScale(2, RoundingMode.CEILING).toPlainString());
+        clickThroughRateTextRight.setValue(selectedCampaignRight.getValue().getClickThroughRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+        conversionsPerUniqueTextRight.setValue(selectedCampaignRight.getValue().getConversionsPerUnique().setScale(2, RoundingMode.CEILING).toPlainString());
+    }
+
+    private void updateTotalMetricsRight() {
+
+        totalImpressionsTextRight.setValue(String.valueOf(selectedCampaignRight.getValue().getImpressionDataCount()));
+        totalClicksTextRight.setValue(String.valueOf(selectedCampaignRight.getValue().getClickDataCount()));
+        totalUniquesTextRight.setValue(String.valueOf(selectedCampaignRight.getValue().getUniquesCount()));
+        totalConversionsTextRight.setValue(String.valueOf(selectedCampaignRight.getValue().getConversionsCount()));
+    }
+
+
     private void updateBouncesCountDefault(Filter filter) {
         updateBouncesCountByPages((byte) 1, filter);
     }
+
+    private void updateBouncesCountDefaultRight(Filter filter) {
+
+        updateBouncesCountByPagesRight((byte) 1, filter);
+    }
+
 
     private void updateBouncesCountByTime(long maxSeconds, boolean allowInf, Filter filter) {
         selectedCampaign.getValue().updateBouncesByTime(maxSeconds, allowInf, filter);
@@ -225,12 +337,25 @@ public class CompareLeftViewModel implements ViewModel {
         updateBounceMetrics();
     }
 
+    private void updateBouncesCountByPagesRight(byte maxPages, Filter filter) {
+        selectedCampaignRight.getValue().updateBouncesByPages(maxPages, filter);
+        updateBounceMetricsRight();
+    }
+
     private void updateBounceMetrics() {
         totalBouncesText.setValue(String.valueOf(selectedCampaign.getValue().getBouncesCount()));
         bounceRateText.setValue(selectedCampaign.getValue().getBounceRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
         bouncesPerConversionText.setValue(selectedCampaign.getValue().getBouncesPerConversion().setScale(2, RoundingMode.CEILING).toPlainString());
         if (selectedTotals.getValue().equals(totalBounces))
             updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedBounceTotals());
+    }
+
+    private void updateBounceMetricsRight() {
+        totalBouncesTextRight.setValue(String.valueOf(selectedCampaignRight.getValue().getBouncesCount()));
+        bounceRateTextRight.setValue(selectedCampaignRight.getValue().getBounceRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
+        bouncesPerConversionTextRight.setValue(selectedCampaignRight.getValue().getBouncesPerConversion().setScale(2, RoundingMode.CEILING).toPlainString());
+        //if (selectedTotalsRight.getValue().equals(totalBounces))
+          //  updateTotalMetricLineChartData(selectedCampaignRight.getValue().getDatedBounceTotals());
     }
 
     private void setupCampaignSelector() {
@@ -248,6 +373,22 @@ public class CompareLeftViewModel implements ViewModel {
         selectedCampaign.setValue(Campaign.getCampaigns().get(0));
     }
 
+
+    private void setupCampaignSelectorRight() {
+        selectedCampaignRight.addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                Optional<Campaign> matchingCampaign = Campaign.getCampaigns().stream().filter(newVal::equals).findFirst();
+                matchingCampaign.ifPresent(cam -> selectedCampaignRight.setValue(cam));
+                updateCampaignRight();
+            } else {
+                selectedCampaignRight.setValue(Campaign.getCampaigns().get(0));
+            }
+
+        });
+
+        selectedCampaignRight.setValue(Campaign.getCampaigns().get(0));
+    }
+
     private void updateCampaign(){
         Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter());
         updateTotalMetrics();
@@ -255,6 +396,17 @@ public class CompareLeftViewModel implements ViewModel {
         updateBouncesCountDefault(filter);
 
         updatePieChartData(selectedCampaign.getValue().getPercentageMap(Demographic.Gender));
+        updateAverages();
+        updateTotals();
+    }
+
+    private void updateCampaignRight(){
+        Filter filter = (selectedCampaignRight.getValue().hasAppliedFilter() ? selectedCampaignRight.getValue().getAppliedFilter() : new Filter());
+        updateTotalMetricsRight();
+        updateTotalCostsRight();
+        updateBouncesCountDefaultRight(filter);
+
+        updatePieChartData(selectedCampaignRight.getValue().getPercentageMap(Demographic.Gender));
         updateAverages();
         updateTotals();
     }
@@ -275,13 +427,19 @@ public class CompareLeftViewModel implements ViewModel {
     private void updateAverages() {
         switch (selectedAverage.getValue()) {
             case avgCostClick:
+                averageChartData.clear();
                 updateLineChartData(selectedCampaign.getValue().getDatedClickCostAverages());
+                updateLineChartData(selectedCampaignRight.getValue().getDatedClickCostAverages());
                 break;
             case avgCostImpr:
+                averageChartData.clear();
                 updateLineChartData(selectedCampaign.getValue().getDatedImpressionCostAverages());
+                updateLineChartData(selectedCampaignRight.getValue().getDatedImpressionCostAverages());
                 break;
             case avgCostAcq:
+                averageChartData.clear();
                 updateLineChartData(selectedCampaign.getValue().getDatedAcquisitionCostAverages());
+                updateLineChartData(selectedCampaignRight.getValue().getDatedAcquisitionCostAverages());
                 break;
         }
     }
@@ -303,19 +461,33 @@ public class CompareLeftViewModel implements ViewModel {
         //TODO refactor into one method like demographics
         switch (selectedTotals.getValue()) {
             case totalImpressions:
+                totalMetricChartData.clear();
                 updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedImpressionTotals());
+                updateTotalMetricLineChartData(selectedCampaignRight.getValue().getDatedImpressionTotals());
                 break;
             case totalClicks:
+                totalMetricChartData.clear();
                 updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedClickTotals());
+                updateTotalMetricLineChartData(selectedCampaignRight.getValue().getDatedClickTotals());
                 break;
             case totalUniques:
+                totalMetricChartData.clear();
                 updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedUniqueTotals());
+                updateTotalMetricLineChartData(selectedCampaignRight.getValue().getDatedUniqueTotals());
+
+
                 break;
             case totalBounces:
+                totalMetricChartData.clear();
                 updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedBounceTotals());
+                updateTotalMetricLineChartData(selectedCampaignRight.getValue().getDatedBounceTotals());
+
                 break;
             case totalConversions:
+                totalMetricChartData.clear();
                 updateTotalMetricLineChartData(selectedCampaign.getValue().getDatedAcquisitionTotals());
+                updateTotalMetricLineChartData(selectedCampaignRight.getValue().getDatedAcquisitionTotals());
+
                 break;
         }
     }
@@ -334,6 +506,20 @@ public class CompareLeftViewModel implements ViewModel {
         selectedDemographic.setValue(Demographic.Gender);
     }
 
+    private void setupDemographicSelectorRight() {
+        selectedDemographicRight.addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                Optional<Demographic> matchingDemographic = Stream.of(Demographics.Demographic.values()).filter(newVal::equals).findFirst();
+                matchingDemographic.ifPresent(dem -> selectedDemographicRight.setValue(dem));
+            } else {
+                selectedDemographicRight.setValue(Demographic.Gender);
+            }
+            updatePieChartDataRight(selectedCampaignRight.getValue().getPercentageMap(selectedDemographicRight.getValue()));
+        });
+
+        selectedDemographicRight.setValue(Demographic.Gender);
+    }
+
     private void updatePieChartData(HashMap<String, BigDecimal> dataMap) {
         demographicsChartData.clear();
         for (Entry<String, BigDecimal> entry : dataMap.entrySet()) {
@@ -343,8 +529,17 @@ public class CompareLeftViewModel implements ViewModel {
         }
     }
 
+    private void updatePieChartDataRight(HashMap<String, BigDecimal> dataMap) {
+        demographicsChartDataRight.clear();
+        for (Entry<String, BigDecimal> entry : dataMap.entrySet()) {
+            PieChart.Data pd = new PieChart.Data(entry.getKey(), entry.getValue().doubleValue());
+            pd.setName(pd.getName() + " "+ entry.getValue().setScale(1, RoundingMode.HALF_UP).doubleValue() + "%");
+            demographicsChartDataRight.add(pd);
+        }
+    }
+
     private void updateLineChartData(HashMap<String, BigDecimal> dataMap) {
-        averageChartData.clear();
+
         Series<String, Number> s = new Series<>();
         s.setName(selectedCampaign.getValue().toString());
         for (Entry<String, BigDecimal> entry : dataMap.entrySet()) {
@@ -355,7 +550,7 @@ public class CompareLeftViewModel implements ViewModel {
     }
 
     private void updateTotalMetricLineChartData(HashMap<String, Long> dataMap) {
-        totalMetricChartData.clear();
+
         Series<String, Number> s = new Series<>();
         s.setName(selectedCampaign.getValue().toString());
         for (Entry<String, Long> entry : dataMap.entrySet()) {
@@ -373,6 +568,7 @@ public class CompareLeftViewModel implements ViewModel {
             Data<String, Number> data = new XYChart.Data<>(reformattedStr, entry.getValue());
             s.getData().add(data);
         }
+
         totalMetricChartData.add(s);
     }
 

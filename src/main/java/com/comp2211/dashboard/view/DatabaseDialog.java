@@ -7,6 +7,7 @@ import com.jfoenix.controls.JFXDialog;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
@@ -32,6 +33,9 @@ public class DatabaseDialog {
     @FXML
     TextField campaignTitle;
 
+    @FXML
+    ImageView impressCheck, serverCheck, clickCheck;
+
     private String impressionFilePath = "", serverFilePath = "", clickFilePath = "";
 
     private String impressionFileName = "", serverFileName = "", clickFileName = "";
@@ -48,6 +52,7 @@ public class DatabaseDialog {
         if (file != null) {
             impressionFilePath = file.getAbsolutePath();
             impressionFileName = file.getName();
+            impressCheck.setVisible(true);
             System.out.println("Absolute path (impression): " + impressionFilePath);
         }
     }
@@ -64,6 +69,7 @@ public class DatabaseDialog {
         if (file != null) {
             serverFilePath = file.getAbsolutePath();
             serverFileName = file.getName();
+            serverCheck.setVisible(true);
             System.out.println("Absolute path (Server): " + serverFilePath);
 
         }
@@ -81,6 +87,7 @@ public class DatabaseDialog {
         if (file != null) {
             clickFilePath = file.getAbsolutePath();
             clickFileName = file.getName();
+            clickCheck.setVisible(true);
             System.out.println("Absolute path (Click): " + clickFilePath);
         }
 

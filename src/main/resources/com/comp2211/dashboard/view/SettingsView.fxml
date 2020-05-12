@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -10,63 +12,90 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<StackPane fx:id="databasePane" prefHeight="796.0" prefWidth="1161.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.SettingsView">
+<StackPane fx:id="databasePane" prefHeight="796.0" prefWidth="1161.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.SettingsView">
 
-    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="794.0" prefWidth="1141.0">
-        <children>
-
-        </children>
-    </AnchorPane>
-   <Pane prefHeight="74.0" prefWidth="1246.0" style="-fx-background-color: #FCFCFC;">
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="794.0" prefWidth="1141.0" styleClass="pane2">
       <children>
-         <Text fill="#3c3f41" layoutX="26.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Settings" wrappingWidth="96.34716796875">
-            <font>
-               <Font name="SansSerif Bold" size="17.0" />
-            </font>
-         </Text>
-         <Line endX="-129.0" endY="-120.0" layoutX="129.0" layoutY="194.0" opacity="0.1" startX="1009.0" startY="-120.0" strokeLineCap="BUTT" />
-         <Pane layoutX="55.0" layoutY="103.0" prefHeight="295.0" prefWidth="1029.0" style="-fx-background-color: #FFFFFF;">
+         <Pane prefHeight="74.0" prefWidth="1161.0" styleClass="pane-sides">
             <children>
-               <Text fill="#3c3f41" layoutX="33.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DEFINITION OF BOUNCE RATE" wrappingWidth="265.34716796875">
+               <Text fill="#3c3f41" layoutX="26.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Settings" wrappingWidth="96.34716796875">
                   <font>
                      <Font name="SansSerif Bold" size="17.0" />
                   </font>
                </Text>
-               <Line endX="928.0" layoutX="100.0" layoutY="66.0" startX="-100.0" />
-               <Text fill="#3c3f41" layoutX="50.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Set your own definition for a bounce" wrappingWidth="310.34716796875">
+               <Line endX="-129.0" endY="-120.0" layoutX="129.0" layoutY="194.0" opacity="0.1" startX="1032.0" startY="-120.0" strokeLineCap="BUTT" />
+            </children>
+         </Pane>
+         <Pane layoutX="83.0" layoutY="100.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="290.0" prefWidth="970.0" styleClass="pane1">
+            <children>
+               <Text fill="#3c3f41" layoutX="370.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="DEFINITION OF BOUNCE RATE" wrappingWidth="197.34716796875">
                   <font>
-                     <Font name="SansSerif Regular" size="17.0" />
+                     <Font name="SansSerif Bold" size="13.0" />
                   </font>
                </Text>
-               <Text fill="#3c3f41" layoutX="177.0" layoutY="132.0" strokeType="OUTSIDE" strokeWidth="0.0" text="time : " wrappingWidth="55.34716796875">
+               <Line endX="870.0" layoutX="100.0" layoutY="62.0" opacity="0.1" startX="-100.0" styleClass="line" />
+               <Text fill="#3c3f41" layoutX="347.0" layoutY="93.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Set your own definition for a bounce" wrappingWidth="244.34716796875">
                   <font>
-                     <Font name="SansSerif Bold" size="17.0" />
+                     <Font name="SansSerif Italic" size="15.0" />
                   </font>
                </Text>
-               <TextField fx:id="timeTextField" layoutX="251.0" layoutY="112.0" />
-               <Text fill="#3c3f41" layoutX="319.0" layoutY="164.0" strokeType="OUTSIDE" strokeWidth="0.0" text="or" wrappingWidth="24.34716796875">
+               <Text fill="#3c3f41" layoutX="352.0" layoutY="144.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="time : " wrappingWidth="41.34716796875">
                   <font>
-                     <Font name="SansSerif Bold" size="17.0" />
+                     <Font name="SansSerif Bold" size="13.0" />
                   </font>
                </Text>
-               <TextField fx:id="noPagesTextField" layoutX="251.0" layoutY="179.0" />
-               <Text fill="#3c3f41" layoutX="79.0" layoutY="198.0" strokeType="OUTSIDE" strokeWidth="0.0" text="no. of pages visited: " wrappingWidth="172.34716796875">
+               <TextField fx:id="timeTextField" layoutX="401.0" layoutY="125.0" />
+               <Text fill="#3c3f41" layoutX="469.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="or" wrappingWidth="24.34716796875">
                   <font>
-                     <Font name="SansSerif Bold" size="17.0" />
+                     <Font name="SansSerif Bold" size="13.0" />
                   </font>
                </Text>
-               <Text fill="#3c3f41" layoutX="428.0" layoutY="132.0" strokeType="OUTSIDE" strokeWidth="0.0" text="sec." wrappingWidth="41.34716796875">
+               <TextField fx:id="noPagesTextField" layoutX="401.0" layoutY="191.0" />
+               <Text fill="#3c3f41" layoutX="259.0" layoutY="210.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="no. of pages visited: " wrappingWidth="135.34716796875">
                   <font>
-                     <Font name="SansSerif Bold" size="17.0" />
+                     <Font name="SansSerif Bold" size="13.0" />
                   </font>
                </Text>
-               <JFXButton layoutX="274.0" layoutY="235.0" onAction="#saveBounce" prefHeight="39.0" prefWidth="111.0" text="SAVE" />
+               <Text fill="#3c3f41" layoutX="569.0" layoutY="144.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="sec." wrappingWidth="41.34716796875">
+                  <font>
+                     <Font name="SansSerif Bold" size="13.0" />
+                  </font>
+               </Text>
+               <JFXButton buttonType="RAISED" layoutX="402.0" layoutY="236.0" onAction="#saveBounce" prefHeight="33.0" prefWidth="160.0" styleClass="jfx-button-custom" text="SAVE">
+                  <effect>
+                     <DropShadow color="#00000044" height="0.0" offsetX="5.0" offsetY="5.0" radius="5.51" width="24.04" />
+                  </effect>
+               </JFXButton>
             </children>
             <effect>
                <DropShadow color="#00000021" height="11.89" offsetX="5.0" offsetY="5.0" radius="5.445" width="11.89" />
             </effect>
          </Pane>
+         <Pane layoutX="83.0" layoutY="425.0" prefHeight="281.0" prefWidth="971.0" styleClass="pane1">
+            <effect>
+               <DropShadow color="#00000021" height="11.89" offsetX="5.0" offsetY="5.0" radius="5.445" width="11.89" />
+            </effect>
+            <children>
+               <Text fill="#3c3f41" layoutX="432.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="ACCESSIBILITY" wrappingWidth="106.34716796875">
+                  <font>
+                     <Font name="SansSerif Bold" size="13.0" />
+                  </font>
+               </Text>
+               <Line endX="870.0" layoutX="100.0" layoutY="65.0" opacity="0.1" startX="-100.0" styleClass="line" />
+               <JFXCheckBox fx:id="darkModeCheckBox" checkedColor="#474c49" layoutX="398.0" layoutY="95.0" onAction="#darkModeAction" text="ACTIVATE DARK MODE">
+                  <font>
+                     <Font name="SansSerif Bold" size="13.0" />
+                  </font>
+               </JFXCheckBox>
+               <Slider fx:id="textSizeSlider" blockIncrement="1.0" layoutX="338.0" layoutY="194.0" majorTickUnit="1.0" max="3.0" min="1.0" minorTickCount="0" prefHeight="15.0" prefWidth="316.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="2.0" />
+               <Text fill="#3c3f41" layoutX="460.0" layoutY="167.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="TEXT SIZE" wrappingWidth="72.34716796875">
+                  <font>
+                     <Font name="SansSerif Bold" size="13.0" />
+                  </font>
+               </Text>
+            </children>
+         </Pane>
       </children>
-   </Pane>
+    </AnchorPane>
 
 </StackPane>

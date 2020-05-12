@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<StackPane fx:id="dialogDBStack" prefHeight="349.0" prefWidth="416.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.PrimaryFilterDialog">
+<StackPane fx:id="dialogDBStack" prefHeight="349.0" prefWidth="416.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.PrimaryFilterDialog">
 
     <JFXDialog fx:id="dialogs" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="394.0" prefWidth="416.0">
         <JFXDialogLayout>
@@ -27,49 +27,55 @@
             </actions>
         </JFXDialogLayout>
     </JFXDialog>
-    <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="421.0" prefWidth="482.0">
+    <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="421.0" prefWidth="482.0" styleClass="pane2">
         <children>
-            <JFXButton fx:id="saveButton" buttonType="RAISED" layoutX="284.0" layoutY="336.0" onAction="#saveFilter" prefHeight="42.0" prefWidth="100.0" style="-fx-background-color: #FFFFFF;" text="Save" />
-            <JFXButton fx:id="cancelButton" buttonType="RAISED" layoutX="89.0" layoutY="336.0" onAction="#cancelDialog" prefHeight="42.0" prefWidth="100.0" style="-fx-background-color: #FFFFFF;" text="Cancel" />
-            <Text layoutX="139.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DASHBOARD FILTER" textAlignment="CENTER">
+            <JFXButton fx:id="saveButton" buttonType="RAISED" layoutX="284.0" layoutY="336.0" onAction="#saveFilter" prefHeight="42.0" prefWidth="100.0" styleClass="jfx-button-custom" text="Save">
+            <font>
+               <Font name="SansSerif Regular" size="13.0" />
+            </font></JFXButton>
+            <JFXButton fx:id="cancelButton" buttonType="RAISED" layoutX="89.0" layoutY="336.0" onAction="#cancelDialog" prefHeight="42.0" prefWidth="100.0" styleClass="jfx-button-custom" text="Cancel">
+            <font>
+               <Font name="SansSerif Regular" size="13.0" />
+            </font></JFXButton>
+            <Text layoutX="139.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="DASHBOARD FILTER" textAlignment="CENTER">
                 <font>
                     <Font name="SansSerif Bold" size="19.0" />
                 </font>
             </Text>
-            <Text fx:id="alertAddingText" layoutX="88.0" layoutY="345.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER">
+            <Text fx:id="alertAddingText" layoutX="88.0" layoutY="345.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" textAlignment="CENTER">
                 <font>
                     <Font name="SansSerif Bold" size="12.0" />
                 </font>
             </Text>
-         <DatePicker fx:id="startDatePicker" layoutX="50.0" layoutY="97.0" prefHeight="34.0" prefWidth="187.0" promptText="Select Date" />
-         <Text layoutX="44.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Start date" textAlignment="CENTER">
+         <DatePicker fx:id="startDatePicker" layoutX="50.0" layoutY="97.0" prefHeight="34.0" prefWidth="187.0" promptText="Select Date" styleClass="date-picker" />
+         <Text layoutX="44.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Start date" textAlignment="CENTER">
             <font>
                <Font name="SansSerif Bold" size="14.0" />
             </font>
          </Text>
-         <Text layoutX="383.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="End date " textAlignment="CENTER">
+         <Text layoutX="383.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="End date " textAlignment="CENTER">
             <font>
                <Font name="SansSerif Bold" size="14.0" />
             </font>
          </Text>
          <DatePicker fx:id="endDatePicker" layoutX="252.0" layoutY="97.0" prefHeight="34.0" prefWidth="187.0" promptText="Select Date" />
          <JFXComboBox fx:id="genderComboBox" layoutX="58.0" layoutY="188.0" prefHeight="27.0" prefWidth="171.0" />
-         <Text layoutX="48.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Gender" textAlignment="CENTER">
+         <Text layoutX="48.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Gender" textAlignment="CENTER">
             <font>
                <Font name="SansSerif Bold" size="14.0" />
             </font>
          </Text>
-         <Text layoutX="252.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Income" textAlignment="CENTER">
+         <Text layoutX="252.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Income" textAlignment="CENTER">
             <font>
                <Font name="SansSerif Bold" size="14.0" />
             </font>
          </Text>
-         <Text layoutX="45.0" layoutY="253.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Age" textAlignment="CENTER">
+         <Text layoutX="45.0" layoutY="253.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Age" textAlignment="CENTER">
             <font>
                <Font name="SansSerif Bold" size="14.0" />
             </font>
          </Text>
-         <Text layoutX="250.0" layoutY="253.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Context" textAlignment="CENTER">
+         <Text layoutX="250.0" layoutY="253.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Context" textAlignment="CENTER">
             <font>
                <Font name="SansSerif Bold" size="14.0" />
             </font>

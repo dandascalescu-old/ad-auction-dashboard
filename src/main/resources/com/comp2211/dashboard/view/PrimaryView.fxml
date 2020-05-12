@@ -12,7 +12,6 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.effect.DropShadow?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
@@ -21,65 +20,67 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<ScrollPane fx:id="scrollPane" prefHeight="778.0" prefWidth="1158.0" style="outline: none; -fx-background-color: transparent;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.PrimaryView">
+<ScrollPane fx:id="scrollPane" prefHeight="778.0" prefWidth="1158.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.PrimaryView">
 <content>
-   <StackPane fx:id="stackPane2" minHeight="0.0" minWidth="0.0" prefHeight="1702.0" prefWidth="1137.0">
+   <StackPane fx:id="stackPane2" minHeight="0.0" minWidth="0.0" prefHeight="1710.0" prefWidth="1140.0">
 
-   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1278.0" prefWidth="1137.0" stylesheets="@../css/style.css">
+   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1710.0" prefWidth="1130.0" styleClass="pane2">
       <children>
 
-            <Pane prefHeight="74.0" prefWidth="1246.0" style="-fx-background-color: #FCFCFC;">
+            <Pane prefHeight="74.0" prefWidth="1246.0" styleClass="pane-sides">
                <children>
-                  <Text fill="#3c3f41" layoutX="26.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dashboard" wrappingWidth="96.34716796875">
+                  <Text fill="#4d4447" layoutX="26.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Dashboard" wrappingWidth="96.34716796875">
                      <font>
                         <Font name="SansSerif Bold" size="17.0" />
                      </font>
                   </Text>
                   <JFXComboBox fx:id="campaignCombobox" focusColor="#474c49" layoutX="786.0" layoutY="21.0" prefHeight="32.0" prefWidth="180.0" stylesheets="@../css/style.css" />
-                  <Line endX="-129.0" endY="-120.0" layoutX="129.0" layoutY="194.0" opacity="0.1" startX="1009.0" startY="-120.0" strokeLineCap="BUTT" />
-                  <JFXButton layoutX="1001.0" layoutY="17.0" maxWidth="-Infinity" minWidth="-Infinity" onAction="#openFilterDialog" prefHeight="40.0" prefWidth="50.0">
+                  <Line endX="-129.0" endY="-120.0" layoutX="129.0" layoutY="194.0" opacity="0.15" startX="1009.0" startY="-120.0" strokeLineCap="BUTT" styleClass="line" />
+                  <JFXButton layoutX="1001.0" layoutY="17.0" maxWidth="-Infinity" minWidth="-Infinity" onAction="#openFilterDialog" prefHeight="40.0" prefWidth="50.0" ripplerFill="TRANSPARENT">
                      <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/filter.png" />
-                           </image>
-                        </ImageView>
+                        <ImageView fitHeight="30.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true" styleClass="image-view-filter" />
                      </graphic>
                   </JFXButton>
-                     <JFXButton layoutX="1072.0" layoutY="16.0" maxWidth="-Infinity" minWidth="-Infinity" onAction="#openExportDataWindow" prefHeight="40.0" prefWidth="50.0">
+                     <Text fill="#4d4447" layoutX="1008.0" layoutY="68.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="FILTER" wrappingWidth="36.34716796875">
+                        <font>
+                           <Font name="SansSerif Bold" size="10.0" />
+                        </font>
+                     </Text>
+                     <JFXButton layoutX="1072.0" layoutY="14.0" maxWidth="-Infinity" minWidth="-Infinity" onAction="#openExportDataWindow" prefHeight="40.0" prefWidth="50.0" ripplerFill="TRANSPARENT">
                         <graphic>
-                           <ImageView fitHeight="33.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@../img/exporti.png" />
-                              </image>
-                           </ImageView>
+                           <ImageView fitHeight="33.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true" styleClass="image-view-export" />
                         </graphic>
                      </JFXButton>
+                     <Text fill="#4d4447" layoutX="1076.0" layoutY="68.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="EXPORT" wrappingWidth="41.34716796875">
+                        <font>
+                           <Font name="SansSerif Bold" size="10.0" />
+                        </font>
+                     </Text>
                </children>
             </Pane>
 
 
 
-         <Pane fx:id="averageCostPane" layoutX="55.0" layoutY="270.0" prefHeight="342.0" prefWidth="1063.0" style="-fx-background-color: #FCFCFC;">
+         <Pane fx:id="averageCostPane" layoutX="55.0" layoutY="270.0" prefHeight="342.0" prefWidth="1063.0" styleClass="pane1">
             <children>
-               <Line endX="962.0" layoutX="100.0" layoutY="43.0" opacity="0.1" startX="-100.0" />
-               <Text fill="#3c3f41" layoutX="23.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="AVERAGE COST ">
+               <Line endX="962.0" layoutX="100.0" layoutY="43.0" opacity="0.1" startX="-100.0" styleClass="line" />
+               <Text fill="#3c3f41" layoutX="23.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="AVERAGE COST ">
                   <font>
                      <Font name="SansSerif Bold" size="13.0" />
                   </font>
                </Text>
                <JFXComboBox fx:id="averageCombobox" focusColor="#474c49" layoutX="720.0" layoutY="10.0" prefHeight="27.0" prefWidth="247.0" stylesheets="@../css/style.css" />
-               <BarChart fx:id="averageChart" animated="false" layoutX="114.0" layoutY="55.0" prefHeight="276.0" prefWidth="834.0" stylesheets="@../css/style.css">
+               <BarChart fx:id="averageChart" animated="false" layoutX="114.0" layoutY="55.0" prefHeight="276.0" prefWidth="834.0">
                   <xAxis>
-                     <CategoryAxis label="Date" side="BOTTOM" fx:id="xLineAxis" />
+                     <CategoryAxis label="Date" side="BOTTOM" styleClass="text" fx:id="xLineAxis" />
                   </xAxis>
                   <yAxis>
-                     <NumberAxis fx:id="yAxisLine" label="Cost (£)" side="LEFT" />
+                     <NumberAxis fx:id="yAxisLine" label="Cost (£)" side="LEFT" styleClass="text" />
                   </yAxis>
                </BarChart>
-                     <JFXToggleNode fx:id="averageSix" layoutX="785.0" layoutY="304.0" onAction="#changeAverageGran" prefHeight="29.0" prefWidth="54.0" style="-fx-background-color: #F4F4F4; -fx-background-radius: 40;">
+                     <JFXToggleNode fx:id="averageSix" layoutX="785.0" layoutY="304.0" onAction="#changeAverageGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node">
                         <graphic>
-                           <Label text="6H" textFill="#3c3f41">
+                           <Label styleClass="text" text="6H" textFill="#3c3f41">
                               <font>
                                  <Font name="SansSerif Bold" size="12.0" />
                               </font>
@@ -89,18 +90,18 @@
                            <ToggleGroup fx:id="averageToggle" />
                         </toggleGroup>
                      </JFXToggleNode>
-                     <JFXToggleNode fx:id="averageTwelve" layoutX="856.0" layoutY="304.0" onAction="#changeAverageGran" prefHeight="29.0" prefWidth="54.0" style="-fx-background-color: #F4F4F4; -fx-background-radius: 40;" toggleGroup="$averageToggle">
+                     <JFXToggleNode fx:id="averageTwelve" layoutX="856.0" layoutY="304.0" onAction="#changeAverageGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node" toggleGroup="$averageToggle">
                         <graphic>
-                           <Label text="12H" textFill="#3c3f41">
+                           <Label styleClass="text" text="12H" textFill="#3c3f41">
                               <font>
                                  <Font name="SansSerif Bold" size="12.0" />
                               </font>
                            </Label>
                         </graphic>
                      </JFXToggleNode>
-                     <JFXToggleNode fx:id="averageDay" layoutX="923.0" layoutY="304.0" onAction="#changeAverageGran" prefHeight="29.0" prefWidth="54.0" selected="true" style="-fx-background-color: #F4F4F4; -fx-background-radius: 40;" toggleGroup="$averageToggle">
+                     <JFXToggleNode fx:id="averageDay" layoutX="923.0" layoutY="304.0" onAction="#changeAverageGran" prefHeight="29.0" prefWidth="54.0" selected="true" styleClass="jfx-toggle-node" toggleGroup="$averageToggle">
                         <graphic>
-                           <Label text="1D" textFill="#3c3f41">
+                           <Label styleClass="text" text="1D" textFill="#3c3f41">
                               <font>
                                  <Font name="SansSerif Bold" size="12.0" />
                               </font>
@@ -112,10 +113,10 @@
                <DropShadow color="#00000022" height="10.38" offsetX="5.0" offsetY="5.0" radius="4.3100000000000005" width="8.86" />
             </effect>
          </Pane>
-         <Pane fx:id="demographicsPane" layoutX="54.0" layoutY="637.0" prefHeight="330.0" prefWidth="431.0" style="-fx-background-color: #FFFFFF;">
+         <Pane fx:id="demographicsPane" layoutX="54.0" layoutY="637.0" prefHeight="330.0" prefWidth="431.0" styleClass="pane1">
             <children>
-               <Line endX="737.0" layoutX="-306.0" layoutY="54.0" opacity="0.1" startX="306.0" />
-               <Text fill="#3c3f41" layoutX="22.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DEMOGRAPHICS">
+               <Line endX="737.0" layoutX="-306.0" layoutY="54.0" opacity="0.1" startX="306.0" styleClass="line" />
+               <Text fill="#3c3f41" layoutX="22.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="DEMOGRAPHICS">
                   <font>
                      <Font name="SansSerif Bold" size="13.0" />
                   </font>
@@ -127,10 +128,10 @@
                <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
             </effect>
          </Pane>
-         <Pane fx:id="totalMetricsOverTimePane" layoutX="55.0" layoutY="992.0" prefHeight="330.0" prefWidth="670.0" style="-fx-background-color: #FFFFFF;">
+         <Pane fx:id="totalMetricsOverTimePane" layoutX="55.0" layoutY="992.0" prefHeight="330.0" prefWidth="670.0" styleClass="pane1">
             <children>
-               <Line endX="913.0" layoutX="-306.0" layoutY="53.0" opacity="0.1" startX="306.0" />
-               <Text fill="#3c3f41" layoutX="22.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TOTAL METRICS OVER TIME">
+               <Line endX="913.0" layoutX="-306.0" layoutY="53.0" opacity="0.1" startX="306.0" styleClass="line" />
+               <Text fill="#3c3f41" layoutX="22.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="TOTAL METRICS OVER TIME">
                   <font>
                      <Font name="SansSerif Bold" size="13.0" />
                   </font>
@@ -146,10 +147,10 @@
                      <!--<Insets />-->
                   <!--</opaqueInsets>-->
                <!--</BarChart>-->
-               <JFXComboBox fx:id="totalMetricCombobox" focusColor="#474c49" layoutX="450.0" layoutY="17.0" prefHeight="27.0" prefWidth="180.0" stylesheets="@../css/style.css" />
-                     <JFXToggleNode fx:id="totalMetricSix" layoutX="450.0" layoutY="296.0" onAction="#changeTotalGran" prefHeight="29.0" prefWidth="54.0" style="-fx-background-color: #F4F4F4; -fx-background-radius: 40;">
+               <JFXComboBox fx:id="totalMetricCombobox" focusColor="#474c49" layoutX="450.0" layoutY="17.0" prefHeight="27.0" prefWidth="180.0" />
+                     <JFXToggleNode fx:id="totalMetricSix" layoutX="450.0" layoutY="296.0" onAction="#changeTotalGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node">
                         <graphic>
-                           <Label text="6H" textFill="#3c3f41">
+                           <Label styleClass="text" text="6H" textFill="#3c3f41">
                               <font>
                                  <Font name="SansSerif Bold" size="12.0" />
                               </font>
@@ -159,32 +160,32 @@
                            <ToggleGroup fx:id="totalMetricToggles" />
                         </toggleGroup>
                      </JFXToggleNode>
-                     <JFXToggleNode fx:id="totalMetricTwelve" layoutX="521.0" layoutY="296.0" onAction="#changeTotalGran" prefHeight="29.0" prefWidth="54.0" style="-fx-background-color: #F4F4F4; -fx-background-radius: 40;" toggleGroup="$totalMetricToggles">
+                     <JFXToggleNode fx:id="totalMetricTwelve" layoutX="521.0" layoutY="296.0" onAction="#changeTotalGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node" toggleGroup="$totalMetricToggles">
                         <graphic>
-                           <Label text="12H" textFill="#3c3f41">
+                           <Label styleClass="text" text="12H" textFill="#3c3f41">
                               <font>
                                  <Font name="SansSerif Bold" size="12.0" />
                               </font>
                            </Label>
                         </graphic>
                      </JFXToggleNode>
-                     <JFXToggleNode fx:id="totalMetricDay" layoutX="588.0" layoutY="296.0" onAction="#changeTotalGran" prefHeight="29.0" prefWidth="54.0" selected="true" style="-fx-background-color: #F4F4F4; -fx-background-radius: 40;" toggleGroup="$totalMetricToggles">
+                     <JFXToggleNode fx:id="totalMetricDay" layoutX="588.0" layoutY="296.0" onAction="#changeTotalGran" prefHeight="29.0" prefWidth="54.0" selected="true" styleClass="jfx-toggle-node" toggleGroup="$totalMetricToggles">
                         <graphic>
-                           <Label text="1D" textFill="#3c3f41">
+                           <Label styleClass="text" text="1D" textFill="#3c3f41">
                               <font>
                                  <Font name="SansSerif Bold" size="12.0" />
                               </font>
                            </Label>
                         </graphic>
                      </JFXToggleNode>
-                     <Label layoutX="344.0" layoutY="300.0" prefHeight="21.0" prefWidth="31.0" text="2015">
+                     <Label layoutX="344.0" layoutY="300.0" prefHeight="21.0" prefWidth="31.0" styleClass="text" text="2015">
                         <font>
                            <Font name="SansSerif Bold" size="12.0" />
                         </font>
                      </Label>
                      <StackPane fx:id="totalLineChartPane" layoutX="22.0" layoutY="58.0" prefHeight="245.0" prefWidth="638.0">
                         <children>
-                        <LineChart fx:id="totalMetricsLineChart" animated="false" prefHeight="245.0" prefWidth="638.0" stylesheets="@../css/style.css">
+                        <LineChart fx:id="totalMetricsLineChart" animated="false" prefHeight="245.0" prefWidth="638.0">
                           <xAxis>
                             <CategoryAxis nodeOrientation="LEFT_TO_RIGHT" side="BOTTOM" />
                           </xAxis>
@@ -199,130 +200,130 @@
                <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
             </effect>
          </Pane>
-         <Pane fx:id="ctrPane" layoutX="55.0" layoutY="1347.0" prefHeight="152.5" prefWidth="214.0" style="-fx-background-color: #FFFFFF;">
+         <Pane fx:id="ctrPane" layoutX="55.0" layoutY="1347.0" prefHeight="152.5" prefWidth="214.0" styleClass="pane1">
             <effect>
                <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
             </effect>
             <children>
-               <Text fill="#3c3f41" layoutX="86.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" text="CTR">
+               <Text fill="#3c3f41" layoutX="86.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="CTR">
                   <font>
                      <Font name="SansSerif Bold" size="20.0" />
                   </font>
                </Text>
-               <Text fx:id="ctrText" fill="#3c3f41" layoutX="86.0" layoutY="115.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0.05 %">
+               <Text fx:id="ctrText" fill="#3c3f41" layoutX="86.0" layoutY="115.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="0.05 %">
                   <font>
                      <Font name="SansSerif Bold" size="20.0" />
                   </font>
                </Text>
-                     <Line endX="520.0" layoutX="-306.0" layoutY="63.0" opacity="0.1" startX="306.0" />
+                     <Line endX="520.0" layoutX="-306.0" layoutY="63.0" opacity="0.1" startX="306.0" styleClass="line" />
             </children>
          </Pane>
-         <Pane layoutX="55.0" layoutY="1524.5" prefHeight="152.5" prefWidth="214.0" style="-fx-background-color: #FFFFFF;">
+         <Pane layoutX="55.0" layoutY="1524.5" prefHeight="152.5" prefWidth="214.0" styleClass="pane1">
             <effect>
                <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
             </effect>
             <children>
-               <Text fill="#3c3f41" layoutX="56.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Bounce Rate" wrappingWidth="101.5830078125">
+               <Text fill="#3c3f41" layoutX="56.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Bounce Rate" wrappingWidth="101.5830078125">
                   <font>
                      <Font name="SansSerif Bold" size="16.0" />
                   </font>
                </Text>
-               <Text fx:id="bounceRateText" fill="#3c3f41" layoutX="88.0" layoutY="113.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0.31">
+               <Text fx:id="bounceRateText" fill="#3c3f41" layoutX="88.0" layoutY="113.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="0.31">
                   <font>
                      <Font name="SansSerif Bold" size="20.0" />
                   </font>
                </Text>
-                     <Line endX="520.0" layoutX="-306.0" layoutY="62.0" opacity="0.1" startX="306.0" />
+                     <Line endX="520.0" layoutX="-306.0" layoutY="62.0" opacity="0.1" startX="306.0" styleClass="line" />
             </children>
          </Pane>
-         <Pane fx:id="conversionsUniquesPane" layoutX="294.0" layoutY="1524.5" prefHeight="152.5" prefWidth="214.0" style="-fx-background-color: #FFFFFF;">
+         <Pane fx:id="conversionsUniquesPane" layoutX="294.0" layoutY="1524.5" prefHeight="152.5" prefWidth="214.0" styleClass="pane1">
             <effect>
                <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
             </effect>
             <children>
-               <Text fill="#3c3f41" layoutX="14.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Conversions per Unique" wrappingWidth="186.5830078125">
+               <Text fill="#3c3f41" layoutX="14.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Conversions per Unique" wrappingWidth="186.5830078125">
                   <font>
                      <Font name="SansSerif Bold" size="16.0" />
                   </font>
                </Text>
-               <Text fx:id="conversionUniquesText" fill="#3c3f41" layoutX="87.0" layoutY="115.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0.82">
+               <Text fx:id="conversionUniquesText" fill="#3c3f41" layoutX="87.0" layoutY="115.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="0.82">
                   <font>
                      <Font name="SansSerif Bold" size="21.0" />
                   </font>
                </Text>
-                     <Line endX="520.0" layoutX="-306.0" layoutY="61.0" opacity="0.1" startX="306.0" />
+                     <Line endX="520.0" layoutX="-306.0" layoutY="61.0" opacity="0.1" startX="306.0" styleClass="line" />
             </children></Pane>
-         <Pane layoutX="294.0" layoutY="1347.0" prefHeight="152.5" prefWidth="214.0" style="-fx-background-color: #FFFFFF;">
+         <Pane layoutX="294.0" layoutY="1347.0" prefHeight="152.5" prefWidth="214.0" styleClass="pane1">
             <effect>
                <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
             </effect>
                   <children>
-                     <Text fill="#3c3f41" layoutX="11.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Bounces per Conversion" wrappingWidth="192.5830078125">
+                     <Text fill="#3c3f41" layoutX="11.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Bounces per Conversion" wrappingWidth="192.5830078125">
                         <font>
                            <Font name="SansSerif Bold" size="16.0" />
                         </font>
                      </Text>
-                     <Text fx:id="bounceConversionText" fill="#3c3f41" layoutX="88.0" layoutY="114.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0.82">
+                     <Text fx:id="bounceConversionText" fill="#3c3f41" layoutX="88.0" layoutY="114.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="0.82">
                         <font>
                            <Font name="SansSerif Bold" size="20.0" />
                         </font>
                      </Text>
-                     <Line endX="520.0" layoutX="-306.0" layoutY="64.0" opacity="0.1" startX="306.0" />
+                     <Line endX="520.0" layoutX="-306.0" layoutY="64.0" opacity="0.1" startX="306.0" styleClass="line" />
                   </children></Pane>
-            <Pane fx:id="totalMetricsPane" layoutX="750.0" layoutY="992.0" prefHeight="330.0" prefWidth="369.0" style="-fx-background-color: #FFFFFF;">
+            <Pane fx:id="totalMetricsPane" layoutX="750.0" layoutY="992.0" prefHeight="330.0" prefWidth="369.0" styleClass="pane1">
                <children>
-                  <Line endX="846.0" layoutX="-493.0" layoutY="52.0" opacity="0.1" startX="493.0" />
-                  <Text fill="#3c3f41" layoutX="122.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TOTAL METRICS ">
+                  <Line endX="846.0" layoutX="-493.0" layoutY="52.0" opacity="0.1" startX="493.0" styleClass="line" />
+                  <Text fill="#3c3f41" layoutX="122.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="TOTAL METRICS ">
                      <font>
                         <Font name="SansSerif Bold" size="13.0" />
                      </font>
                   </Text>
-                  <Text fx:id="totalImpressions" fill="#3c3f41" layoutX="215.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="32120">
+                  <Text fx:id="totalImpressions" fill="#3c3f41" layoutX="215.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="32120">
                      <font>
                         <Font name="SansSerif Bold" size="14.0" />
                      </font>
                   </Text>
-                  <Text fx:id="totalClicks" fill="#3c3f41" layoutX="215.0" layoutY="150.0" strokeType="OUTSIDE" strokeWidth="0.0" text="99832">
+                  <Text fx:id="totalClicks" fill="#3c3f41" layoutX="215.0" layoutY="150.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="99832">
                      <font>
                         <Font name="SansSerif Bold" size="14.0" />
                      </font>
                   </Text>
-                  <Text fx:id="totalUniques" fill="#3c3f41" layoutX="215.0" layoutY="195.0" strokeType="OUTSIDE" strokeWidth="0.0" text="12001">
+                  <Text fx:id="totalUniques" fill="#3c3f41" layoutX="215.0" layoutY="195.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="12001">
                      <font>
                         <Font name="SansSerif Bold" size="14.0" />
                      </font>
                   </Text>
-                  <Text fx:id="totalBounces" fill="#3c3f41" layoutX="215.0" layoutY="240.0" strokeType="OUTSIDE" strokeWidth="0.0" text="11142">
+                  <Text fx:id="totalBounces" fill="#3c3f41" layoutX="215.0" layoutY="240.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="11142">
                      <font>
                         <Font name="SansSerif Bold" size="14.0" />
                      </font>
                   </Text>
-                  <Text fx:id="totalConversions" fill="#3c3f41" layoutX="215.0" layoutY="285.0" strokeType="OUTSIDE" strokeWidth="0.0" text="9732">
+                  <Text fx:id="totalConversions" fill="#3c3f41" layoutX="215.0" layoutY="285.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="9732">
                      <font>
                         <Font name="SansSerif Bold" size="14.0" />
                      </font>
                   </Text>
-                  <Text fill="#3c3f41" layoutX="99.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Impressions:">
+                  <Text fill="#3c3f41" layoutX="99.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Impressions:">
                      <font>
                         <Font name="SansSerif Bold" size="13.0" />
                      </font>
                   </Text>
-                  <Text fill="#3c3f41" layoutX="99.0" layoutY="150.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Clicks:">
+                  <Text fill="#3c3f41" layoutX="99.0" layoutY="150.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Clicks:">
                      <font>
                         <Font name="SansSerif Bold" size="13.0" />
                      </font>
                   </Text>
-                  <Text fill="#3c3f41" layoutX="99.0" layoutY="195.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Uniques:">
+                  <Text fill="#3c3f41" layoutX="99.0" layoutY="195.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Uniques:">
                      <font>
                         <Font name="SansSerif Bold" size="13.0" />
                      </font>
                   </Text>
-                  <Text fill="#3c3f41" layoutX="99.0" layoutY="240.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Bounces: ">
+                  <Text fill="#3c3f41" layoutX="99.0" layoutY="240.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Bounces: ">
                      <font>
                         <Font name="SansSerif Bold" size="13.0" />
                      </font>
                   </Text>
-                  <Text fill="#3c3f41" layoutX="99.0" layoutY="285.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Conversions: ">
+                  <Text fill="#3c3f41" layoutX="99.0" layoutY="285.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Conversions: ">
                      <font>
                         <Font name="SansSerif Bold" size="13.0" />
                      </font>
@@ -332,40 +333,40 @@
                   <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
                </effect>
             </Pane>
-         <Pane fx:id="totalCostPane" layoutX="55.0" layoutY="100.0" prefHeight="151.0" prefWidth="1063.0" style="-fx-background-color: #FFFFFF;">
+         <Pane fx:id="totalCostPane" layoutX="55.0" layoutY="100.0" prefHeight="151.0" prefWidth="1063.0" styleClass="pane1">
             <children>
-               <Line endX="1428.0" layoutX="-365.0" layoutY="53.0" opacity="0.1" startX="365.0" />
-               <Text fill="#3c3f41" layoutX="26.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TOTAL COST">
+               <Line endX="1428.0" layoutX="-365.0" layoutY="53.0" opacity="0.1" startX="365.0" styleClass="line" />
+               <Text fill="#3c3f41" layoutX="26.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="TOTAL COST">
                   <font>
                      <Font name="SansSerif Bold" size="13.0" />
                   </font>
                </Text>
-               <Text fill="#3c3f41" layoutX="125.0" layoutY="82.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Total Click Cost">
+               <Text fill="#3c3f41" layoutX="125.0" layoutY="82.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Total Click Cost">
                   <font>
                      <Font name="SansSerif Bold" size="12.0" />
                   </font>
                </Text>
-               <Text fill="#3c3f41" layoutX="456.0" layoutY="82.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Total Impression Cost">
+               <Text fill="#3c3f41" layoutX="456.0" layoutY="82.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Total Impression Cost">
                   <font>
                      <Font name="SansSerif Bold" size="12.0" />
                   </font>
                </Text>
-               <Text fill="#474c49" layoutX="901.0" layoutY="82.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Total">
+               <Text fill="#474c49" layoutX="901.0" layoutY="82.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Total">
                   <font>
                      <Font name="SansSerif Bold" size="12.0" />
                   </font>
                </Text>
-               <Text fx:id="totalClickCost" fill="#3c3f41" layoutX="120.0" layoutY="118.0" strokeType="OUTSIDE" strokeWidth="0.0" text="£117610.87">
+               <Text fx:id="totalClickCost" fill="#3c3f41" layoutX="120.0" layoutY="118.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="£117610.87">
                   <font>
                      <Font name="SansSerif Bold" size="19.0" />
                   </font>
                </Text>
-               <Text fx:id="totalImpresCost" fill="#3c3f41" layoutX="485.0" layoutY="119.0" strokeType="OUTSIDE" strokeWidth="0.0" text="£487.06">
+               <Text fx:id="totalImpresCost" fill="#3c3f41" layoutX="485.0" layoutY="119.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="£487.06">
                   <font>
                      <Font name="SansSerif Bold" size="19.0" />
                   </font>
                </Text>
-               <Text fx:id="totalCost" fill="#474c49" layoutX="865.0" layoutY="118.0" strokeType="OUTSIDE" strokeWidth="0.0" text="£118097.93">
+               <Text fx:id="totalCost" fill="#474c49" layoutX="865.0" layoutY="118.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="£118097.93">
                   <font>
                      <Font name="SansSerif Bold" size="19.0" />
                   </font>
@@ -375,13 +376,13 @@
                <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
             </effect>
          </Pane>
-               <Pane layoutX="515.0" layoutY="637.0" prefHeight="330.0" prefWidth="603.0" style="-fx-background-color: #FFFFFF;">
+               <Pane layoutX="515.0" layoutY="637.0" prefHeight="330.0" prefWidth="603.0" styleClass="pane1">
                   <effect>
                      <DropShadow color="#00000020" height="10.38" offsetX="5.0" offsetY="5.0" radius="4.3100000000000005" width="8.86" />
                   </effect>
                   <children>
-                     <Line endX="1173.0" layoutX="-570.0" layoutY="55.0" opacity="0.1" startX="570.0" />
-                     <Text fill="#3c3f41" layoutX="22.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TOTAL COST">
+                     <Line endX="1173.0" layoutX="-570.0" layoutY="55.0" opacity="0.1" startX="570.0" styleClass="line" />
+                     <Text fill="#3c3f41" layoutX="22.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="TOTAL COST">
                         <font>
                            <Font name="SansSerif Bold" size="13.0" />
                         </font>
@@ -394,15 +395,45 @@
                            <NumberAxis fx:id="yAxisLine1" label="Cost (£)" side="LEFT" />
                         </yAxis>
                      </LineChart>
+                     <JFXToggleNode fx:id="totalCostSix" layoutX="401.0" layoutY="291.0" onAction="#changeTotalCostGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node">
+                        <graphic>
+                           <Label styleClass="text" text="6H" textFill="#3c3f41">
+                              <font>
+                                 <Font name="SansSerif Bold" size="12.0" />
+                              </font>
+                           </Label>
+                        </graphic>
+                        <toggleGroup>
+                           <ToggleGroup fx:id="totalCostToggles" />
+                        </toggleGroup>
+                     </JFXToggleNode>
+                     <JFXToggleNode fx:id="totalCostTwelve" layoutX="467.0" layoutY="291.0" onAction="#changeTotalCostGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node" toggleGroup="$totalCostToggles">
+                        <graphic>
+                           <Label styleClass="text" text="12H" textFill="#3c3f41">
+                              <font>
+                                 <Font name="SansSerif Bold" size="12.0" />
+                              </font>
+                           </Label>
+                        </graphic>
+                     </JFXToggleNode>
+                     <JFXToggleNode fx:id="totalCostDay" layoutX="529.0" layoutY="291.0" onAction="#changeTotalCostGran" prefHeight="29.0" prefWidth="54.0" selected="true" styleClass="jfx-toggle-node" toggleGroup="$totalCostToggles">
+                        <graphic>
+                           <Label styleClass="text" text="1D" textFill="#3c3f41">
+                              <font>
+                                 <Font name="SansSerif Bold" size="12.0" />
+                              </font>
+                           </Label>
+                        </graphic>
+                     </JFXToggleNode>
                   </children>
                </Pane>
-               <Pane layoutX="533.0" layoutY="1347.0" prefHeight="330.0" prefWidth="587.0" style="-fx-background-color: #FFFFFF;">
+               <Pane layoutX="533.0" layoutY="1347.0" prefHeight="330.0" prefWidth="587.0" styleClass="pane1">
                   <effect>
                      <DropShadow color="#00000020" height="10.38" offsetX="5.0" offsetY="5.0" radius="4.3100000000000005" width="8.86" />
                   </effect>
                   <children>
-                     <Line endX="1173.0" layoutX="-570.0" layoutY="55.0" opacity="0.1" startX="570.0" />
-                     <Text fill="#3c3f41" layoutX="22.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="RATES OVER TIME">
+                     <Line endX="1173.0" layoutX="-570.0" layoutY="55.0" opacity="0.1" startX="570.0" styleClass="line" />
+                     <Text fill="#3c3f41" layoutX="22.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="RATES OVER TIME">
                         <font>
                            <Font name="SansSerif Bold" size="13.0" />
                         </font>
@@ -416,6 +447,36 @@
                            <NumberAxis fx:id="yAxisLine11" side="LEFT" />
                         </yAxis>
                      </LineChart>
+                     <JFXToggleNode fx:id="ratesSix" layoutX="371.0" layoutY="291.0" onAction="#changeRatesGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node">
+                        <graphic>
+                           <Label styleClass="text" text="6H" textFill="#3c3f41">
+                              <font>
+                                 <Font name="SansSerif Bold" size="12.0" />
+                              </font>
+                           </Label>
+                        </graphic>
+                        <toggleGroup>
+                           <ToggleGroup fx:id="ratesToggle" />
+                        </toggleGroup>
+                     </JFXToggleNode>
+                     <JFXToggleNode fx:id="ratesTwelve" layoutX="442.0" layoutY="291.0" onAction="#changeRatesGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node" toggleGroup="$ratesToggle">
+                        <graphic>
+                           <Label styleClass="text" text="12H" textFill="#3c3f41">
+                              <font>
+                                 <Font name="SansSerif Bold" size="12.0" />
+                              </font>
+                           </Label>
+                        </graphic>
+                     </JFXToggleNode>
+                     <JFXToggleNode fx:id="ratesDay" layoutX="509.0" layoutY="291.0" onAction="#changeRatesGran" prefHeight="29.0" prefWidth="54.0" selected="true" styleClass="jfx-toggle-node" toggleGroup="$ratesToggle">
+                        <graphic>
+                           <Label styleClass="text" text="1D" textFill="#3c3f41">
+                              <font>
+                                 <Font name="SansSerif Bold" size="12.0" />
+                              </font>
+                           </Label>
+                        </graphic>
+                     </JFXToggleNode>
                   </children>
                </Pane>
       </children>

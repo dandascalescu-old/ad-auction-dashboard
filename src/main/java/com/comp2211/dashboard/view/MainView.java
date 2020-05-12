@@ -28,7 +28,7 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
     ViewTuple<SettingsView, SettingsViewModel> settingsTuple;
 
     @FXML
-    Rectangle recDashboard, recDatabase, recCompare;
+    Rectangle recDashboard, recDatabase, recCompare, recSettings;
 
     @FXML
     private BorderPane mainPane;
@@ -40,6 +40,7 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
         recDashboard.setVisible(true);
         recDatabase.setVisible(false);
         recCompare.setVisible(false);
+        recSettings.setVisible(false);
 
         //ViewTuple<PrimaryView, PrimaryViewModel> viewTuple1 = FluentViewLoader.fxmlView(PrimaryViewView.class).load();
 
@@ -52,6 +53,7 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
         recDashboard.setVisible(false);
         recDatabase.setVisible(true);
         recCompare.setVisible(false);
+        recSettings.setVisible(false);
 
         databaseTuple = FluentViewLoader.fxmlView(DatabaseView.class).load();
         mainPane.setCenter(databaseTuple.getView());
@@ -64,6 +66,7 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
         recDashboard.setVisible(true);
         recDatabase.setVisible(false);
         recCompare.setVisible(false);
+        recSettings.setVisible(false);
 
         primaryTutple = FluentViewLoader.fxmlView(PrimaryView.class).load();
         mainPane.setCenter(primaryTutple.getView());
@@ -78,12 +81,18 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
         recDashboard.setVisible(false);
         recDatabase.setVisible(false);
         recCompare.setVisible(true);
+        recSettings.setVisible(false);
 
         compareTuple = FluentViewLoader.fxmlView(CompareView.class).load();
         mainPane.setCenter(compareTuple.getView());
     }
 
     public void openSettingsPane(ActionEvent event) throws IOException{
+        recDashboard.setVisible(false);
+        recDatabase.setVisible(false);
+        recCompare.setVisible(false);
+        recSettings.setVisible(true);
+
 
         settingsTuple = FluentViewLoader.fxmlView(SettingsView.class).load();
         mainPane.setCenter(settingsTuple.getView());

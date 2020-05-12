@@ -105,7 +105,10 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   Text ctrText, conversionUniquesText;
 
   @FXML
-  JFXToggleNode totalMetricDay, totalMetricTwelve, totalMetricSix, averageDay, averageTwelve, averageSix;
+  JFXToggleNode totalMetricDay, totalMetricTwelve, totalMetricSix,
+          averageDay, averageTwelve, averageSix,
+          totalCostSix, totalCostTwelve, totalCostDay,
+          ratesSix, ratesTwelve, ratesDay;
 
 
   ViewTuple<ExportDialog, ExportDialogViewModel> exportDialogView;
@@ -216,6 +219,32 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
   }
 
+  public void changeTotalCostGran(ActionEvent event) {
+
+        if(totalCostSix.isSelected()){
+
+
+        }else if(totalCostTwelve.isSelected()){
+
+
+        }else if(totalCostDay.isSelected()){
+
+        }
+  }
+
+  public void changeRatesGran(ActionEvent event) {
+
+    if(ratesSix.isSelected()){
+
+
+    }else if(ratesTwelve.isSelected()){
+
+
+    }else if(ratesDay.isSelected()){
+
+    }
+  }
+
 
   public void openFilterDialog(ActionEvent event) {
     if (primaryDialogView == null)
@@ -245,5 +274,6 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   static void cancelExportDialogAction(){
     dialogExport.close();
   }
+
 
 }
