@@ -20,6 +20,11 @@ public class App extends Application {
 
   ViewTuple<LoginView, LoginViewModel> viewTuple;
 
+  public static final String DARK_MODE = "DARK_MODE";
+  public static final String LIGHT_MODE = "LIGHT_MODE";
+  public static final String styleLight = LoginView.class.getResource("/com/comp2211/dashboard/css/styleLight.css").toExternalForm();
+  public static final  String styleDark = LoginView.class.getResource("/com/comp2211/dashboard/css/styleDark.css").toExternalForm();
+
   @Override
   public void start(Stage stage) throws IOException {
     stage.setTitle("Ad Analytics Dashboard");

@@ -2,19 +2,23 @@ package com.comp2211.dashboard.view;
 
 import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel;
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXSpinner;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 
 import java.time.LocalDate;
 
 public class PrimaryFilterDialog implements FxmlView<PrimaryFilterDialogModel> {
+    private static String location = "";
     //TODO include a 'clear selection' button
 
     @FXML
@@ -25,6 +29,10 @@ public class PrimaryFilterDialog implements FxmlView<PrimaryFilterDialogModel> {
 
     @InjectViewModel
     private PrimaryFilterDialogModel viewModel;
+
+    @FXML
+    Label loadingFilterText;
+
 
     public void initialize() {
         startDatePicker.valueProperty().bindBidirectional(viewModel.startDateProperty());
@@ -38,6 +46,7 @@ public class PrimaryFilterDialog implements FxmlView<PrimaryFilterDialogModel> {
         ageComboBox.setItems(viewModel.ageList());
         incomeComboBox.setItems(viewModel.incomeList());
         contextComboBox.setItems(viewModel.contextList());
+        loadingFilterText.setVisible(false);
     }
 
     @FXML
@@ -49,14 +58,37 @@ public class PrimaryFilterDialog implements FxmlView<PrimaryFilterDialogModel> {
         incomeComboBox.valueProperty().setValue(null);
         contextComboBox.valueProperty().setValue(null);
 
-        PrimaryView.cancelDialogAction();
+        if (location.equals("primary")) {
+            PrimaryView.cancelDialogAction();
+        }else if (location.equals("leftCompare")){
+            CompareView.cancelDialogActionLeft();
+        }else if (location.equals("rightCompare")){
+            CompareView.cancelDialogActionRight();
+        }
+
     }
 
     @FXML
     void saveFilter(ActionEvent event){
+
+        loadingFilterText.setVisible(true);
         viewModel.applyFilters();
 
-        PrimaryView.cancelDialogAction();
+
+
+        if (location.equals("primary")) {
+            PrimaryView.cancelDialogAction();
+        }else if (location.equals("leftCompare")){
+            CompareView.cancelDialogActionLeft();
+        }else if (location.equals("rightCompare")){
+            CompareView.cancelDialogActionRight();
+        }
+
+    }
+
+    public static void updateLocation(String locationNew){
+        location = locationNew;
+
     }
 
 }

@@ -28,6 +28,7 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeTableColumn;
 import javafx.util.Callback;
 
