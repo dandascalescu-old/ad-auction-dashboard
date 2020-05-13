@@ -4,7 +4,6 @@
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXToggleNode?>
 <?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Label?>
@@ -20,7 +19,8 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<ScrollPane fx:id="scrollPane" prefHeight="778.0" prefWidth="1158.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.CompareView">
+<?import com.comp2211.dashboard.view.HoverLineChart?>
+<ScrollPane fx:id="scrollPane" prefHeight="778.0" prefWidth="1158.0" stylesheets="@../css/styleLight.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.CompareView">
    <content>
       <StackPane fx:id="stackPane2" minHeight="0.0" minWidth="0.0" prefHeight="2764.0" prefWidth="1138.0" styleClass="pane2">
          <children>
@@ -29,7 +29,7 @@
                   <Line endX="138.0" endY="2298.0" layoutX="430.0" layoutY="442.0" opacity="0.2" startX="138.0" startY="1774.0" styleClass="line" />
                   <Pane prefHeight="74.0" prefWidth="1142.0" styleClass="pane-sides">
                      <children>
-                        <JFXComboBox fx:id="campaignComboboxLeft" focusColor="#474c49" layoutX="134.0" layoutY="21.0" prefHeight="32.0" prefWidth="180.0" stylesheets="@../css/style.css" />
+                        <JFXComboBox fx:id="campaignComboboxLeft" focusColor="#474c49" layoutX="134.0" layoutY="21.0" prefHeight="32.0" prefWidth="180.0" stylesheets="@../css/styleLight.css" />
                         <Line endX="-129.0" endY="-120.0" layoutX="129.0" layoutY="194.0" opacity="0.1" startX="1009.0" startY="-120.0" strokeLineCap="BUTT" styleClass="line" />
                         <JFXButton layoutX="54.0" layoutY="17.0" maxWidth="-Infinity" minWidth="-Infinity" onAction="#openFilterDialogLeft" prefHeight="40.0" prefWidth="50.0">
                            <graphic>
@@ -40,7 +40,7 @@
                               </ImageView>
                            </graphic>
                         </JFXButton>
-                        <JFXComboBox fx:id="campaignComboboxRight" focusColor="#474c49" layoutX="786.0" layoutY="21.0" prefHeight="32.0" prefWidth="180.0" stylesheets="@../css/style.css" />
+                        <JFXComboBox fx:id="campaignComboboxRight" focusColor="#474c49" layoutX="786.0" layoutY="21.0" prefHeight="32.0" prefWidth="180.0" stylesheets="@../css/styleLight.css" />
                         <JFXButton layoutX="995.0" layoutY="17.0" maxWidth="-Infinity" minWidth="-Infinity" onAction="#openFilterDialogRight" prefHeight="40.0" prefWidth="50.0">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true" styleClass="image-view-filter">
@@ -94,15 +94,15 @@
                               <Font name="SansSerif Bold" size="13.0" />
                            </font>
                         </Text>
-                        <JFXComboBox fx:id="averageCombobox" focusColor="#474c49" layoutX="787.0" layoutY="10.0" prefHeight="27.0" prefWidth="180.0" stylesheets="@../css/style.css" />
-                        <LineChart fx:id="averageChart" animated="false" layoutX="114.0" layoutY="55.0" prefHeight="276.0" prefWidth="834.0">
+                        <JFXComboBox fx:id="averageCombobox" focusColor="#474c49" layoutX="787.0" layoutY="10.0" prefHeight="27.0" prefWidth="180.0" stylesheets="@../css/styleLight.css" />
+                        <HoverLineChart fx:id="averageChart" animated="false" layoutX="114.0" layoutY="55.0" prefHeight="276.0" prefWidth="834.0">
                            <xAxis>
                               <CategoryAxis label="Date" side="BOTTOM" fx:id="xLineAxis" />
                            </xAxis>
                            <yAxis>
-                              <NumberAxis fx:id="yAxisLine" label="Cost (£)" side="LEFT" />
+                              <NumberAxis fx:id="yAxisLine" label="Cost (pence)" side="LEFT" />
                            </yAxis>
-                        </LineChart>
+                        </HoverLineChart>
                         <JFXToggleNode fx:id="averageSix" layoutX="785.0" layoutY="304.0" onAction="#changeAverageGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node">
                            <graphic>
                               <Label styleClass="text" text="6H" textFill="#3c3f41">
@@ -245,14 +245,14 @@
                         <DropShadow color="#00000020" height="9.62" offsetX="5.0" offsetY="5.0" radius="4.119999999999999" width="8.86" />
                      </effect>
                      <children>
-                        <PieChart fx:id="demogLeftChart" layoutX="27.0" layoutY="68.0" prefHeight="223.0" prefWidth="437.0" stylesheets="@../css/style.css" />
+                        <PieChart fx:id="demogLeftChart" layoutX="27.0" layoutY="68.0" prefHeight="223.0" prefWidth="437.0" stylesheets="@../css/styleLight.css" />
                         <Text fill="#3c3f41" layoutX="21.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="DEMOGRAPHICS">
                            <font>
                               <Font name="SansSerif Bold" size="13.0" />
                            </font>
                         </Text>
                         <Line endX="390.0" layoutX="101.0" layoutY="60.0" opacity="0.1" startX="-100.0" styleClass="line" />
-                        <JFXComboBox fx:id="demogLeftCombobox" focusColor="#474c49" layoutX="284.0" layoutY="23.0" prefHeight="27.0" prefWidth="180.0" stylesheets="@../css/style.css" />
+                        <JFXComboBox fx:id="demogLeftCombobox" focusColor="#474c49" layoutX="284.0" layoutY="23.0" prefHeight="27.0" prefWidth="180.0" stylesheets="@../css/styleLight.css" />
                      </children>
                   </Pane>
                   <Pane layoutX="609.0" layoutY="2409.0" prefHeight="330.0" prefWidth="491.0" styleClass="pane1">
@@ -260,14 +260,14 @@
                         <DropShadow color="#00000020" height="9.62" offsetX="5.0" offsetY="5.0" radius="4.119999999999999" width="8.86" />
                      </effect>
                      <children>
-                        <PieChart fx:id="demogRightChart" layoutX="27.0" layoutY="68.0" prefHeight="223.0" prefWidth="437.0" stylesheets="@../css/style.css" />
+                        <PieChart fx:id="demogRightChart" layoutX="27.0" layoutY="68.0" prefHeight="223.0" prefWidth="437.0" stylesheets="@../css/styleLight.css" />
                         <Text fill="#3c3f41" layoutX="21.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="DEMOGRAPHICS">
                            <font>
                               <Font name="SansSerif Bold" size="13.0" />
                            </font>
                         </Text>
                         <Line endX="390.0" layoutX="101.0" layoutY="60.0" opacity="0.1" startX="-100.0" styleClass="line" />
-                        <JFXComboBox fx:id="demogRightCombobox" focusColor="#474c49" layoutX="290.0" layoutY="23.0" prefHeight="27.0" prefWidth="180.0" stylesheets="@../css/style.css" />
+                        <JFXComboBox fx:id="demogRightCombobox" focusColor="#474c49" layoutX="290.0" layoutY="23.0" prefHeight="27.0" prefWidth="180.0" stylesheets="@../css/styleLight.css" />
                      </children>
                   </Pane>
                   <Pane fx:id="averageCostPane1" layoutX="37.0" layoutY="1126.0" prefHeight="342.0" prefWidth="1063.0" styleClass="pane1">
@@ -278,15 +278,15 @@
                               <Font name="SansSerif Bold" size="13.0" />
                            </font>
                         </Text>
-                        <JFXComboBox fx:id="totalCombobox" focusColor="#474c49" layoutX="787.0" layoutY="10.0" prefHeight="27.0" prefWidth="180.0" stylesheets="@../css/style.css" />
-                        <LineChart fx:id="totalChart" animated="false" layoutX="114.0" layoutY="55.0" prefHeight="264.0" prefWidth="834.0" stylesheets="@../css/style.css">
+                        <JFXComboBox fx:id="totalCombobox" focusColor="#474c49" layoutX="787.0" layoutY="10.0" prefHeight="27.0" prefWidth="180.0" stylesheets="@../css/styleLight.css" />
+                        <HoverLineChart fx:id="totalChart" animated="false" layoutX="114.0" layoutY="55.0" prefHeight="264.0" prefWidth="834.0" stylesheets="@../css/styleLight.css">
                            <xAxis>
                               <CategoryAxis label="Date" side="BOTTOM" fx:id="xLineAxis1" />
                            </xAxis>
                            <yAxis>
                               <NumberAxis fx:id="yAxisLine1" label="Amount" side="LEFT" />
                            </yAxis>
-                        </LineChart>
+                        </HoverLineChart>
                         <JFXToggleNode fx:id="totalSix" layoutX="785.0" layoutY="304.0" onAction="#changeTotalMetricsGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node">
                            <graphic>
                               <Label styleClass="text" text="6H" textFill="#3c3f41">
@@ -438,15 +438,15 @@
                               <Font name="SansSerif Bold" size="13.0" />
                            </font>
                         </Text>
-                        <JFXComboBox fx:id="rateCombobox" focusColor="#474c49" layoutX="787.0" layoutY="10.0" prefHeight="27.0" prefWidth="180.0" stylesheets="@../css/style.css" />
-                        <LineChart fx:id="rateChart" animated="false" layoutX="114.0" layoutY="55.0" prefHeight="276.0" prefWidth="834.0" stylesheets="@../css/style.css">
+                        <JFXComboBox fx:id="rateCombobox" focusColor="#474c49" layoutX="787.0" layoutY="10.0" prefHeight="27.0" prefWidth="180.0" stylesheets="@../css/styleLight.css" />
+                        <HoverLineChart fx:id="rateChart" animated="false" layoutX="114.0" layoutY="55.0" prefHeight="276.0" prefWidth="834.0" stylesheets="@../css/styleLight.css">
                            <xAxis>
                               <CategoryAxis label="Date" side="BOTTOM" fx:id="xLineAxis2" />
                            </xAxis>
                            <yAxis>
-                              <NumberAxis fx:id="yAxisLine2" label="Cost (£)" side="LEFT" />
+                              <NumberAxis fx:id="yAxisLine2" side="LEFT" />
                            </yAxis>
-                        </LineChart>
+                        </HoverLineChart>
                         <JFXToggleNode fx:id="rateSix" layoutX="785.0" layoutY="304.0" onAction="#changeRatesGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node">
                            <graphic>
                               <Label styleClass="text" text="6H" textFill="#3c3f41">
@@ -600,14 +600,14 @@
                               <Font name="SansSerif Bold" size="13.0" />
                            </font>
                         </Text>
-                        <LineChart fx:id="totalCostChartRight" animated="false" layoutX="1.0" layoutY="64.0" prefHeight="266.0" prefWidth="493.0">
+                        <HoverLineChart fx:id="totalCostChartRight" animated="false" layoutX="1.0" layoutY="64.0" prefHeight="266.0" prefWidth="493.0">
                            <xAxis>
                               <CategoryAxis label="Date" side="BOTTOM" fx:id="xLineAxis31" />
                            </xAxis>
                            <yAxis>
                               <NumberAxis fx:id="yAxisLine31" label="Cost (£)" side="LEFT" />
                            </yAxis>
-                        </LineChart>
+                        </HoverLineChart>
                         <Line endX="687.0" endY="454.0" layoutX="-196.0" layoutY="-398.0" opacity="0.1" startX="196.0" startY="454.0" styleClass="line" />
                         <JFXToggleNode fx:id="totalCostRightSix" layoutX="316.0" layoutY="297.0" onAction="#changeTotalCostRightGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node">
                            <graphic>
@@ -651,14 +651,14 @@
                               <Font name="SansSerif Bold" size="13.0" />
                            </font>
                         </Text>
-                        <LineChart fx:id="totalCostChartLeft" animated="false" layoutX="1.0" layoutY="64.0" prefHeight="266.0" prefWidth="493.0">
+                        <HoverLineChart fx:id="totalCostChartLeft" animated="false" layoutX="1.0" layoutY="64.0" prefHeight="266.0" prefWidth="493.0">
                            <xAxis>
                               <CategoryAxis label="Date" side="BOTTOM" fx:id="xLineAxis3" />
                            </xAxis>
                            <yAxis>
                               <NumberAxis fx:id="yAxisLine3" label="Cost (£)" side="LEFT" />
                            </yAxis>
-                        </LineChart>
+                        </HoverLineChart>
                         <Line endX="687.0" endY="454.0" layoutX="-196.0" layoutY="-398.0" opacity="0.1" startX="196.0" startY="454.0" styleClass="line" />
                         <JFXToggleNode fx:id="totalCostLeftSix" layoutX="316.0" layoutY="297.0" onAction="#changeTotalCostLeftGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node">
                            <graphic>

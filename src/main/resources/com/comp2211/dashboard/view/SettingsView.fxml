@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Text?>
 
 <?import com.jfoenix.controls.JFXComboBox?>
-<StackPane fx:id="databasePane" prefHeight="796.0" prefWidth="1161.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.SettingsView">
+<StackPane fx:id="databasePane" prefHeight="796.0" prefWidth="1161.0" stylesheets="@../css/styleLight.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.SettingsView">
 
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="794.0" prefWidth="1141.0" styleClass="pane2">
       <children>
@@ -68,7 +68,7 @@
                   </font>
                </Text>
                <JFXButton layoutX="450.0" layoutY="230.0" maxWidth="-Infinity" minWidth="-Infinity" onAction="#saveBounce" text="SAVE" prefHeight="40.0" prefWidth="50.0" ripplerFill="TRANSPARENT"/>
-               <JFXComboBox fx:id="campaignCombobox" focusColor="#474c49" layoutX="786.0" layoutY="21.0" prefHeight="32.0" prefWidth="180.0" stylesheets="@../css/style.css" />
+               <JFXComboBox fx:id="campaignCombobox" focusColor="#474c49" layoutX="786.0" layoutY="21.0" prefHeight="32.0" prefWidth="180.0" stylesheets="@../css/styleLight.css" />
             </children>
             <effect>
                <DropShadow color="#00000021" height="11.89" offsetX="5.0" offsetY="5.0" radius="5.445" width="11.89" />

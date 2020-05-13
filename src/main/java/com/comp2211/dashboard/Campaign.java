@@ -63,9 +63,10 @@ public class Campaign {
   }
 
   /**
-   * Constructor for a campaign.
-   *
-   * @param campaignName The unique identifier for a given campaign. Must be given for each campaign.
+   * Campaign constructor, initialises global variables / cached data maps
+   * @param campaignID ID for campaign
+   * @param campaignName name for campaign
+   * @param dbManager database manager for the campaign
    */
   public Campaign(int campaignID, String campaignName, DatabaseManager dbManager) {
     this.campaignID = campaignID;
@@ -142,7 +143,8 @@ public class Campaign {
   }*/
 
   /**
-   * Fetches and caches entries from the database
+   * If filter is different to current appliedFilter, retrieves data from database manager and stores it in the cache variables
+   * @param filter new filter to apply
    */
   public void cacheData(Filter filter) {
     //TODO Edit stdout/logs messages
@@ -151,8 +153,6 @@ public class Campaign {
       return;
     }
 
-    //TODO maybe cache IDs for certain demographics?
-    //System.out.println("dbManager: " + dbManager);
     clickDataCount = dbManager.retrieveDataCount(DatabaseManager.Table.click_table, filter);
     impressionDataCount = dbManager.retrieveDataCount(DatabaseManager.Table.impression_table, filter);
     serverDataCount = dbManager.retrieveDataCount(DatabaseManager.Table.server_table, filter);
@@ -191,6 +191,9 @@ public class Campaign {
     Logger.log("[INFO] [Campaign " + this.campaignName + "] Data cached successfully.");
   }
 
+  /**
+   * Clears all cached data maps
+   */
   public void clearCache() {
     cachedDatedClickCostAverages.clear();
     cachedDatedImpressionCostAverages.clear();
@@ -237,30 +240,17 @@ public class Campaign {
     return conversionsCount;
   }
 
-  /**
-   * Sums up all the costs of each click.
-   *
-   * @return Total cost of all click in campaign.
-   */
   public BigDecimal getTotalClickCost() {
     return totalClickCost;
   }
 
-  /**
-   * Sums up all the costs of each impression.
-   *
-   * @return Total cost of all impressions in campaign.
-   */
   public BigDecimal getTotalImpressionCost() {
     return totalImpressionCost;
   }
 
-  //TODO use these in the dashboard
   /**
-   * Calculates the average cost per click using the total click cost divided by the number of
-   * clicks.
-   *
-   * @return Average cost per click given in pence.
+   * Calculates the average cost per click using the total click cost divided by the number of clicks
+   * @return Average cost per click given in pence
    */
   public BigDecimal getAvgCostPerClick() {
     if (clickDataCount == 0) {
@@ -270,9 +260,8 @@ public class Campaign {
   }
 
   /**
-   * Calculates the click through rate in percentage using click and impression lists.
-   *
-   * @return Click through rate as a percentage.
+   * Calculates the click through rate in percentage using click and impression lists
+   * @return click through rate as a percentage
    */
   public BigDecimal getClickThroughRate() {
     if (impressionDataCount == 0) {
@@ -281,18 +270,22 @@ public class Campaign {
     return BigDecimal.valueOf(clickDataCount).divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
   }
 
+  /**
+   * Updates all graphs' data to be granularity of 24hrs
+   */
   public void resetGranularity() {
-    /*totalsGranularity = (byte) 24;
-    avgsGranularity = (byte) 24;
-    costTotalsGranularity = (byte) 24;
-    ratesGranularity = (byte) 24;*/
     updateTotalsGranularity((byte) 24);
     updateAvgsGranularity((byte) 24);
     updateCostTotalsGranularity((byte) 24);
     updateRatesGranularity((byte) 24);
+    /* Received by PrimaryView and PrimaryViewModel to update information there */
     MvvmFX.getNotificationCenter().publish(Campaign.RESET_GRAN);
   }
 
+  /**
+   * Updates values in data maps to a new granularity for all data related to the totals graph
+   * @param hoursGranularity number of hours to change the granularity to
+   */
   public void updateTotalsGranularity(byte hoursGranularity) {
     totalsGranularity = hoursGranularity;
     cachedDatedImpressionTotals.clear();
@@ -301,16 +294,21 @@ public class Campaign {
     cachedDatedClickTotals.putAll(dbManager.retrieveDatedClickTotals(totalsGranularity, appliedFilter));
     cachedDatedUniqueTotals.clear();
     cachedDatedUniqueTotals.putAll(dbManager.retrieveDatedUniqueTotals(totalsGranularity, appliedFilter));
+
     cachedDatedBounceTotals.clear();
-    //TODO use applied bounce method
     if (getBounceType().equals(BounceType.Pages))
       cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(totalsGranularity, bounceDefinition.getMaxPages(), appliedFilter));
     else
       cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByTime(totalsGranularity, bounceDefinition.getMaxSeconds(), bounceDefinition.allowInf(), appliedFilter));
+
     cachedDatedAcquisitionTotals.clear();
     cachedDatedAcquisitionTotals.putAll(dbManager.retrieveDatedAcquisitionTotals(totalsGranularity, appliedFilter));
   }
 
+  /**
+   * Updates values in data maps to a new granularity for all data related to the cost averages graph
+   * @param hoursGranularity number of hours to change the granularity to
+   */
   public void updateAvgsGranularity(byte hoursGranularity) {
     avgsGranularity = hoursGranularity;
     cachedDatedImpressionCostAverages.clear();
@@ -321,16 +319,23 @@ public class Campaign {
     cachedDatedAcquisitionCostAverages.putAll(dbManager.retrieveDatedAverageAcquisitionCost(avgsGranularity, appliedFilter));
   }
 
+  /**
+   * Updates values in data maps to a new granularity for all data related to the cost totals graph
+   * @param hoursGranularity number of hours to change the granularity to
+   */
   public void updateCostTotalsGranularity(byte hoursGranularity) {
     costTotalsGranularity = hoursGranularity;
     cachedDatedCostTotals.clear();
     cachedDatedCostTotals.putAll(calcDatedSums(dbManager.retrieveDatedCostTotals(Cost.Impression_Cost, costTotalsGranularity, appliedFilter), dbManager.retrieveDatedCostTotals(Cost.Click_Cost, costTotalsGranularity, appliedFilter)));
   }
 
+  /**
+   * Updates values in data maps to a new granularity for all data related to the rates graph
+   * @param hoursGranularity number of hours to change the granularity to
+   */
   public void updateRatesGranularity(byte hoursGranularity) {
     ratesGranularity = hoursGranularity;
 
-    //TODO apply correct bounce method
     HashMap<String, Long> serverTotals = dbManager.retrieveDatedServerTotals(ratesGranularity, appliedFilter);
     cachedDatedBounceRates.clear();
     if (getBounceType().equals(BounceType.Pages))
@@ -342,6 +347,12 @@ public class Campaign {
     cachedDatedCTRs.putAll(calcDatedRates(dbManager.retrieveDatedClickTotals(ratesGranularity, appliedFilter), dbManager.retrieveDatedImpressionTotals(ratesGranularity, appliedFilter)));
   }
 
+  /**
+   * Updates values in bounce-related data maps to values calculated by time
+   * @param maxSeconds maximum seconds between entry and exit for which a bounce is counted
+   * @param allowInf whether to count entries with no exit datetime as a bounce
+   * @param filter filter to apply
+   */
   public void updateBouncesByTime(long maxSeconds, boolean allowInf, Filter filter) {
     if (maxSeconds < 0) {
       Logger.log("[WARNING] Attempted bounce calculation with negative 'maxSeconds' value.");
@@ -353,9 +364,13 @@ public class Campaign {
     cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByTime(totalsGranularity, maxSeconds, allowInf, filter));
     cachedDatedBounceRates.clear();
     cachedDatedBounceRates.putAll(calcDatedRates(dbManager.retrieveDatedBounceTotalsByTime(ratesGranularity, maxSeconds, allowInf, filter), dbManager.retrieveDatedServerTotals(ratesGranularity, filter)));
-    //MvvmFX.getNotificationCenter().publish("Bounce");
   }
 
+  /**
+   * Updates values in bounce-related data maps to values calculated by pages visited
+   * @param maxPages maximum pages visited for which a bounce is counted
+   * @param filter filter to apply
+   */
   public void updateBouncesByPages(byte maxPages, Filter filter) {
     if (maxPages < 0) {
       Logger.log("[WARNING] Attempted bounce calculation with negative 'maxPages' value.");
@@ -367,14 +382,11 @@ public class Campaign {
     cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(totalsGranularity, maxPages, filter));
     cachedDatedBounceRates.clear();
     cachedDatedBounceRates.putAll(calcDatedRates(dbManager.retrieveDatedBounceTotalsByPages(ratesGranularity, maxPages, filter), dbManager.retrieveDatedServerTotals(ratesGranularity, filter)));
-    //MvvmFX.getNotificationCenter().publish("Bounce");
   }
-
-
 
   /**
    * Calculates the bounce rate as the percentage of server entries that result in a bounce
-   * @return Bounce rate as a percentage
+   * @return bounce rate as a percentage
    */
   public BigDecimal getBounceRate() {
     if (serverDataCount == 0) {
@@ -383,6 +395,10 @@ public class Campaign {
     return BigDecimal.valueOf(bouncesCount).divide(BigDecimal.valueOf(serverDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
   }
 
+  /**
+   * Calculates the ratio of number of bounces to number of conversions
+   * @return bounces per conversion as a decimal value
+   */
   public BigDecimal getBouncesPerConversion() {
     if (conversionsCount == 0) {
       return BigDecimal.ZERO;
@@ -390,6 +406,10 @@ public class Campaign {
     return BigDecimal.valueOf(bouncesCount).divide(BigDecimal.valueOf(conversionsCount), 6, RoundingMode.HALF_UP);
   }
 
+  /**
+   * Calculates the ratio of number of conversions to number of unique click users
+   * @return conversions per unique as a decimal value
+   */
   public BigDecimal getConversionsPerUnique() {
     if (uniquesCount == 0) {
       return BigDecimal.ZERO;
@@ -398,15 +418,13 @@ public class Campaign {
   }
 
   /**
-   * Calculates the total cost of the campaign using the sum of the costs of impression and clicks.
-   *
-   * @return Total cost of a campaign in pence.
+   * Calculates the total cost of the campaign using the sum of the costs of impression and clicks
+   * @return total cost of a campaign in pence
    */
   public BigDecimal getTotalCost() {
     return getTotalClickCost().add(getTotalImpressionCost());
   }
 
-  //TODO add these to dashboard?
   /*/**
    * Calculates the average cost per acquisition/conversion by summing all converted clicks and
    * dividing by the count.
@@ -430,82 +448,34 @@ public class Campaign {
     return getTotalImpressionCost().divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(1000));
   }*/
 
-  /**
-   * Calculates the average acquisition cost for each date.
-   *
-   * @return Hash Map containing the date in dd/MM/yyyy format as the key with the average cost for
-   *     that date as the value.
-   */
   public HashMap<String, BigDecimal> getDatedAcquisitionCostAverages() {
     return cachedDatedAcquisitionCostAverages;
   }
 
-  /**
-   * Calculates the average impression cost for each date.
-   *
-   * @return Hash Map containing the date in dd/MM/yyyy format as the key with the average cost for
-   *     that date as the value.
-   */
   public HashMap<String, BigDecimal> getDatedImpressionCostAverages() {
     return cachedDatedImpressionCostAverages;
   }
 
-  /**
-   * Calculates the average click cost for each date.
-   *
-   * @return Hash Map containing the date in dd/MM/yyyy format as the key with the average cost for
-   *     that date as the value.
-   */
   public HashMap<String, BigDecimal> getDatedClickCostAverages() {
     return cachedDatedClickCostAverages;
   }
 
-  /**
-   * Calculates the total impressions for each date.
-   *
-   * @return Hash Map containing the date in dd/MM/yyyy format as the key with the total for
-   *     that date as the value.
-   */
   public HashMap<String, Long> getDatedImpressionTotals() {
     return cachedDatedImpressionTotals;
   }
 
-  /**
-   * Calculates the total clicks for each date.
-   *
-   * @return Hash Map containing the date in dd/MM/yyyy format as the key with the total for
-   *     that date as the value.
-   */
   public HashMap<String, Long> getDatedClickTotals() {
     return cachedDatedClickTotals;
   }
 
-  /**
-   * Calculates the total uniques for each date.
-   *
-   * @return Hash Map containing the date in dd/MM/yyyy format as the key with the total for
-   *     that date as the value.
-   */
   public HashMap<String, Long> getDatedUniqueTotals() {
     return cachedDatedUniqueTotals;
   }
 
-  /**
-   * Calculates the total bounces for each date.
-   *
-   * @return Hash Map containing the date in dd/MM/yyyy format as the key with the total for
-   *     that date as the value.
-   */
   public HashMap<String, Long> getDatedBounceTotals() {
     return cachedDatedBounceTotals;
   }
 
-  /**
-   * Calculates the total conversions for each date.
-   *
-   * @return Hash Map containing the date in dd/MM/yyyy format as the key with the total for
-   *     that date as the value.
-   */
   public HashMap<String, Long> getDatedAcquisitionTotals() {
     return cachedDatedAcquisitionTotals;
   }
@@ -513,7 +483,7 @@ public class Campaign {
   /**
    * Calculates the percentage of each group for a given Demographic type
    * @param type the Demographic type to use
-   * @return HashMap containing the groups as keys, and the percentage of each group in the campaign.
+   * @return HashMap containing the groups as keys, and the percentage of each group in the campaign
    */
   public HashMap<String, BigDecimal> getPercentageMap(Demographic type) {
     switch(type) {
@@ -530,51 +500,49 @@ public class Campaign {
     }
   }
 
-  /**
-   * Calculates percentage of each age group.
-   * @return HashMap containing the age groups as keys, and the percentage of each group in the campaign.
-   */
   private HashMap<String, BigDecimal> getAgePercentage() {
     return cachedAgePercentage;
   }
 
-  /**
-   * Calculates percentage of each gender.
-   * @return HashMap containing the gender groups as keys, and the percentage of each gender in the campaign.
-   */
   private HashMap<String, BigDecimal> getGenderPercentage() {
     return cachedGenderPercentage;
   }
 
-  /**
-   * Calculates percentage of each income group.
-   * @return HashMap containing the income groups as keys, and the percentage of each group in the campaign.
-   */
   private HashMap<String, BigDecimal> getIncomePercentage() {
     return cachedIncomePercentage;
   }
 
-  /**
-   * Calculates percentage of each context.
-   * @return HashMap containing the context types as keys, and the percentage of each context in the campaign.
-   */
   private HashMap<String, BigDecimal> getContextPercentage() {
     return cachedContextPercentage;
   }
 
+  /**
+   * Retrieves the start date of the campaign from the database manager
+   * @return start date as a string
+   */
   public String getCampaignStartDate(){
     return dbManager.retrieveCampaignStartDate(new Filter(getCampaignID()));
   }
 
+  /**
+   * Retrieves the end date of the campaign from the database manager
+   * @return end date as a string
+   */
   public String getCampaignEndDate(){
     return dbManager.retrieveCampaignEndDate(new Filter(getCampaignID()));
   }
 
+  /**
+   * Calculates the percentages of total impressions each value of a demographic contains, as a map of demographic subgroup to percentage
+   * @param demographic type of demographic to return the percentages of
+   * @param dataMap map containing total numbers of a demographic's subgroup
+   * @return map of demographic subgroup to percentage
+   */
   private HashMap<String, BigDecimal> percentageMap (Demographic demographic, HashMap<String, Long> dataMap) {
     HashMap<String, BigDecimal> resultMap = new LinkedHashMap<>();
     for (Entry<String, Long> entry : dataMap.entrySet()) {
       Long count = entry.getValue();
-      if(count == null || count == 0 || impressionDataCount == 0) {
+      if (count == null || count == 0 || impressionDataCount == 0) {
         resultMap.put(entry.getKey(), BigDecimal.ZERO);
       } else {
         resultMap.put(entry.getKey(), BigDecimal.valueOf(count).divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)));
@@ -587,6 +555,12 @@ public class Campaign {
     return cachedDatedCostTotals;
   }
 
+  /**
+   * Calculates, given two maps of dates to sum for that date, the sum of matching datetimes, returning the combined map
+   * @param datedSums1 a map containing datetimes to any particular value for that date
+   * @param datedSums2 same as datedSums1
+   * @return map containing all datetimes in both given maps, with the sum of values in each
+   */
   private static HashMap<String, BigDecimal> calcDatedSums(HashMap<String, BigDecimal> datedSums1, HashMap<String, BigDecimal> datedSums2) {
     HashMap<String, BigDecimal> returnMap = new LinkedHashMap<>();
     for (Entry<String, BigDecimal> sums1Entry : datedSums1.entrySet()) {
@@ -596,6 +570,7 @@ public class Campaign {
       if (datedSums2.containsKey(date)) {
         sum2 = datedSums2.get(date);
       }
+      /* Adds the value in map 1 to the value in map 2 */
       BigDecimal sum = sum1.add(sum2);
       returnMap.put(date, sum);
     }
@@ -610,6 +585,12 @@ public class Campaign {
     return cachedDatedCTRs;
   }
 
+  /**
+   * Calculates, given two maps of dates to values for that date, the ratio of matching datetimes, returning the combined map
+   * @param datedDividendTotals a map containing datetimes to any particular value for that date, with values to be used as the dividends
+   * @param datedDivisorTotals same as datedSums1, but the values are used as divisors
+   * @return map containing all datetimes in both given maps, with the results of value-divisions in each
+   */
   private static HashMap<String, BigDecimal> calcDatedRates(HashMap<String, Long> datedDividendTotals, HashMap<String, Long> datedDivisorTotals) {
     HashMap<String, BigDecimal> returnMap = new LinkedHashMap<>();
     for (Entry<String, Long> divisorEntry : datedDivisorTotals.entrySet()) {
@@ -622,6 +603,7 @@ public class Campaign {
         if (datedDividendTotals.containsKey(date)) {
           dividend = datedDividendTotals.get(date);
         }
+        /* Divides the value in map 1 by the value in map 2 */
         BigDecimal bounceRate = BigDecimal.valueOf(dividend).divide(BigDecimal.valueOf(divisor), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
         returnMap.put(date, bounceRate);
       }

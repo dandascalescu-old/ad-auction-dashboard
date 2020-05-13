@@ -1,20 +1,15 @@
 package com.comp2211.dashboard.view;
 
+import com.comp2211.dashboard.util.Logger;
 import com.comp2211.dashboard.viewmodel.ExportDialogViewModel;
-import com.comp2211.dashboard.viewmodel.PrimaryViewModel;
 import com.jfoenix.controls.JFXCheckBox;
-import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.FxmlView;
-import de.saxsys.mvvmfx.InjectViewModel;
-import de.saxsys.mvvmfx.ViewTuple;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.chart.Chart;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
@@ -55,7 +50,7 @@ public class ExportDialog implements FxmlView<ExportDialogViewModel> {
 
     public void setPrimaryView(PrimaryView primaryView){
         this.primaryView = primaryView;
-    System.out.println("set on " + this);
+        //System.out.println("set on " + this);
     }
 
     public void exportFilesAction(ActionEvent event){
@@ -65,9 +60,13 @@ public class ExportDialog implements FxmlView<ExportDialogViewModel> {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         File selectedDirectory = directoryChooser.showDialog(stage);
 
-        //TODO fix possible nullpointer
+        if (selectedDirectory == null || !selectedDirectory.exists()) {
+            Logger.log("[INFO] Export path not selected.");
+            return;
+        }
+
         absoluteExportPath = selectedDirectory.getAbsolutePath();
-        System.out.println(absoluteExportPath);
+        Logger.log("[INFO] Export path set: \"" + absoluteExportPath + "\"");
 
         export(selectedDirectory);
 

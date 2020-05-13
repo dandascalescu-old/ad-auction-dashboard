@@ -103,8 +103,10 @@ public class SettingsView implements FxmlView<SettingsViewModel>, Initializable{
     public void darkModeAction(ActionEvent event) {
             if (darkModeCheckBox.isSelected()){
                 System.out.println("Activating Dark Mode");
+                MvvmFX.getNotificationCenter().publish(App.DARK_MODE);
             } else {
                 System.out.println("Deactivating Dark Mode");
+                MvvmFX.getNotificationCenter().publish(App.LIGHT_MODE);
             }
 
     }

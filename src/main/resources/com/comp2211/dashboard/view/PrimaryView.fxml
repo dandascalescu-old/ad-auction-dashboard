@@ -21,7 +21,14 @@
 <?import javafx.scene.text.Text?>
 
 
-<ScrollPane fx:id="scrollPane" prefHeight="778.0" prefWidth="1158.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.PrimaryView">
+<?import com.comp2211.dashboard.view.HoverLineChart?>
+<?import com.comp2211.dashboard.view.HoverBarChart?>
+
+
+
+
+<ScrollPane fx:id="scrollPane" prefHeight="778.0" prefWidth="1158.0" stylesheets="@../css/styleLight.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.PrimaryView">
+
 
 <content>
    <StackPane fx:id="stackPane2" minHeight="0.0" minWidth="0.0" prefHeight="1710.0" prefWidth="1140.0">
@@ -36,7 +43,7 @@
                         <Font name="SansSerif Bold" size="17.0" />
                      </font>
                   </Text>
-                  <JFXComboBox fx:id="campaignCombobox" focusColor="#474c49" layoutX="786.0" layoutY="21.0" prefHeight="32.0" prefWidth="180.0" stylesheets="@../css/style.css" />
+                  <JFXComboBox fx:id="campaignCombobox" focusColor="#474c49" layoutX="786.0" layoutY="21.0" prefHeight="32.0" prefWidth="180.0" stylesheets="@../css/styleLight.css" />
                   <Line endX="-129.0" endY="-120.0" layoutX="129.0" layoutY="194.0" opacity="0.15" startX="1009.0" startY="-120.0" strokeLineCap="BUTT" styleClass="line" />
                   <JFXButton layoutX="1001.0" layoutY="17.0" maxWidth="-Infinity" minWidth="-Infinity" onAction="#openFilterDialog" prefHeight="40.0" prefWidth="50.0" ripplerFill="TRANSPARENT">
                      <graphic>
@@ -66,20 +73,20 @@
          <Pane fx:id="averageCostPane" layoutX="55.0" layoutY="270.0" prefHeight="342.0" prefWidth="1063.0" styleClass="pane1">
             <children>
                <Line endX="962.0" layoutX="100.0" layoutY="43.0" opacity="0.1" startX="-100.0" styleClass="line" />
-               <Text fill="#3c3f41" layoutX="23.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="AVERAGE COST ">
+               <Text fill="#3c3f41" layoutX="23.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="AVERAGE COST OVER TIME">
                   <font>
                      <Font name="SansSerif Bold" size="13.0" />
                   </font>
                </Text>
-               <JFXComboBox fx:id="averageCombobox" focusColor="#474c49" layoutX="720.0" layoutY="10.0" prefHeight="27.0" prefWidth="247.0" stylesheets="@../css/style.css" />
-               <BarChart fx:id="averageChart" animated="false" layoutX="114.0" layoutY="55.0" prefHeight="276.0" prefWidth="834.0">
+               <JFXComboBox fx:id="averageCombobox" focusColor="#474c49" layoutX="720.0" layoutY="10.0" prefHeight="27.0" prefWidth="247.0" stylesheets="@../css/styleLight.css" />
+               <HoverBarChart fx:id="averageChart" animated="false" layoutX="114.0" layoutY="55.0" prefHeight="276.0" prefWidth="834.0">
                   <xAxis>
                      <CategoryAxis label="Date" side="BOTTOM" styleClass="text" fx:id="xLineAxis" />
                   </xAxis>
                   <yAxis>
                      <NumberAxis fx:id="yAxisLine" label="Cost (pence)" side="LEFT" styleClass="text" />
                   </yAxis>
-               </BarChart>
+               </HoverBarChart>
                      <JFXToggleNode fx:id="averageSix" layoutX="785.0" layoutY="304.0" onAction="#changeAverageGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node">
                         <graphic>
                            <Label styleClass="text" text="6H" textFill="#3c3f41">
@@ -124,7 +131,7 @@
                   </font>
                </Text>
               <PieChart fx:id="demographicsChart" animated="false" layoutX="14.0" layoutY="62.0" legendSide="RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="259.0" prefWidth="408.0" style="-fx-background-radius: 20; -fx-vertical-grid-lines-visible: false;" styleClass="dashboard_table" />
-              <JFXComboBox fx:id="demographicCombobox" focusColor="#474c49" layoutX="237.0" layoutY="17.0" prefHeight="27.0" prefWidth="180.0" stylesheets="@../css/style.css" />
+              <JFXComboBox fx:id="demographicCombobox" focusColor="#474c49" layoutX="237.0" layoutY="17.0" prefHeight="27.0" prefWidth="180.0" stylesheets="@../css/styleLight.css" />
             </children>
             <effect>
                <DropShadow color="#00000020" height="14.93" offsetX="5.0" offsetY="5.0" radius="5.4475" width="8.86" />
@@ -189,14 +196,14 @@
                      </Label>
                      <StackPane fx:id="totalLineChartPane" layoutX="22.0" layoutY="58.0" prefHeight="245.0" prefWidth="638.0">
                         <children>
-                        <LineChart fx:id="totalMetricsLineChart" animated="false" prefHeight="245.0" prefWidth="638.0">
+                        <HoverLineChart fx:id="totalMetricsLineChart" animated="false" prefHeight="245.0" prefWidth="638.0">
                           <xAxis>
                             <CategoryAxis nodeOrientation="LEFT_TO_RIGHT" side="BOTTOM" />
                           </xAxis>
                           <yAxis>
                             <NumberAxis side="LEFT" />
                           </yAxis>
-                        </LineChart>
+                        </HoverLineChart>
                         </children>
                      </StackPane>
             </children>
@@ -391,14 +398,14 @@
                            <Font name="SansSerif Bold" size="13.0" />
                         </font>
                      </Text>
-                     <LineChart fx:id="totalCostChart" animated="false" layoutX="21.0" layoutY="63.0" prefHeight="242.0" prefWidth="562.0" stylesheets="@../css/style.css">
+                     <HoverLineChart fx:id="totalCostChart" animated="false" layoutX="21.0" layoutY="63.0" prefHeight="242.0" prefWidth="562.0" stylesheets="@../css/styleLight.css">
                         <xAxis>
                            <CategoryAxis label="Date" side="BOTTOM" fx:id="xLineAxis1" />
                         </xAxis>
                         <yAxis>
                            <NumberAxis fx:id="yAxisLine1" label="Cost (£)" side="LEFT" />
                         </yAxis>
-                     </LineChart>
+                     </HoverLineChart>
                      <JFXToggleNode fx:id="totalCostSix" layoutX="401.0" layoutY="291.0" onAction="#changeTotalCostGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node">
                         <graphic>
                            <Label styleClass="text" text="6H" textFill="#3c3f41">
@@ -442,15 +449,15 @@
                            <Font name="SansSerif Bold" size="13.0" />
                         </font>
                      </Text>
-                     <JFXComboBox fx:id="rateCombobox" focusColor="#474c49" layoutX="397.0" layoutY="17.0" prefHeight="27.0" prefWidth="180.0" stylesheets="@../css/style.css" />
-                     <LineChart fx:id="rateChart" animated="false" layoutX="21.0" layoutY="63.0" prefHeight="242.0" prefWidth="562.0" stylesheets="@../css/style.css">
+                     <JFXComboBox fx:id="rateCombobox" focusColor="#474c49" layoutX="397.0" layoutY="17.0" prefHeight="27.0" prefWidth="180.0" stylesheets="@../css/styleLight.css" />
+                     <HoverLineChart fx:id="rateChart" animated="false" layoutX="21.0" layoutY="63.0" prefHeight="242.0" prefWidth="562.0" stylesheets="@../css/styleLight.css">
                         <xAxis>
                            <CategoryAxis side="BOTTOM" fx:id="xLineAxis11" />
                         </xAxis>
                         <yAxis>
                            <NumberAxis fx:id="yAxisLine11" side="LEFT" />
                         </yAxis>
-                     </LineChart>
+                     </HoverLineChart>
                      <JFXToggleNode fx:id="ratesSix" layoutX="371.0" layoutY="291.0" onAction="#changeRatesGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node">
                         <graphic>
                            <Label styleClass="text" text="6H" textFill="#3c3f41">
