@@ -734,7 +734,7 @@ public class CompareLeftViewModel implements ViewModel {
                 updateTotalCostsRight();
                 updateBouncesCountDefaultRight(filter);
 
-                updatePieChartData(selectedCampaignRight.getValue().getPercentageMap(selectedDemographicRight.getValue()));
+                updatePieChartDataRight(selectedCampaignRight.getValue().getPercentageMap(selectedDemographicRight.getValue()));
                 updateTotals();
                 updateAverages();
 
