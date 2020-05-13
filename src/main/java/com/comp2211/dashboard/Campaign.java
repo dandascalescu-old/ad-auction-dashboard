@@ -1,5 +1,7 @@
 package com.comp2211.dashboard;
 
+import com.comp2211.dashboard.model.data.Bounce;
+import com.comp2211.dashboard.model.data.Bounce.BounceType;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import com.comp2211.dashboard.model.data.Filter;
 import com.comp2211.dashboard.util.Logger;
@@ -24,6 +26,8 @@ import java.util.Objects;
  */
 public class Campaign {
 
+  public static final String RESET_GRAN = "RESET_GRANULARITY";
+
   // Used as a singleton across app
   private static List<Campaign> allCampaigns = new ArrayList<>();
 
@@ -32,8 +36,8 @@ public class Campaign {
   private DatabaseManager dbManager;
 
   private Filter appliedFilter;
-  private byte totalsGranularity;
-  private byte avgsGranularity;
+  private Bounce bounceDefinition;
+  private byte totalsGranularity, avgsGranularity, costTotalsGranularity, ratesGranularity;
 
   private BigDecimal totalClickCost, totalImpressionCost, averageAcquisitionCost;
   private long clickDataCount, impressionDataCount, serverDataCount, uniquesCount, bouncesCount, conversionsCount;
@@ -70,6 +74,8 @@ public class Campaign {
 
     totalsGranularity = 24;
     avgsGranularity = 24;
+    costTotalsGranularity = 24;
+    ratesGranularity = 24;
 
     cachedDatedAcquisitionCostAverages = new LinkedHashMap<>();
     cachedDatedImpressionCostAverages = new LinkedHashMap<>();
@@ -91,8 +97,10 @@ public class Campaign {
     cachedDatedBounceRates = new LinkedHashMap<>();
     cachedDatedCTRs = new LinkedHashMap<>();
 
-    updateBouncesByPages((byte)1, new Filter(campaignID));
-//    allCampaigns.add(this); todo:check if needed
+    updateBouncesByPages((byte) 1, new Filter(campaignID));
+    bounceDefinition = new Bounce((byte) 1);
+
+    //allCampaigns.add(this); todo:check if needed
     DatabaseViewModel.addNewCampaign(this);
   }
 
@@ -119,6 +127,19 @@ public class Campaign {
   public Filter getAppliedFilter() {
     return appliedFilter;
   }
+
+  public BounceType getBounceType() {
+    return bounceDefinition.getType();
+  }
+  public Bounce getBounceDefinition() {
+    return bounceDefinition;
+  }
+  /*public void setBounceDefinition(byte maxPages) {
+    bounceDefinition = new Bounce(maxPages);
+  }
+  public void setBounceDefinition(long maxSeconds, boolean allowInf) {
+    bounceDefinition = new Bounce(maxSeconds, allowInf);
+  }*/
 
   /**
    * Fetches and caches entries from the database
@@ -158,10 +179,10 @@ public class Campaign {
     cachedIncomePercentage.putAll(percentageMap(Demographic.Income, dbManager.retrieveDemographics(Demographic.Income, filter)));
     cachedContextPercentage.putAll(percentageMap(Demographic.Context, dbManager.retrieveDemographics(Demographic.Context, filter)));
 
-    cachedDatedCostTotals.putAll(calcDatedSums(dbManager.retrieveDatedCostTotals(Cost.Impression_Cost, (byte) 24, filter), dbManager.retrieveDatedCostTotals(Cost.Click_Cost, (byte) 24, filter)));
+    cachedDatedCostTotals.putAll(calcDatedSums(dbManager.retrieveDatedCostTotals(Cost.Impression_Cost, costTotalsGranularity, filter), dbManager.retrieveDatedCostTotals(Cost.Click_Cost, costTotalsGranularity, filter)));
 
-    cachedDatedBounceRates.putAll(calcDatedRates(cachedDatedBounceTotals, dbManager.retrieveDatedServerTotals((byte) 24, filter)));
-    cachedDatedCTRs.putAll(calcDatedRates(cachedDatedClickTotals, cachedDatedImpressionTotals));
+    //cachedDatedBounceRates.putAll(calcDatedRates(cachedDatedBounceTotals, dbManager.retrieveDatedServerTotals(ratesGranularity, filter)));
+    cachedDatedCTRs.putAll(calcDatedRates(dbManager.retrieveDatedClickTotals(ratesGranularity, filter), dbManager.retrieveDatedImpressionTotals(ratesGranularity, filter)));
 
     appliedFilter = filter;
 
@@ -260,6 +281,18 @@ public class Campaign {
     return BigDecimal.valueOf(clickDataCount).divide(BigDecimal.valueOf(impressionDataCount), 6, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
   }
 
+  public void resetGranularity() {
+    /*totalsGranularity = (byte) 24;
+    avgsGranularity = (byte) 24;
+    costTotalsGranularity = (byte) 24;
+    ratesGranularity = (byte) 24;*/
+    updateTotalsGranularity((byte) 24);
+    updateAvgsGranularity((byte) 24);
+    updateCostTotalsGranularity((byte) 24);
+    updateRatesGranularity((byte) 24);
+    MvvmFX.getNotificationCenter().publish(Campaign.RESET_GRAN);
+  }
+
   public void updateTotalsGranularity(byte hoursGranularity) {
     totalsGranularity = hoursGranularity;
     cachedDatedImpressionTotals.clear();
@@ -270,7 +303,10 @@ public class Campaign {
     cachedDatedUniqueTotals.putAll(dbManager.retrieveDatedUniqueTotals(totalsGranularity, appliedFilter));
     cachedDatedBounceTotals.clear();
     //TODO use applied bounce method
-    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(totalsGranularity, (byte) 1, appliedFilter));
+    if (getBounceType().equals(BounceType.Pages))
+      cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(totalsGranularity, bounceDefinition.getMaxPages(), appliedFilter));
+    else
+      cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByTime(totalsGranularity, bounceDefinition.getMaxSeconds(), bounceDefinition.allowInf(), appliedFilter));
     cachedDatedAcquisitionTotals.clear();
     cachedDatedAcquisitionTotals.putAll(dbManager.retrieveDatedAcquisitionTotals(totalsGranularity, appliedFilter));
   }
@@ -285,32 +321,53 @@ public class Campaign {
     cachedDatedAcquisitionCostAverages.putAll(dbManager.retrieveDatedAverageAcquisitionCost(avgsGranularity, appliedFilter));
   }
 
+  public void updateCostTotalsGranularity(byte hoursGranularity) {
+    costTotalsGranularity = hoursGranularity;
+    cachedDatedCostTotals.clear();
+    cachedDatedCostTotals.putAll(calcDatedSums(dbManager.retrieveDatedCostTotals(Cost.Impression_Cost, costTotalsGranularity, appliedFilter), dbManager.retrieveDatedCostTotals(Cost.Click_Cost, costTotalsGranularity, appliedFilter)));
+  }
+
+  public void updateRatesGranularity(byte hoursGranularity) {
+    ratesGranularity = hoursGranularity;
+
+    //TODO apply correct bounce method
+    HashMap<String, Long> serverTotals = dbManager.retrieveDatedServerTotals(ratesGranularity, appliedFilter);
+    cachedDatedBounceRates.clear();
+    if (getBounceType().equals(BounceType.Pages))
+      cachedDatedBounceRates.putAll(calcDatedRates(dbManager.retrieveDatedBounceTotalsByPages(ratesGranularity, bounceDefinition.getMaxPages(), appliedFilter), serverTotals));
+    else
+      cachedDatedBounceRates.putAll(calcDatedRates(dbManager.retrieveDatedBounceTotalsByTime(ratesGranularity, bounceDefinition.getMaxSeconds(), bounceDefinition.allowInf(), appliedFilter), serverTotals));
+
+    cachedDatedCTRs.clear();
+    cachedDatedCTRs.putAll(calcDatedRates(dbManager.retrieveDatedClickTotals(ratesGranularity, appliedFilter), dbManager.retrieveDatedImpressionTotals(ratesGranularity, appliedFilter)));
+  }
+
   public void updateBouncesByTime(long maxSeconds, boolean allowInf, Filter filter) {
     if (maxSeconds < 0) {
-      Logger.log("Attempted bounce calculation with negative value");
+      Logger.log("[WARNING] Attempted bounce calculation with negative 'maxSeconds' value.");
       return;
     }
+    bounceDefinition = new Bounce(maxSeconds, allowInf);
     bouncesCount = dbManager.retrieveBouncesCountByTime(maxSeconds, allowInf, filter);
     cachedDatedBounceTotals.clear();
     cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByTime(totalsGranularity, maxSeconds, allowInf, filter));
     cachedDatedBounceRates.clear();
-    cachedDatedBounceRates.putAll(calcDatedRates(cachedDatedBounceTotals, dbManager.retrieveDatedServerTotals((byte) 24, filter)));
-    MvvmFX.getNotificationCenter().publish("Bounce");
+    cachedDatedBounceRates.putAll(calcDatedRates(dbManager.retrieveDatedBounceTotalsByTime(ratesGranularity, maxSeconds, allowInf, filter), dbManager.retrieveDatedServerTotals(ratesGranularity, filter)));
+    //MvvmFX.getNotificationCenter().publish("Bounce");
   }
 
   public void updateBouncesByPages(byte maxPages, Filter filter) {
     if (maxPages < 0) {
-      Logger.log("Attempted bounce calculation with negative value, returning 0");
+      Logger.log("[WARNING] Attempted bounce calculation with negative 'maxPages' value.");
       return;
     }
+    bounceDefinition = new Bounce(maxPages);
     bouncesCount = dbManager.retrieveBouncesCountByPages(maxPages, filter);
     cachedDatedBounceTotals.clear();
     cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(totalsGranularity, maxPages, filter));
     cachedDatedBounceRates.clear();
-    cachedDatedBounceRates.putAll(calcDatedRates(cachedDatedBounceTotals, dbManager.retrieveDatedServerTotals((byte) 24, filter)));
-    cachedDatedBounceTotals.putAll(dbManager.retrieveDatedBounceTotalsByPages(totalsGranularity, maxPages, filter));
-
-    MvvmFX.getNotificationCenter().publish("Bounce");
+    cachedDatedBounceRates.putAll(calcDatedRates(dbManager.retrieveDatedBounceTotalsByPages(ratesGranularity, maxPages, filter), dbManager.retrieveDatedServerTotals(ratesGranularity, filter)));
+    //MvvmFX.getNotificationCenter().publish("Bounce");
   }
 
 

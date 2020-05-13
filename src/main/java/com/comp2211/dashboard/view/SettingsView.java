@@ -6,6 +6,7 @@ import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXComboBox;
 import de.saxsys.mvvmfx.FxmlView;
+import de.saxsys.mvvmfx.MvvmFX;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,6 +21,8 @@ import java.util.ResourceBundle;
 import javafx.scene.text.Text;
 
 public class SettingsView implements FxmlView<SettingsViewModel>, Initializable{
+
+    public static final String BOUNCES = "BOUNCES";
 
     public Text alertAddingText;
     public JFXComboBox<Campaign> campaignCombobox;
@@ -71,9 +74,7 @@ public class SettingsView implements FxmlView<SettingsViewModel>, Initializable{
     }
 
     public void saveBounce(ActionEvent event) {
-
         String time = "";
-
         String pages = "";
 
         time = timeTextField.getText();
@@ -85,23 +86,24 @@ public class SettingsView implements FxmlView<SettingsViewModel>, Initializable{
         }
         else if (time.length() > 0){
             Campaign campaign = campaignCombobox.getValue();
+            campaign.resetGranularity();
             campaign.updateBouncesByTime(Long.parseLong(time), true, campaign.getAppliedFilter());
+            MvvmFX.getNotificationCenter().publish(SettingsView.BOUNCES);
             alertAddingText.setText("Bounce definition set to " + time + " seconds!");
         }
         else if (pages.length() > 0 ){
             Campaign campaign = campaignCombobox.getValue();
+            campaign.resetGranularity();
             campaign.updateBouncesByPages(Byte.decode(pages), campaign.getAppliedFilter());
+            MvvmFX.getNotificationCenter().publish(SettingsView.BOUNCES);
             alertAddingText.setText("Bounce definition set to " + pages + " pages!");
         }
-
-
     }
 
     public void darkModeAction(ActionEvent event) {
             if (darkModeCheckBox.isSelected()){
                 System.out.println("Activating Dark Mode");
-            }else{
-
+            } else {
                 System.out.println("Deactivating Dark Mode");
             }
 

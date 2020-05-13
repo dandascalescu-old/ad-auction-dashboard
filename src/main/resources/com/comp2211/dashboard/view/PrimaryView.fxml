@@ -77,7 +77,7 @@
                      <CategoryAxis label="Date" side="BOTTOM" styleClass="text" fx:id="xLineAxis" />
                   </xAxis>
                   <yAxis>
-                     <NumberAxis fx:id="yAxisLine" label="Cost (£)" side="LEFT" styleClass="text" />
+                     <NumberAxis fx:id="yAxisLine" label="Cost (pence)" side="LEFT" styleClass="text" />
                   </yAxis>
                </BarChart>
                      <JFXToggleNode fx:id="averageSix" layoutX="785.0" layoutY="304.0" onAction="#changeAverageGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node">

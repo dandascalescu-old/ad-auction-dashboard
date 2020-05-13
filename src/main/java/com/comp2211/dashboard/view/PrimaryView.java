@@ -26,6 +26,8 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
 
   public static final String GRAN_NOTIFICATION = "TOTALS_GRANULARITY";
   public static final String GRAN_NOTIFICATION_AVG = "AVGS_GRANULARITY";
+  public static final String GRAN_NOTIFICATION_COST_TOTAL = "COST_TOTALS_GRANULARITY";
+  public static final String GRAN_NOTIFICATION_RATES = "RATES_GRANULARITY";
 
   final double SCALE_DELTA = 1.1;
   @FXML
@@ -168,6 +170,7 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     totalCostChart.setLegendVisible(false);
     totalCostChart.getXAxis().setTickLabelRotation(-30);
 
+    setupGranResetReceiving();
   }
 
   public void campaignComboboxController() {
@@ -211,28 +214,22 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   }
 
   public void changeTotalCostGran(ActionEvent event) {
-
-        if(totalCostSix.isSelected()){
-
-
-        }else if(totalCostTwelve.isSelected()){
-
-
-        }else if(totalCostDay.isSelected()){
-
-        }
+    if(totalCostSix.isSelected()){
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION_COST_TOTAL, (byte) 6);
+    }else if(totalCostTwelve.isSelected()){
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION_COST_TOTAL, (byte) 12);
+    }else if(totalCostDay.isSelected()){
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION_COST_TOTAL, (byte) 24);
+    }
   }
 
   public void changeRatesGran(ActionEvent event) {
-
     if(ratesSix.isSelected()){
-
-
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION_RATES, (byte) 6);
     }else if(ratesTwelve.isSelected()){
-
-
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION_RATES, (byte) 12);
     }else if(ratesDay.isSelected()){
-
+      MvvmFX.getNotificationCenter().publish(PrimaryView.GRAN_NOTIFICATION_RATES, (byte) 24);
     }
   }
 
@@ -266,5 +263,20 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     dialogExport.close();
   }
 
-
+  private void setupGranResetReceiving() {
+    MvvmFX.getNotificationCenter().subscribe(Campaign.RESET_GRAN, (key, payload) -> {
+      totalMetricDay.setSelected(true);
+      totalMetricTwelve.setSelected(false);
+      totalMetricSix.setSelected(false);
+      averageDay.setSelected(true);
+      averageTwelve.setSelected(false);
+      averageSix.setSelected(false);
+      totalCostDay.setSelected(true);
+      totalCostTwelve.setSelected(false);
+      totalCostSix.setSelected(false);
+      ratesDay.setSelected(true);
+      ratesTwelve.setSelected(false);
+      ratesSix.setSelected(false);
+    });
+  }
 }
