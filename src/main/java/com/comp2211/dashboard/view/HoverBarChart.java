@@ -20,7 +20,7 @@ public class HoverBarChart<X,Y> extends BarChart<X,Y> {
   @Override protected  void seriesAdded(Series<X,Y> series, int seriesIndex) {
     for (int j=0; j < series.getData().size(); j++) {
       Data<X,Y> item = series.getData().get(j);
-      item.setNode(new ChartPointView(String.format("%.2f",Float.parseFloat(item.getYValue().toString())),getYAxis()));
+      item.setNode(new ChartPointView(String.format("%.4f",Float.parseFloat(item.getYValue().toString())),getYAxis()));
     }
 
     super.seriesAdded(series, seriesIndex);
