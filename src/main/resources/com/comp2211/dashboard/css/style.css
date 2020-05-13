@@ -32,7 +32,7 @@
 .default-color0.chart-line-symbol { -fx-background-color: #bbbbbb, transparent; }
 .default-color0.chart-series-line { -fx-stroke: white; }
 .default-color1.chart-line-symbol { -fx-background-color: #bbbbbb, transparent; }
-.default-color1.chart-series-line { -fx-stroke: white; }
+.default-color1.chart-series-line { -fx-stroke: lightgrey; }
 
 .axis:left {
     -fx-border-color: transparent #bbbbbb transparent transparent;

@@ -76,7 +76,7 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   private JFXComboBox<Demographic> demographicCombobox;
 
   @FXML
-  private BarChart<String, Number> averageChart;
+  private HoverBarChart<String, Number> averageChart;
 
   @FXML
   private HoverLineChart<String, Number> rateChart;

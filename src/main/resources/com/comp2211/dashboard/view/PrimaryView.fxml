@@ -22,6 +22,7 @@
 
 
 <?import com.comp2211.dashboard.view.HoverLineChart?>
+<?import com.comp2211.dashboard.view.HoverBarChart?>
 <ScrollPane fx:id="scrollPane" prefHeight="778.0" prefWidth="1158.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.PrimaryView">
 
 <content>
@@ -73,14 +74,14 @@
                   </font>
                </Text>
                <JFXComboBox fx:id="averageCombobox" focusColor="#474c49" layoutX="720.0" layoutY="10.0" prefHeight="27.0" prefWidth="247.0" stylesheets="@../css/style.css" />
-               <BarChart fx:id="averageChart" animated="false" layoutX="114.0" layoutY="55.0" prefHeight="276.0" prefWidth="834.0">
+               <HoverBarChart fx:id="averageChart" animated="false" layoutX="114.0" layoutY="55.0" prefHeight="276.0" prefWidth="834.0">
                   <xAxis>
                      <CategoryAxis label="Date" side="BOTTOM" styleClass="text" fx:id="xLineAxis" />
                   </xAxis>
                   <yAxis>
                      <NumberAxis fx:id="yAxisLine" label="Cost (pence)" side="LEFT" styleClass="text" />
                   </yAxis>
-               </BarChart>
+               </HoverBarChart>
                      <JFXToggleNode fx:id="averageSix" layoutX="785.0" layoutY="304.0" onAction="#changeAverageGran" prefHeight="29.0" prefWidth="54.0" styleClass="jfx-toggle-node">
                         <graphic>
                            <Label styleClass="text" text="6H" textFill="#3c3f41">
