@@ -15,6 +15,7 @@ import com.comp2211.dashboard.model.data.Demographics;
 import com.comp2211.dashboard.util.Security;
 import com.comp2211.dashboard.util.UserSession;
 
+//TODO redo method javadoc comments
 public class MySQLManager extends DatabaseManager {
 
   public MySQLManager() {
@@ -89,9 +90,14 @@ public class MySQLManager extends DatabaseManager {
     return open;
   }
 
-
-  //TODO comment methods, also in other classes
-  public List<List<String>> retrieve(String statement, Object[] params, String[] resultColumns) {
+  /**
+   * Performs the sql query using the given statement and parameters
+   * @param statement string to be converted to a prepared statement to be executed
+   * @param params parameters to be used in the prepared statements, so far supporting Byte, Long, String and sql.Date objects
+   * @param resultColumns list of column headings in result set of columns where data is to be returned
+   * @return list of result columns returned by query
+   */
+  private List<List<String>> retrieve(String statement, Object[] params, String[] resultColumns) {
     //System.out.println(statement);
     PreparedStatement stmt = null;
     ResultSet rs = null;
@@ -204,7 +210,6 @@ public class MySQLManager extends DatabaseManager {
    */
   @Override
   public BigDecimal retrieveAverageAcquisitionCost(Filter filter) {
-    //TODO make more efficent
     String where = filterToWhere(filter, Table.click_table);
     String statement = "SELECT AVG(Click_Cost) AS AVG " +
             "FROM " + click_table +
@@ -253,6 +258,13 @@ public class MySQLManager extends DatabaseManager {
     );
   }
 
+  /**
+   * Retrieve the total cost for the given type in each datetime range
+   * @param type type of cost to retrieve data on
+   * @param hoursGranularity value, in hours, that datetime ranges will differ by
+   * @param filter filter to be applied to query
+   * @return map of datetime ranges to total cost for that range
+   */
   @Override
   public HashMap<String, BigDecimal> retrieveDatedCostTotals(Cost type, byte hoursGranularity, Filter filter) {
     Table table = (type.equals(Cost.Click_Cost) ? Table.click_table : Table.impression_table);
@@ -268,23 +280,6 @@ public class MySQLManager extends DatabaseManager {
             retrieve(statement, new Object[]{}, new String[]{"START", "SUM"})
     );
   }
-  /*public HashMap<String, BigDecimal> retrieveDatedCostTotals(byte hoursGranularity, Filter filter) {
-    String where = filterToWhere(filter, Table.impression_table);
-    where = ( where.isEmpty() ? "" : " WHERE " + where );
-    String cas = hoursToCase(hoursGranularity, Table.impression_table);
-    String statement = "SELECT imprGroups.start AS START, SUM(imprGroups." + Cost.Impression_Cost.toString() + ") + SUM(clickGroups." + Cost.Click_Cost.toString() + ") AS SUM " +
-            "FROM (" +
-            "SELECT CASE " + cas + " END AS start, " + Cost.Impression_Cost.toString() + " " +
-            "FROM " + impression_table +
-            where + ") imprGroups INNER JOIN (" +
-            "SELECT CASE " + cas + " END AS start, " + Cost.Click_Cost.toString() + " " +
-            "FROM " + click_table +
-            where + ") clickGroups ON imprGroups.start = clickGroups.start " +
-            "GROUP BY START";
-    return toBigDecimalMap(
-            retrieve(statement, new Object[]{}, new String[]{"START", "SUM"})
-    );
-  }*/
 
   /**
    * Retrieve the total number of impressions for each date.
@@ -400,6 +395,12 @@ public class MySQLManager extends DatabaseManager {
     );
   }
 
+  /**
+   * Retrieve the number of server entries in each datetime range
+   * @param hoursGranularity value, in hours, that datetime ranges will differ by
+   * @param filter filter to be applied to query
+   * @return map of datetime ranges to number of entries for that range
+   */
   @Override
   public HashMap<String, Long> retrieveDatedServerTotals(byte hoursGranularity, Filter filter) {
     String where = filterToWhere(filter, Table.server_table);
@@ -464,25 +465,42 @@ public class MySQLManager extends DatabaseManager {
     );
   }
 
-  //TODO add toString method
+  /**
+   * Retrieve the earliest date in the impression table for the campaignID in filter
+   * @param filter filter to be applied to query
+   * @return earliest date, as a string
+   */
   @Override
   public String retrieveCampaignStartDate(Filter filter) {
     String statement = "SELECT MIN(Date) AS Date" +
         " FROM " + impression_table +
         " WHERE Campaign_ID = " + filter.getCampaignID() +
         " LIMIT 1";
-    return retrieve(statement, new Object[]{}, new String[]{"Date"}).get(0).get(0);
+    return toString(
+            retrieve(statement, new Object[]{}, new String[]{"Date"})
+    );
   }
 
+  /**
+   * Retrieve the latest date in the impression table for the campaignID in filter
+   * @param filter filter to be applied to query
+   * @return latest date, as a string
+   */
   @Override
   public String retrieveCampaignEndDate(Filter filter) {
     String statement = "SELECT MAX(Date) AS Date" +
         " FROM " + impression_table +
         " WHERE Campaign_ID = " + filter.getCampaignID() +
         " LIMIT 1";
-    return retrieve(statement, new Object[]{}, new String[]{"Date"}).get(0).get(0);
+    return toString(
+            retrieve(statement, new Object[]{}, new String[]{"Date"})
+    );
   }
 
+  /**
+   * Retrieve the name of the campaign for the given campaignID
+   * @return name of campaign
+   */
   @Override
   public String retrieveCampaignName(int campaignID){
     String statement = "SELECT Name " +
@@ -523,6 +541,11 @@ public class MySQLManager extends DatabaseManager {
     return false;
   }
 
+  /**
+   * Returns a datetime to long map from values in resultsList
+   * @param resultsList a 2D list of results columns (such as a result set returned from retrieve)
+   * @return map of string values to long values in resultsList
+   */
   private static HashMap<String, Long> toLongMap(List<List<String>> resultsList) {
     HashMap<String, Long> resultMap = new LinkedHashMap<>();
     for (List<String> result : resultsList)
@@ -537,6 +560,11 @@ public class MySQLManager extends DatabaseManager {
     return resultMap;
   }
 
+  /**
+   * Returns a datetime to BigDecimal map from values in resultsList
+   * @param resultsList a 2D list of results columns (such as a result set returned from retrieve)
+   * @return map of string values to BigDecimal values in resultsList
+   */
   private static HashMap<String, BigDecimal> toBigDecimalMap(List<List<String>> resultsList) {
     HashMap<String, BigDecimal> resultMap = new LinkedHashMap<>();
     for (List<String> result : resultsList)
@@ -551,6 +579,11 @@ public class MySQLManager extends DatabaseManager {
     return resultMap;
   }
 
+  /**
+   * Returns a long value from element 0,0 of resultsList
+   * @param resultsList a 2D list of results columns (such as a result set returned from retrieve)
+   * @return long value
+   */
   private static long toLong(List<List<String>> resultsList) {
     if (resultsList.size() != 1)
       Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 columns, received " + resultsList.size() + ".");
@@ -566,6 +599,11 @@ public class MySQLManager extends DatabaseManager {
     return 0L;
   }
 
+  /**
+   * Returns a BigDecimal value from element 0,0 of resultsList
+   * @param resultsList a 2D list of results columns (such as a result set returned from retrieve)
+   * @return BigDecimal value
+   */
   private static BigDecimal toBigDecimal(List<List<String>> resultsList) {
     if (resultsList.size() != 1)
       Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 columns, received " + resultsList.size() + ".");
@@ -581,6 +619,29 @@ public class MySQLManager extends DatabaseManager {
     return BigDecimal.ZERO;
   }
 
+  /**
+   * Returns a string value from element 0,0 of resultsList
+   * @param resultsList a 2D list of results columns (such as a result set returned from retrieve)
+   * @return string value
+   */
+  private static String toString(List<List<String>> resultsList) {
+    if (resultsList.size() != 1)
+      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 columns, received " + resultsList.size() + ".");
+    else if (resultsList.get(0).size() != 1)
+      Logger.log("[ERROR] Invalid result returned from SQL query. Expected 1 result, received " + resultsList.get(0).size() + ".");
+    else if (resultsList.get(0).get(0) == null)
+      Logger.log("[ERROR] Null result returned from SQL query.");
+    else
+      return String.valueOf(resultsList.get(0).get(0));
+    return "";
+  }
+
+  /**
+   * Returns 'WHERE' sql expression body equivalent to the given filter
+   * @param filter filter object to convert
+   * @param table table in which the query is to be executed (so correct headings can be used)
+   * @return string containing body of 'WHERE' statement
+   */
   private static String filterToWhere(Filter filter, Table table) {
     String dateTitle = "Date";
     if (table.equals(Table.server_table)) dateTitle = "Entry_Date";
@@ -602,6 +663,12 @@ public class MySQLManager extends DatabaseManager {
     return where;
   }
 
+  /**
+   * Returns 'CASE' sql expression body to group datetime ranges equivalent to the given hoursGranularity
+   * @param hoursGranularity number of hours between datetime ranges
+   * @param table table in which the query is to be executed (so correct headings can be used)
+   * @return string containing body of 'CASE' statement
+   */
   private static String hoursToCase(byte hoursGranularity, Table table) {
     String dateTitle = "Date";
     if (table.equals(Table.server_table)) dateTitle = "Entry_Date";
