@@ -41,14 +41,6 @@
                                 <Font name="SansSerif Bold" size="10.0" />
                             </font>
                         </Text>
-                        <JFXButton fx:id="profileButton" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="10.0" layoutY="566.0" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
-                            <graphic>
-                                <ImageView styleClass="image-view-profile">
-                                    <image>
-                                        <Image url="@../img/profile3.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic></JFXButton>
                         <JFXButton fx:id="logoffButton" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="738.0" prefHeight="52.0" prefWidth="59.0" ripplerFill="TRANSPARENT" textAlignment="CENTER">
                             <graphic>
                                 <ImageView styleClass="image-view-exit">
@@ -67,11 +59,6 @@
                             </font>
                         </Text>
                         <Text fill="#474c49" layoutX="19.0" layoutY="725.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="SETTINGS" wrappingWidth="51.66503906250006">
-                            <font>
-                                <Font name="SansSerif Bold" size="10.0" />
-                            </font>
-                        </Text>
-                        <Text fill="#474c49" layoutX="20.0" layoutY="640.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="PROFILE" wrappingWidth="45.66503906250006">
                             <font>
                                 <Font name="SansSerif Bold" size="10.0" />
                             </font>

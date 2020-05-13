@@ -1,11 +1,14 @@
 package com.comp2211.dashboard.viewmodel;
 
 import com.comp2211.dashboard.Campaign;
+import com.comp2211.dashboard.model.data.Bounce;
+import com.comp2211.dashboard.model.data.Bounce.BounceType;
 import com.comp2211.dashboard.model.data.Demographics;
 import com.comp2211.dashboard.model.data.Demographics.Demographic;
 import com.comp2211.dashboard.model.data.Filter;
 import com.comp2211.dashboard.util.Logger;
 import com.comp2211.dashboard.view.PrimaryView;
+import com.comp2211.dashboard.view.SettingsView;
 import de.saxsys.mvvmfx.MvvmFX;
 import de.saxsys.mvvmfx.ViewModel;
 import java.math.BigDecimal;
@@ -25,6 +28,7 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeTableColumn;
 import javafx.util.Callback;
 
@@ -116,8 +120,11 @@ public class PrimaryViewModel implements ViewModel {
     setupFilterReceiving();
     setupGranReceiving();
     setupGranAvgsReceiving();
+    setupGranCostTotalsReceiving();
+    setupGranRatesReceiving();
     setupBounceReceiving();
     setupCampaignReceiving();
+    setupGranResetReceiving();
   }
 
   public ObservableList<Campaign> campaignsList() {
@@ -225,9 +232,9 @@ public class PrimaryViewModel implements ViewModel {
   }
 
   private void updateTotalCosts() {
-    totalClickCost.setValue("£" + selectedCampaign.getValue().getTotalClickCost().setScale(2, RoundingMode.CEILING).toPlainString());
-    totalImpresCost.setValue("£" + selectedCampaign.getValue().getTotalImpressionCost().setScale(2, RoundingMode.CEILING).toPlainString());
-    totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost().setScale(2, RoundingMode.CEILING).toPlainString());
+    totalClickCost.setValue("£" + selectedCampaign.getValue().getTotalClickCost().divide(BigDecimal.valueOf(100L), RoundingMode.CEILING).setScale(2, RoundingMode.CEILING).toPlainString());
+    totalImpresCost.setValue("£" + selectedCampaign.getValue().getTotalImpressionCost().divide(BigDecimal.valueOf(100L), RoundingMode.CEILING).setScale(2, RoundingMode.CEILING).toPlainString());
+    totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost().divide(BigDecimal.valueOf(100L), RoundingMode.CEILING).setScale(2, RoundingMode.CEILING).toPlainString());
 
     updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
 
@@ -240,6 +247,15 @@ public class PrimaryViewModel implements ViewModel {
     totalClicksText.setValue(String.valueOf(selectedCampaign.getValue().getClickDataCount()));
     totalUniquesText.setValue(String.valueOf(selectedCampaign.getValue().getUniquesCount()));
     totalConversionsText.setValue(String.valueOf(selectedCampaign.getValue().getConversionsCount()));
+  }
+
+  private void updateBouncesCount(Filter filter) {
+    Bounce current = selectedCampaign.getValue().getBounceDefinition();
+    if (current.getType().equals(BounceType.Pages))
+      updateBouncesCountByPages(current.getMaxPages(), filter);
+    else
+      updateBouncesCountByTime(current.getMaxSeconds(), current.allowInf(), filter);
+    updateBounceMetrics();
   }
 
   private void updateBouncesCountDefault(Filter filter) {
@@ -490,7 +506,7 @@ public class PrimaryViewModel implements ViewModel {
         }
       }
 
-      Data<String, Number> data = new XYChart.Data<>(reformattedStr, entry.getValue());
+      Data<String, Number> data = new XYChart.Data<>(reformattedStr, entry.getValue().divide(BigDecimal.valueOf(100L), RoundingMode.CEILING));
       s.getData().add(data);
     }
     totalCostChartData.add(s);
@@ -501,21 +517,25 @@ public class PrimaryViewModel implements ViewModel {
       try {
         Filter filter = (Filter) payload[0];
         filter.setCampaignID(selectedCampaign.get().getCampaignID());
+        Logger.log("[INFO] Applying filter...");
+        selectedCampaign.getValue().resetGranularity();
         selectedCampaign.getValue().cacheData(filter);
 
         updateTotalMetrics();
         updateTotalCosts();
         //TODO change to apply correct bounce method
-        updateBouncesCountDefault(filter);
+        updateBouncesCount(filter);
 
         updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
         updateTotals();
         updateAverages();
+        updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
+        updateRates();
 
         Logger.log("[INFO] Filter applied successfully.");
       } catch (ClassCastException e) {
         e.printStackTrace();
-        Logger.log("[ERROR] Invalid filter received");
+        Logger.log("[ERROR] Invalid filter received.");
       }
     });
   }
@@ -524,13 +544,14 @@ public class PrimaryViewModel implements ViewModel {
     MvvmFX.getNotificationCenter().subscribe(PrimaryView.GRAN_NOTIFICATION, (key, payload) -> {
       try {
         byte granularity = (byte) payload[0];
+        Logger.log("[INFO] Changing granularity...");
         selectedCampaign.getValue().updateTotalsGranularity(granularity);
         updateTotals();
 
         Logger.log("[INFO] Granularity changed successfully.");
       } catch (ClassCastException e) {
         e.printStackTrace();
-        Logger.log("[ERROR] Invalid granularity received");
+        Logger.log("[ERROR] Invalid granularity received.");
       }
     });
   }
@@ -539,13 +560,46 @@ public class PrimaryViewModel implements ViewModel {
     MvvmFX.getNotificationCenter().subscribe(PrimaryView.GRAN_NOTIFICATION_AVG, (key, payload) -> {
       try {
         byte granularity = (byte) payload[0];
+        Logger.log("[INFO] Changing granularity...");
         selectedCampaign.getValue().updateAvgsGranularity(granularity);
         updateAverages();
 
         Logger.log("[INFO] Granularity changed successfully.");
       } catch (ClassCastException e) {
         e.printStackTrace();
-        Logger.log("[ERROR] Invalid granularity received");
+        Logger.log("[ERROR] Invalid granularity received.");
+      }
+    });
+  }
+
+  private void setupGranCostTotalsReceiving() {
+    MvvmFX.getNotificationCenter().subscribe(PrimaryView.GRAN_NOTIFICATION_COST_TOTAL, (key, payload) -> {
+      try {
+        byte granularity = (byte) payload[0];
+        Logger.log("[INFO] Changing granularity...");
+        selectedCampaign.getValue().updateCostTotalsGranularity(granularity);
+        updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
+
+        Logger.log("[INFO] Granularity changed successfully.");
+      } catch (ClassCastException e) {
+        e.printStackTrace();
+        Logger.log("[ERROR] Invalid granularity received.");
+      }
+    });
+  }
+
+  private void setupGranRatesReceiving() {
+    MvvmFX.getNotificationCenter().subscribe(PrimaryView.GRAN_NOTIFICATION_RATES, (key, payload) -> {
+      try {
+        byte granularity = (byte) payload[0];
+        Logger.log("[INFO] Changing granularity...");
+        selectedCampaign.getValue().updateRatesGranularity(granularity);
+        updateRates();
+
+        Logger.log("[INFO] Granularity changed successfully.");
+      } catch (ClassCastException e) {
+        e.printStackTrace();
+        Logger.log("[ERROR] Invalid granularity received.");
       }
     });
   }
@@ -559,9 +613,17 @@ public class PrimaryViewModel implements ViewModel {
   }
 
   private void setupBounceReceiving() {
-    MvvmFX.getNotificationCenter().subscribe("Bounce", (key, payload) -> {
+    MvvmFX.getNotificationCenter().subscribe(SettingsView.BOUNCES, (key, payload) -> {
       updateBounceMetrics();
     });
   }
 
+  private void setupGranResetReceiving() {
+    MvvmFX.getNotificationCenter().subscribe(Campaign.RESET_GRAN, (key, payload) -> {
+      updateTotals();
+      updateAverages();
+      updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
+      updateRates();
+    });
+  }
 }

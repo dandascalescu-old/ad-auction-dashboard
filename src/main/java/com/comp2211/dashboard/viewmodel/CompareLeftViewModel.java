@@ -114,7 +114,6 @@ public class CompareLeftViewModel implements ViewModel {
         Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter());
         Filter filterRight = (selectedCampaignRight.getValue().hasAppliedFilter() ? selectedCampaignRight.getValue().getAppliedFilter() : new Filter());
 
-
         // This was in an runnable block, which has been removed to make testing more manageable
         selectedCampaign.getValue().cacheData(filter);
         selectedCampaignRight.getValue().cacheData(filter);
