@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="849.0" prefWidth="1246.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.MainView">
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="849.0" prefWidth="1246.0" stylesheets="@../css/styleLight.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2211.dashboard.view.MainView">
     <children>
         <BorderPane fx:id="mainPane" prefHeight="849.0" prefWidth="1246.0">
             <center>
@@ -41,14 +41,6 @@
                                 <Font name="SansSerif Bold" size="10.0" />
                             </font>
                         </Text>
-                        <JFXButton fx:id="profileButton" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="10.0" layoutY="566.0" prefHeight="52.0" prefWidth="59.0" textAlignment="CENTER">
-                            <graphic>
-                                <ImageView styleClass="image-view-profile">
-                                    <image>
-                                        <Image url="@../img/profile3.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic></JFXButton>
                         <JFXButton fx:id="logoffButton" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="738.0" prefHeight="52.0" prefWidth="59.0" ripplerFill="TRANSPARENT" textAlignment="CENTER">
                             <graphic>
                                 <ImageView styleClass="image-view-exit">
@@ -71,11 +63,6 @@
                                 <Font name="SansSerif Bold" size="10.0" />
                             </font>
                         </Text>
-                        <Text fill="#474c49" layoutX="20.0" layoutY="640.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="PROFILE" wrappingWidth="45.66503906250006">
-                            <font>
-                                <Font name="SansSerif Bold" size="10.0" />
-                            </font>
-                        </Text>
                   <JFXButton fx:id="databaseButton1" alignment="CENTER" contentDisplay="CENTER" layoutX="12.0" layoutY="260.0" onAction="#openComparePane" prefHeight="52.0" prefWidth="59.0" ripplerFill="TRANSPARENT" textAlignment="CENTER">
                      <graphic>
                         <ImageView disable="true" styleClass="image-view-compare" />
@@ -93,7 +80,7 @@
                 </Pane>
             </left>
         </BorderPane>
-        <Text fill="#474c49" layoutX="20.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="AD.">
+        <Text layoutX="20.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="AD.">
             <font>
                 <Font name="SansSerif Bold" size="30.0" />
             </font>

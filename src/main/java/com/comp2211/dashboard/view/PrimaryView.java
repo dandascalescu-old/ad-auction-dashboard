@@ -12,7 +12,10 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
@@ -73,16 +76,16 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   private JFXComboBox<Demographic> demographicCombobox;
 
   @FXML
-  private BarChart<String, Number> averageChart;
+  private HoverBarChart<String, Number> averageChart;
 
   @FXML
-  private LineChart<String, Number> rateChart;
+  private HoverLineChart<String, Number> rateChart;
 
   @FXML
-  private LineChart<String, Number> totalMetricsLineChart;
+  private HoverLineChart<String, Number> totalMetricsLineChart;
 
   @FXML
-  private LineChart<String, Number> totalCostChart;
+  private HoverLineChart<String, Number> totalCostChart;
 
   @FXML
   private PieChart demographicsChart;
@@ -238,6 +241,8 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     if (primaryDialogView == null)
       primaryDialogView = FluentViewLoader.fxmlView(PrimaryFilterDialog.class).load();
     JFXDialogLayout dialogLayout = new JFXDialogLayout();
+    PrimaryFilterDialog.updateLocation("primary");
+    primaryDialogView.getViewModel().updateLocation("primary");
     dialogLayout.setBody(primaryDialogView.getView());
     dialogFilter = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
     dialogFilter.setTranslateY(-400);
@@ -263,6 +268,9 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     dialogExport.close();
   }
 
+  /**
+   * Sets up subscription to granularity-reset notifications, resetting selectors accordingly
+   */
   private void setupGranResetReceiving() {
     MvvmFX.getNotificationCenter().subscribe(Campaign.RESET_GRAN, (key, payload) -> {
       totalMetricDay.setSelected(true);

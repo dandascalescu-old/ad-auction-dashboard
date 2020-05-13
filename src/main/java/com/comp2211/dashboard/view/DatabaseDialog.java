@@ -55,21 +55,22 @@ public class DatabaseDialog {
     @FXML
     void importServerAction() {
 
-        Stage stage = (Stage) dialogDBStack.getScene().getWindow();
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Import Server Log");
-
-        File file = fileChooser.showOpenDialog(stage);
-        if (file != null) {
-            serverFilePath = file.getAbsolutePath();
-            serverFileName = file.getName();
-            serverCheck.setVisible(true);
-            System.out.println("Absolute path (Server): " + serverFilePath);
-
-        }
-
         chooseFile("Server Log");
+//        Stage stage = (Stage) dialogDBStack.getScene().getWindow();
+//
+//        FileChooser fileChooser = new FileChooser();
+//        fileChooser.setTitle("Import Server Log");
+//
+//        File file = fileChooser.showOpenDialog(stage);
+//        if (file != null) {
+//            serverFilePath = file.getAbsolutePath();
+//            serverFileName = file.getName();
+//            serverCheck.setVisible(true);
+//            System.out.println("Absolute path (Server): " + serverFilePath);
+//
+//        }
+//
+//        chooseFile("Server Log");
     }
 
     @FXML
@@ -81,31 +82,33 @@ public class DatabaseDialog {
         Stage stage = (Stage) dialogDBStack.getScene().getWindow();
 
         FileChooser fileChooser = new FileChooser();
+        if (lastDirectory != null) {
+            fileChooser.setInitialDirectory(new File(lastDirectory));
+        }
         fileChooser.setTitle("Import " + logType);
 
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
-            clickFilePath = file.getAbsolutePath();
-            clickFileName = file.getName();
-            clickCheck.setVisible(true);
-            System.out.println("Absolute path (Click): " + clickFilePath);
-            if (lastDirectory != null) {
-                fileChooser.setInitialDirectory(new File(lastDirectory));
-            }
+//            clickFilePath = file.getAbsolutePath();
+//            clickFileName = file.getName();
+//            System.out.println("Absolute path (Click): " + clickFilePath);
 
             try {
                 switch (logType) {
                     case "Impression Log":
                         impressionFilePath = file.getAbsolutePath();
                         impressionFileName = file.getName();
+                        impressCheck.setVisible(true);
                         break;
                     case "Server Log":
                         serverFilePath = file.getAbsolutePath();
                         serverFileName = file.getName();
+                        serverCheck.setVisible(true);
                         break;
                     case "Click Log":
                         clickFilePath = file.getAbsolutePath();
-                        serverFileName = file.getName();
+                        clickFileName = file.getName();
+                        clickCheck.setVisible(true);
                         break;
                 }
             } catch (Exception ignored) {
@@ -118,11 +121,10 @@ public class DatabaseDialog {
         }
     }
 
-
     public void createCampaignFromFiles(ActionEvent event){
         if (impressionFilePath.equals("") || serverFilePath.equals("") || clickFilePath.equals("") || campaignTitle.getText().equals("")){
             alertAddingText.setText("ALL FIELDS MUST BE FILLED!");
-        }else{
+        } else {
             Thread t = new Thread(() -> {
                 try {
                     Campaign campaign = dataImporter.startImport(campaignTitle.getText(), new File(impressionFilePath), new File(clickFilePath), new File(serverFilePath));
