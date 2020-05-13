@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -713,15 +714,29 @@ public class CompareLeftViewModel implements ViewModel {
             try {
                 Filter filter = (Filter) payload[0];
                 filter.setCampaignID(selectedCampaign.get().getCampaignID());
+                Logger.log("[INFO] Applying filter...");
+                Thread runLater = new Thread(){
+                    @Override
+                    public void run() {
+                        Platform.runLater(()->{
+                            selectedCampaign.getValue().resetGranularity();
+                            updateTotalMetrics();
+                            updateTotalCosts();
+                            //TODO change to apply correct bounce method
+                            selectedCampaign.getValue().updateBouncesByPages((byte)1, filter);
+
+                            updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
+                            updateTotals();
+                            updateAverages();
+                            updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
+                            updateRates();
+                            Logger.log("[INFO] Filter applied successfully.");
+                        });
+                    }
+                };
                 selectedCampaign.getValue().cacheData(filter);
 
-                updateTotalMetrics();
-                updateTotalCosts();
-                updateBouncesCountDefaultLeft(filter);
-
-                updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
-                updateTotals();
-                updateAverages();
+                runLater.start();
 
             } catch (ClassCastException e) {
                 e.printStackTrace();
@@ -734,16 +749,30 @@ public class CompareLeftViewModel implements ViewModel {
         MvvmFX.getNotificationCenter().subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION_RIGHTCOMPARE, (key, payload) -> {
             try {
                 Filter filter = (Filter) payload[0];
-                filter.setCampaignID(selectedCampaignRight.get().getCampaignID());
-                selectedCampaignRight.getValue().cacheData(filter);
+                filter.setCampaignID(selectedCampaign.get().getCampaignID());
+                Logger.log("[INFO] Applying filter...");
+                Thread runLater = new Thread(){
+                    @Override
+                    public void run() {
+                        Platform.runLater(()->{
+                            selectedCampaign.getValue().resetGranularity();
+                            updateTotalMetrics();
+                            updateTotalCosts();
+                            //TODO change to apply correct bounce method
+                            selectedCampaign.getValue().updateBouncesByPages((byte)1, filter);
 
-                updateTotalMetrics();
-                updateTotalCostsRight();
-                updateBouncesCountDefaultRight(filter);
+                            updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
+                            updateTotals();
+                            updateAverages();
+                            updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
+                            updateRates();
+                            Logger.log("[INFO] Filter applied successfully.");
+                        });
+                    }
+                };
+                selectedCampaign.getValue().cacheData(filter);
 
-                updatePieChartDataRight(selectedCampaignRight.getValue().getPercentageMap(selectedDemographicRight.getValue()));
-                updateTotals();
-                updateAverages();
+                runLater.start();
 
             } catch (ClassCastException e) {
                 e.printStackTrace();
