@@ -33,39 +33,10 @@ public class SettingsView implements FxmlView<SettingsViewModel>, Initializable{
     @FXML
     JFXCheckBox darkModeCheckBox;
 
-    @FXML
-    Slider textSizeSlider;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        textSizeSlider.valueProperty().addListener((obs, oldval, newVal) ->
-                textSizeSlider.setValue(Math.round(newVal.doubleValue())));
-
-        textSizeSlider.setLabelFormatter(new StringConverter<Double>() {
-            @Override
-            public String toString(Double n) {
-                if (n < 1.0) return "Small";
-                if (n == 2.0) return "Medium";
-
-                return "Large";
-            }
-
-            @Override
-            public Double fromString(String s) {
-                switch (s) {
-                    case "Small":
-                        return 0d;
-                    case "Medium":
-                        return 1d;
-                    case "Large":
-                        return 3d;
-
-                    default:
-                        return 3d;
-                }
-            }
-        });
 
         campaigns = FXCollections.observableArrayList();
         campaigns.addAll(Campaign.getCampaigns());

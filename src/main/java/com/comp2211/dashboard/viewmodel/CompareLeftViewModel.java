@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -467,7 +468,7 @@ public class CompareLeftViewModel implements ViewModel {
 
             SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat previousFormat2 = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/MM/dd - HHmm");
+            SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/ \nMM/dd -\n HHmm");
             String reformattedStr = null;
             try {
                 reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));
@@ -541,17 +542,17 @@ public class CompareLeftViewModel implements ViewModel {
             case avgCostClick:
                 averageChartData.clear();
                 updateLineChartData(selectedCampaign.getValue().getDatedClickCostAverages());
-                updateLineChartDataRight(selectedCampaignRight.getValue().getDatedClickCostAverages());
+                updateLineChartData(selectedCampaignRight.getValue().getDatedClickCostAverages());
                 break;
             case avgCostImpr:
                 averageChartData.clear();
                 updateLineChartData(selectedCampaign.getValue().getDatedImpressionCostAverages());
-                updateLineChartDataRight(selectedCampaignRight.getValue().getDatedImpressionCostAverages());
+                updateLineChartData(selectedCampaignRight.getValue().getDatedImpressionCostAverages());
                 break;
             case avgCostAcq:
                 averageChartData.clear();
                 updateLineChartData(selectedCampaign.getValue().getDatedAcquisitionCostAverages());
-                updateLineChartDataRight(selectedCampaignRight.getValue().getDatedAcquisitionCostAverages());
+                updateLineChartData(selectedCampaignRight.getValue().getDatedAcquisitionCostAverages());
                 break;
         }
     }
@@ -655,22 +656,29 @@ public class CompareLeftViewModel implements ViewModel {
         Series<String, Number> s = new Series<>();
         s.setName(selectedCampaign.getValue().toString());
         for (Entry<String, BigDecimal> entry : dataMap.entrySet()) {
-            Data<String, Number> data = new XYChart.Data<>(entry.getKey(), entry.getValue().doubleValue());
+
+            //TODO change format for each chart
+            SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat previousFormat2 = new SimpleDateFormat("MM-dd");
+            SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/\nMM/dd -\nHHmm");
+            String reformattedStr = null;
+            try {
+                reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));
+            } catch (ParseException e) {
+                try {
+                    reformattedStr = myFormat.format(previousFormat2.parse(entry.getKey()));
+                } catch (ParseException e2) {
+                    System.err.println(e2);
+                }
+            }
+
+
+            Data<String, Number> data = new XYChart.Data<>(reformattedStr, entry.getValue().doubleValue());
             s.getData().add(data);
         }
         averageChartData.add(s);
     }
 
-    private void updateLineChartDataRight(HashMap<String, BigDecimal> dataMap) {
-
-        Series<String, Number> s = new Series<>();
-        s.setName(selectedCampaignRight.getValue().toString());
-        for (Entry<String, BigDecimal> entry : dataMap.entrySet()) {
-            Data<String, Number> data = new XYChart.Data<>(entry.getKey(), entry.getValue().doubleValue());
-            s.getData().add(data);
-        }
-        averageChartData.add(s);
-    }
 
 
     private void updateTotalMetricLineChartData(HashMap<String, Long> dataMap) {
@@ -681,7 +689,7 @@ public class CompareLeftViewModel implements ViewModel {
             //TODO change format for each chart
             SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat previousFormat2 = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/MM/dd - HHmm");
+            SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/ \nMM/dd -\n HHmm");
             String reformattedStr = null;
             try {
                 reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));
@@ -706,15 +714,29 @@ public class CompareLeftViewModel implements ViewModel {
             try {
                 Filter filter = (Filter) payload[0];
                 filter.setCampaignID(selectedCampaign.get().getCampaignID());
+                Logger.log("[INFO] Applying filter...");
+                Thread runLater = new Thread(){
+                    @Override
+                    public void run() {
+                        Platform.runLater(()->{
+                            selectedCampaign.getValue().resetGranularity();
+                            updateTotalMetrics();
+                            updateTotalCosts();
+                            //TODO change to apply correct bounce method
+                            selectedCampaign.getValue().updateBouncesByPages((byte)1, filter);
+
+                            updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
+                            updateTotals();
+                            updateAverages();
+                            updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
+                            updateRates();
+                            Logger.log("[INFO] Filter applied successfully.");
+                        });
+                    }
+                };
                 selectedCampaign.getValue().cacheData(filter);
 
-                updateTotalMetrics();
-                updateTotalCosts();
-                updateBouncesCountDefaultLeft(filter);
-
-                updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
-                updateTotals();
-                updateAverages();
+                runLater.start();
 
             } catch (ClassCastException e) {
                 e.printStackTrace();
@@ -727,16 +749,30 @@ public class CompareLeftViewModel implements ViewModel {
         MvvmFX.getNotificationCenter().subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION_RIGHTCOMPARE, (key, payload) -> {
             try {
                 Filter filter = (Filter) payload[0];
-                filter.setCampaignID(selectedCampaignRight.get().getCampaignID());
-                selectedCampaignRight.getValue().cacheData(filter);
+                filter.setCampaignID(selectedCampaign.get().getCampaignID());
+                Logger.log("[INFO] Applying filter...");
+                Thread runLater = new Thread(){
+                    @Override
+                    public void run() {
+                        Platform.runLater(()->{
+                            selectedCampaign.getValue().resetGranularity();
+                            updateTotalMetrics();
+                            updateTotalCosts();
+                            //TODO change to apply correct bounce method
+                            selectedCampaign.getValue().updateBouncesByPages((byte)1, filter);
 
-                updateTotalMetrics();
-                updateTotalCostsRight();
-                updateBouncesCountDefaultRight(filter);
+                            updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
+                            updateTotals();
+                            updateAverages();
+                            updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
+                            updateRates();
+                            Logger.log("[INFO] Filter applied successfully.");
+                        });
+                    }
+                };
+                selectedCampaign.getValue().cacheData(filter);
 
-                updatePieChartDataRight(selectedCampaignRight.getValue().getPercentageMap(selectedDemographicRight.getValue()));
-                updateTotals();
-                updateAverages();
+                runLater.start();
 
             } catch (ClassCastException e) {
                 e.printStackTrace();
@@ -753,7 +789,7 @@ public class CompareLeftViewModel implements ViewModel {
 
             SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd \n HH:mm:ss");
             SimpleDateFormat previousFormat2 = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/MM/dd -\n HHmm");
+            SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/ \nMM/dd -\n HHmm");
             String reformattedStr = null;
             try {
                 reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));
@@ -779,7 +815,7 @@ public class CompareLeftViewModel implements ViewModel {
 
             SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat previousFormat2 = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/MM/dd - HHmm");
+            SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/ \nMM/dd -\n HHmm");
             String reformattedStr = null;
             try {
                 reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));

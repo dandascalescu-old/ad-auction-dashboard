@@ -1,11 +1,13 @@
 package com.comp2211.dashboard.view;
 
 import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel;
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSpinner;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
@@ -19,6 +21,7 @@ import java.time.LocalDate;
 
 public class PrimaryFilterDialog implements FxmlView<PrimaryFilterDialogModel> {
     private static String location = "";
+    public JFXButton saveButton;
     //TODO include a 'clear selection' button
 
     @FXML
@@ -72,17 +75,25 @@ public class PrimaryFilterDialog implements FxmlView<PrimaryFilterDialogModel> {
     void saveFilter(ActionEvent event){
 
         loadingFilterText.setVisible(true);
-        viewModel.applyFilters();
+        Thread t = new Thread(){
+            @Override
+            public void run() {
+                saveButton.setDisable(true);
+                viewModel.applyFilters();
+                loadingFilterText.setVisible(false);
+                if (location.equals("primary")) {
+                    PrimaryView.cancelDialogAction();
+                }else if (location.equals("leftCompare")){
+                    CompareView.cancelDialogActionLeft();
+                }else if (location.equals("rightCompare")){
+                    CompareView.cancelDialogActionRight();
+                }
+                saveButton.setDisable(false);
+            }
+        };
+        t.start();
 
 
-
-        if (location.equals("primary")) {
-            PrimaryView.cancelDialogAction();
-        }else if (location.equals("leftCompare")){
-            CompareView.cancelDialogActionLeft();
-        }else if (location.equals("rightCompare")){
-            CompareView.cancelDialogActionRight();
-        }
 
     }
 

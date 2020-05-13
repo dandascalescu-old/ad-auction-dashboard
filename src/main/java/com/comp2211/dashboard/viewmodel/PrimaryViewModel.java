@@ -20,10 +20,12 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
@@ -489,7 +491,24 @@ public class PrimaryViewModel implements ViewModel {
     Series<String, Number> s = new Series<>();
     s.setName(selectedCampaign.getValue().toString());
     for (Entry<String, BigDecimal> entry : dataMap.entrySet()) {
-      Data<String, Number> data = new XYChart.Data<>(entry.getKey(), entry.getValue().doubleValue());
+
+      //TODO change format for each chart
+      SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      SimpleDateFormat previousFormat2 = new SimpleDateFormat("MM-dd");
+      SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/\nMM/dd -\nHHmm");
+      String reformattedStr = null;
+      try {
+        reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));
+      } catch (ParseException e) {
+        try {
+          reformattedStr = myFormat.format(previousFormat2.parse(entry.getKey()));
+        } catch (ParseException e2) {
+          System.err.println(e2);
+        }
+      }
+
+
+      Data<String, Number> data = new XYChart.Data<>(reformattedStr, entry.getValue().doubleValue());
       s.getData().add(data);
     }
     averageChartData.add(s);
@@ -508,8 +527,8 @@ public class PrimaryViewModel implements ViewModel {
 
       //TODO change format for each chart
       SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-      SimpleDateFormat previousFormat2 = new SimpleDateFormat("yyyy-MM-dd");
-      SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/MM/dd - HHmm");
+      SimpleDateFormat previousFormat2 = new SimpleDateFormat("MM-dd");
+      SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/ \nMM/dd -\n HHmm");
       String reformattedStr = null;
       try {
         reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));
@@ -539,7 +558,7 @@ public class PrimaryViewModel implements ViewModel {
 
       SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
       SimpleDateFormat previousFormat2 = new SimpleDateFormat("yyyy-MM-dd");
-      SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/MM/dd - HHmm");
+      SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/ \nMM/dd -\n HHmm");
       String reformattedStr = null;
       try {
         reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));
@@ -569,7 +588,7 @@ public class PrimaryViewModel implements ViewModel {
 
       SimpleDateFormat previousFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
       SimpleDateFormat previousFormat2 = new SimpleDateFormat("yyyy-MM-dd");
-      SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/MM/dd - HHmm");
+      SimpleDateFormat myFormat = new SimpleDateFormat("yyyy/ \nMM/dd -\n HHmm");
       String reformattedStr = null;
       try {
         reformattedStr = myFormat.format(previousFormat.parse(entry.getKey()));
@@ -596,20 +615,28 @@ public class PrimaryViewModel implements ViewModel {
         Filter filter = (Filter) payload[0];
         filter.setCampaignID(selectedCampaign.get().getCampaignID());
         Logger.log("[INFO] Applying filter...");
-        selectedCampaign.getValue().resetGranularity();
+        Thread runLater = new Thread(){
+          @Override
+          public void run() {
+            Platform.runLater(()->{
+              selectedCampaign.getValue().resetGranularity();
+              updateTotalMetrics();
+              updateTotalCosts();
+              //TODO change to apply correct bounce method
+              updateBouncesCount(filter);
+
+              updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
+              updateTotals();
+              updateAverages();
+              updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
+              updateRates();
+              Logger.log("[INFO] Filter applied successfully.");
+            });
+          }
+        };
         selectedCampaign.getValue().cacheData(filter);
 
-        updateTotalMetrics();
-        updateTotalCosts();
-        updateBouncesCount(filter);
-
-        updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
-        updateTotals();
-        updateAverages();
-        updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
-        updateRates();
-
-        Logger.log("[INFO] Filter applied successfully.");
+        runLater.start();
       } catch (ClassCastException e) {
         e.printStackTrace();
         Logger.log("[ERROR] Invalid filter received.");

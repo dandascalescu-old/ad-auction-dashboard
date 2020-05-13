@@ -90,12 +90,6 @@
                      <Font name="SansSerif Bold" size="13.0" />
                   </font>
                </JFXCheckBox>
-               <Slider fx:id="textSizeSlider" blockIncrement="1.0" layoutX="338.0" layoutY="194.0" majorTickUnit="1.0" max="3.0" min="1.0" minorTickCount="0" prefHeight="15.0" prefWidth="316.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="2.0" />
-               <Text fill="#3c3f41" layoutX="460.0" layoutY="167.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="TEXT SIZE" wrappingWidth="72.34716796875">
-                  <font>
-                     <Font name="SansSerif Bold" size="13.0" />
-                  </font>
-               </Text>
             </children>
          </Pane>
       </children>
