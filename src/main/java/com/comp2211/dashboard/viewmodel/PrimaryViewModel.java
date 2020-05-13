@@ -69,10 +69,9 @@ public class PrimaryViewModel implements ViewModel {
   private ObjectProperty<Demographic> selectedDemographic = new SimpleObjectProperty<>();
   private ObjectProperty<Campaign> selectedCampaign = new SimpleObjectProperty<>();
 
-  //TODO rename so they are the same as the totals below?
-  private final String avgCostClick = "Average Cost of Click";
-  private final String avgCostImpr = "Average Cost of Impression";
-  private final String avgCostAcq = "Average Cost of Acquisition";
+  private final String avgCostImpr = "Impressions";
+  private final String avgCostClick = "Clicks";
+  private final String avgCostAcq = "Conversions";
 
   private final String totalImpressions = "Impressions";
   private final String totalClicks = "Clicks";
@@ -83,6 +82,9 @@ public class PrimaryViewModel implements ViewModel {
   private final String rateBounce = "Bounce Rate";
   private final String rateCTR = "Click Through Rate";
 
+  /**
+   * Code to be run upon the viewmodel being instantiated by a view
+   */
   public void initialize() {
     campaigns = FXCollections.observableArrayList();
     averages = FXCollections.observableArrayList();
@@ -96,8 +98,7 @@ public class PrimaryViewModel implements ViewModel {
     rates = FXCollections.observableArrayList();
 
     campaigns.addAll(Campaign.getCampaigns());
-    //TODO reorder so same as totals?
-    averages.addAll(avgCostClick, avgCostImpr, avgCostAcq);
+    averages.addAll(avgCostImpr, avgCostClick, avgCostAcq);
     demographics.addAll(Demographics.Demographic.values());
     totals.addAll(totalImpressions, totalClicks, totalUniques, totalBounces, totalConversions);
     rates.addAll(rateBounce, rateCTR);
@@ -106,7 +107,6 @@ public class PrimaryViewModel implements ViewModel {
 
     Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter());
 
-    // This was in an runnable block, which has been removed to make testing more manageable
     selectedCampaign.getValue().cacheData(filter);
 
     //TODO put updates into fewer methods, where possible
@@ -133,7 +133,9 @@ public class PrimaryViewModel implements ViewModel {
     return campaigns;
   }
 
-  public ObservableList<String> ratesList() {return rates; }
+  public ObservableList<String> ratesList() {
+    return rates;
+  }
 
   public ObservableList<String> totalList() {
     return totals;
@@ -233,7 +235,11 @@ public class PrimaryViewModel implements ViewModel {
     return totalConversionsText;
   }
 
+  /**
+   * Updates values of total cost metrics with values from the selected campaign
+   */
   private void updateTotalCosts() {
+    /* Converts the total costs to pounds */
     totalClickCost.setValue("£" + selectedCampaign.getValue().getTotalClickCost().divide(BigDecimal.valueOf(100L), RoundingMode.CEILING).setScale(2, RoundingMode.CEILING).toPlainString());
     totalImpresCost.setValue("£" + selectedCampaign.getValue().getTotalImpressionCost().divide(BigDecimal.valueOf(100L), RoundingMode.CEILING).setScale(2, RoundingMode.CEILING).toPlainString());
     totalCost.setValue("£" + selectedCampaign.getValue().getTotalCost().divide(BigDecimal.valueOf(100L), RoundingMode.CEILING).setScale(2, RoundingMode.CEILING).toPlainString());
@@ -244,6 +250,9 @@ public class PrimaryViewModel implements ViewModel {
     conversionsPerUniqueText.setValue(selectedCampaign.getValue().getConversionsPerUnique().setScale(2, RoundingMode.CEILING).toPlainString());
   }
 
+  /**
+   * Updates values of metrics containing totals with values from the selected campaign
+   */
   private void updateTotalMetrics() {
     totalImpressionsText.setValue(String.valueOf(selectedCampaign.getValue().getImpressionDataCount()));
     totalClicksText.setValue(String.valueOf(selectedCampaign.getValue().getClickDataCount()));
@@ -251,6 +260,10 @@ public class PrimaryViewModel implements ViewModel {
     totalConversionsText.setValue(String.valueOf(selectedCampaign.getValue().getConversionsCount()));
   }
 
+  /**
+   * Updates bounce data in campaign and metrics related to bounces, using the current bounce definition of the campaign
+   * @param filter filter to apply
+   */
   private void updateBouncesCount(Filter filter) {
     Bounce current = selectedCampaign.getValue().getBounceDefinition();
     if (current.getType().equals(BounceType.Pages))
@@ -260,20 +273,38 @@ public class PrimaryViewModel implements ViewModel {
     updateBounceMetrics();
   }
 
+  /**
+   * Updates bounce data and metrics using a definition of 'pages visited < 1'
+   * @param filter filter to apply to bounce calculation
+   */
   private void updateBouncesCountDefault(Filter filter) {
     updateBouncesCountByPages((byte) 1, filter);
   }
 
+  /**
+   * Updates bounce data and metrics, calculating bounces by time
+   * @param maxSeconds maximum seconds between entry and exit for a bounce to be counted
+   * @param allowInf whether to count entries with no exit datetime as bounce
+   * @param filter filter to apply to bounce calculation
+   */
   private void updateBouncesCountByTime(long maxSeconds, boolean allowInf, Filter filter) {
     selectedCampaign.getValue().updateBouncesByTime(maxSeconds, allowInf, filter);
     updateBounceMetrics();
   }
 
+  /**
+   * Updates bounce data and metrics, calculating bounces by pages visited
+   * @param maxPages maximum number of pages visited for a bounce to be counted
+   * @param filter filter to apply to bounce calculation
+   */
   private void updateBouncesCountByPages(byte maxPages, Filter filter) {
     selectedCampaign.getValue().updateBouncesByPages(maxPages, filter);
     updateBounceMetrics();
   }
 
+  /**
+   * Updates all metrics related to bounces, using values from selected campaign
+   */
   private void updateBounceMetrics() {
     totalBouncesText.setValue(String.valueOf(selectedCampaign.getValue().getBouncesCount()));
     bounceRateText.setValue(selectedCampaign.getValue().getBounceRate().setScale(2, RoundingMode.CEILING).toPlainString() + "%");
@@ -284,6 +315,9 @@ public class PrimaryViewModel implements ViewModel {
       updateRates();
   }
 
+  /**
+   * Sets a listener for the campaign selector, changing selected campaign and updating it upon a change
+   */
   private void setupCampaignSelector() {
     selectedCampaign.addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
@@ -293,40 +327,45 @@ public class PrimaryViewModel implements ViewModel {
       } else {
         selectedCampaign.setValue(Campaign.getCampaigns().get(0));
       }
-
     });
 
     selectedCampaign.setValue(Campaign.getCampaigns().get(0));
   }
 
+  /**
+   * Updates all metrics upon changing campaigns
+   */
   private void updateCampaign(){
-    //TODO move all selectors to correct positions when switching campaigns, maybe save all selectors' positions (such as time-gran/graphs) along with applied filter
-    Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter());
+    selectedCampaign.getValue().resetGranularity();
+
     updateTotalMetrics();
     updateTotalCosts();
-
     updateBounceMetrics();
-
     updatePieChartData(selectedCampaign.getValue().getPercentageMap(Demographic.Gender));
-    updateAverages();
-    updateTotals();
+    //updateAverages();
+    //updateTotals();
   }
 
+  /**
+   * Sets a listener for the averages graph selector, changing graph display data and updating it upon a change
+   */
   private void setupAverageSelector() {
     selectedAverage.addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
         Optional<String> matchingAverage = averages.stream().filter(newVal::equals).findFirst();
         matchingAverage.ifPresent(avg -> selectedAverage.setValue(avg));
       } else {
-        selectedAverage.setValue(avgCostClick);
+        selectedAverage.setValue(avgCostImpr);
       }
       updateAverages();
     });
 
-    selectedAverage.setValue(avgCostClick);
+    selectedAverage.setValue(avgCostImpr);
   }
 
-
+  /**
+   * Updates the averages graph with current values in selected campaign
+   */
   private void updateAverages() {
     switch (selectedAverage.getValue()) {
       case avgCostClick:
@@ -341,6 +380,9 @@ public class PrimaryViewModel implements ViewModel {
     }
   }
 
+  /**
+   * Sets a listener for the rates graph selector, changing graph display data and updating it upon a change
+   */
   private void setUpRatesSelector() {
     selectedRate.addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
@@ -355,6 +397,9 @@ public class PrimaryViewModel implements ViewModel {
     selectedRate.setValue(rateBounce);
   }
 
+  /**
+   * Updates the rates graph with current values in selected campaign
+   */
   private void updateRates(){
     switch (selectedRate.getValue()) {
       case rateBounce :
@@ -366,6 +411,9 @@ public class PrimaryViewModel implements ViewModel {
     }
   }
 
+  /**
+   * Sets a listener for the totals graph selector, changing graph display data and updating it upon a change
+   */
   private void setUpTotalsSelector(){
     selectedTotals.addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
@@ -379,6 +427,10 @@ public class PrimaryViewModel implements ViewModel {
 
     selectedTotals.setValue(totalImpressions);
   }
+
+  /**
+   * Updates the totals graph with current values in selected campaign
+   */
   private void updateTotals() {
     //TODO refactor into one method like demographics
     switch (selectedTotals.getValue()) {
@@ -400,6 +452,9 @@ public class PrimaryViewModel implements ViewModel {
     }
   }
 
+  /**
+   * Sets a listener for the demographics chart selector, changing chart display data and updating it upon a change
+   */
   private void setupDemographicSelector() {
     selectedDemographic.addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
@@ -414,6 +469,10 @@ public class PrimaryViewModel implements ViewModel {
     selectedDemographic.setValue(Demographic.Gender);
   }
 
+  /**
+   * Updates the demographics pie chart with values in given map
+   * @param dataMap map containing data to display
+   */
   private void updatePieChartData(HashMap<String, BigDecimal> dataMap) {
     demographicsChartData.clear();
     for (Entry<String, BigDecimal> entry : dataMap.entrySet()) {
@@ -423,6 +482,10 @@ public class PrimaryViewModel implements ViewModel {
     }
   }
 
+  /**
+   * Updates the averages line chart with values in given map
+   * @param dataMap map containing data to display
+   */
   private void updateLineChartData(HashMap<String, BigDecimal> dataMap) {
     averageChartData.clear();
     Series<String, Number> s = new Series<>();
@@ -451,6 +514,10 @@ public class PrimaryViewModel implements ViewModel {
     averageChartData.add(s);
   }
 
+  /**
+   * Updates the totals line chart with values in given map
+   * @param dataMap map containing data to display
+   */
   //TODO factor out repeated code, add better checking of formats, add formatting to other chart updates
   private void updateTotalMetricLineChartData(HashMap<String, Long> dataMap) {
     totalMetricChartData.clear();
@@ -479,6 +546,10 @@ public class PrimaryViewModel implements ViewModel {
     totalMetricChartData.add(s);
   }
 
+  /**
+   * Updates the rates line chart with values in given map
+   * @param dataMap map containing data to display
+   */
   private void updateRatesLineChartData(HashMap<String, BigDecimal> dataMap) {
     rateChartData.clear();
     Series<String, Number> s = new Series<>();
@@ -505,6 +576,10 @@ public class PrimaryViewModel implements ViewModel {
     rateChartData.add(s);
   }
 
+  /**
+   * Updates the total costs line chart with values in given map
+   * @param dataMap map containing data to display
+   */
   private void updateTotalCostLineChartData(HashMap<String, BigDecimal> dataMap) {
     totalCostChartData.clear();
     Series<String, Number> s = new Series<>();
@@ -531,6 +606,9 @@ public class PrimaryViewModel implements ViewModel {
     totalCostChartData.add(s);
   }
 
+  /**
+   * Sets up subscription to filter notifications, applying filter to campaign and updating metrics
+   */
   private void setupFilterReceiving() {
     MvvmFX.getNotificationCenter().subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION, (key, payload) -> {
       try {
@@ -566,6 +644,9 @@ public class PrimaryViewModel implements ViewModel {
     });
   }
 
+  /**
+   * Sets up subscription to totals chart granularity notifications, applying granularity to campaign data and updating graph
+   */
   private void setupGranReceiving() {
     MvvmFX.getNotificationCenter().subscribe(PrimaryView.GRAN_NOTIFICATION, (key, payload) -> {
       try {
@@ -582,6 +663,9 @@ public class PrimaryViewModel implements ViewModel {
     });
   }
 
+  /**
+   * Sets up subscription to averages chart granularity notifications, applying granularity to campaign data and updating graph
+   */
   private void setupGranAvgsReceiving() {
     MvvmFX.getNotificationCenter().subscribe(PrimaryView.GRAN_NOTIFICATION_AVG, (key, payload) -> {
       try {
@@ -598,6 +682,9 @@ public class PrimaryViewModel implements ViewModel {
     });
   }
 
+  /**
+   * Sets up subscription to cost totals chart granularity notifications, applying granularity to campaign data and updating graph
+   */
   private void setupGranCostTotalsReceiving() {
     MvvmFX.getNotificationCenter().subscribe(PrimaryView.GRAN_NOTIFICATION_COST_TOTAL, (key, payload) -> {
       try {
@@ -614,6 +701,9 @@ public class PrimaryViewModel implements ViewModel {
     });
   }
 
+  /**
+   * Sets up subscription to rates chart granularity notifications, applying granularity to campaign data and updating graph
+   */
   private void setupGranRatesReceiving() {
     MvvmFX.getNotificationCenter().subscribe(PrimaryView.GRAN_NOTIFICATION_RATES, (key, payload) -> {
       try {
@@ -630,20 +720,29 @@ public class PrimaryViewModel implements ViewModel {
     });
   }
 
+  /**
+   * Sets up subscription to campaign import notifications, setting campaign progress to completed upon successful import
+   */
   private void setupCampaignReceiving(){
     MvvmFX.getNotificationCenter().subscribe("Imported", (key, payload) -> {
       campaigns.setAll(Campaign.getCampaigns());
       DatabaseViewModel.changeProgressToCompleted((Campaign) payload[0]);
-      System.out.println("campaigns set.");
+      Logger.log("[INFO] Campaigns set.");
       });
   }
 
+  /**
+   * Sets up subscription to bounce definition updating notifications, updating the bounce metrics
+   */
   private void setupBounceReceiving() {
     MvvmFX.getNotificationCenter().subscribe(SettingsView.BOUNCES, (key, payload) -> {
       updateBounceMetrics();
     });
   }
 
+  /**
+   * Sets up subscription to granularity-reset notifications, updating all graphs' data accordingly
+   */
   private void setupGranResetReceiving() {
     MvvmFX.getNotificationCenter().subscribe(Campaign.RESET_GRAN, (key, payload) -> {
       updateTotals();

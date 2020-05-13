@@ -268,6 +268,9 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     dialogExport.close();
   }
 
+  /**
+   * Sets up subscription to granularity-reset notifications, resetting selectors accordingly
+   */
   private void setupGranResetReceiving() {
     MvvmFX.getNotificationCenter().subscribe(Campaign.RESET_GRAN, (key, payload) -> {
       totalMetricDay.setSelected(true);

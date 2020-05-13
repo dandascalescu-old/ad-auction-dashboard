@@ -73,7 +73,7 @@
          <Pane fx:id="averageCostPane" layoutX="55.0" layoutY="270.0" prefHeight="342.0" prefWidth="1063.0" styleClass="pane1">
             <children>
                <Line endX="962.0" layoutX="100.0" layoutY="43.0" opacity="0.1" startX="-100.0" styleClass="line" />
-               <Text fill="#3c3f41" layoutX="23.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="AVERAGE COST ">
+               <Text fill="#3c3f41" layoutX="23.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="AVERAGE COST OVER TIME">
                   <font>
                      <Font name="SansSerif Bold" size="13.0" />
                   </font>

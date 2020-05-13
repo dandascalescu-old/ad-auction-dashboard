@@ -82,7 +82,7 @@ class PrimaryViewModelTest {
 
   @Test
   void averagesList() {
-    String[] averages = {"Average Cost of Click", "Average Cost of Impression", "Average Cost of Acquisition"};
+    String[] averages = {"Impressions", "Clicks", "Conversions"};
     List<String> totalsList = Arrays.asList(averages);
     String avgNotAvailable = "";
 

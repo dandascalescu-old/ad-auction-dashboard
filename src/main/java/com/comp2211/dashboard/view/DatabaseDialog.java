@@ -121,11 +121,10 @@ public class DatabaseDialog {
         }
     }
 
-
     public void createCampaignFromFiles(ActionEvent event){
         if (impressionFilePath.equals("") || serverFilePath.equals("") || clickFilePath.equals("") || campaignTitle.getText().equals("")){
             alertAddingText.setText("ALL FIELDS MUST BE FILLED!");
-        }else{
+        } else {
             Thread t = new Thread(() -> {
                 try {
                     Campaign campaign = dataImporter.startImport(campaignTitle.getText(), new File(impressionFilePath), new File(clickFilePath), new File(serverFilePath));
