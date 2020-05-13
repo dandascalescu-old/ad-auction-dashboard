@@ -566,21 +566,6 @@ public class PrimaryViewModel implements ViewModel {
     });
   }
 
-  public void updateAll(Filter filter){
-    selectedCampaign.getValue().resetGranularity();
-    updateTotalMetrics();
-    updateTotalCosts();
-    //TODO change to apply correct bounce method
-    updateBouncesCount(filter);
-
-    updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
-    updateTotals();
-    updateAverages();
-    updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
-    updateRates();
-    Logger.log("[INFO] Filter applied successfully.");
-  }
-
   private void setupGranReceiving() {
     MvvmFX.getNotificationCenter().subscribe(PrimaryView.GRAN_NOTIFICATION, (key, payload) -> {
       try {
