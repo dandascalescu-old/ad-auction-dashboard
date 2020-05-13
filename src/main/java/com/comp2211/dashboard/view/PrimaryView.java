@@ -12,7 +12,10 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
@@ -76,13 +79,13 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
   private BarChart<String, Number> averageChart;
 
   @FXML
-  private LineChart<String, Number> rateChart;
+  private HoverLineChart<String, Number> rateChart;
 
   @FXML
-  private LineChart<String, Number> totalMetricsLineChart;
+  private HoverLineChart<String, Number> totalMetricsLineChart;
 
   @FXML
-  private LineChart<String, Number> totalCostChart;
+  private HoverLineChart<String, Number> totalCostChart;
 
   @FXML
   private PieChart demographicsChart;

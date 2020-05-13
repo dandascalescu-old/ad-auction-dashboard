@@ -52,7 +52,7 @@ public class CompareView implements FxmlView<CompareLeftViewModel>, Initializabl
     private JFXComboBox<Demographics.Demographic> demogRightCombobox, demogLeftCombobox;
 
     @FXML
-    private LineChart<String, Number> averageChart;
+    private HoverLineChart<String, Number> averageChart;
 
     @FXML
     private PieChart demogLeftChart, demogRightChart;
@@ -67,7 +67,7 @@ public class CompareView implements FxmlView<CompareLeftViewModel>, Initializabl
 
 
     @FXML
-    private LineChart<String, Number> totalChart;
+    private HoverLineChart<String, Number> totalChart;
 
     ViewTuple<PrimaryFilterDialog, PrimaryFilterDialogModel> primaryDialogViewLeft;
 
