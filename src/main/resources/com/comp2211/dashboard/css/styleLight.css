@@ -11,17 +11,17 @@
 }
 
 .combo-box .combo-box-popup .list-cell:hover {
-    -fx-background-color:  #494949 ;
-    -fx-text-fill: #bbbbbb;
+    /*-fx-background-color:  #494949 ;*/
+    /*-fx-text-fill: #bbbbbb;*/
 }
 
 .combo-box .combo-box-popup .list-cell:selected {
-    -fx-background-color: black;
+    -fx-background-color: skyblue;
 }
 
 .combo-box .combo-box-popup .list-cell{
-    -fx-background-color: #bbbbbb ;
-    -fx-border-color:#bbbbbb;
+    -fx-background-color: #ffffff ;
+    -fx-border-color:#ffffff;
 
 }
 
@@ -29,10 +29,10 @@
     -fx-background-color: transparent;
 }
 
-.default-color0.chart-line-symbol { -fx-background-color: #3c3f41, transparent; }
-.default-color0.chart-series-line { -fx-stroke: white; }
-.default-color1.chart-line-symbol { -fx-background-color: #3c3f41, transparent; }
-.default-color1.chart-series-line { -fx-stroke: white; }
+.default-color0.chart-line-symbol { -fx-background-color: lightgrey, transparent; }
+.default-color0.chart-series-line { -fx-stroke: lightblue; }
+.default-color1.chart-line-symbol { -fx-background-color: lightgrey, transparent; }
+.default-color1.chart-series-line { -fx-stroke: orange; }
 
 .axis:left {
     -fx-border-color: transparent #3c3f41 transparent transparent;
@@ -41,9 +41,9 @@
     -fx-border-color: #3c3f41 transparent transparent;
 }
 
-.chart-bar { -fx-bar-fill: #3c3f41; }
+.chart-bar { -fx-bar-fill: orange; }
 
-.default-color0.chart-bar { -fx-bar-color: #3c3f41; }
+.default-color0.chart-bar { -fx-bar-color: orange; } /*#3c3f41*/
 
 .axis {
     -fx-tick-label-fill: #3c3f41;
