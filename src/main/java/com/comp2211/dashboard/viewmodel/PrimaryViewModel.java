@@ -66,10 +66,9 @@ public class PrimaryViewModel implements ViewModel {
   private ObjectProperty<Demographic> selectedDemographic = new SimpleObjectProperty<>();
   private ObjectProperty<Campaign> selectedCampaign = new SimpleObjectProperty<>();
 
-  //TODO rename so they are the same as the totals below?
-  private final String avgCostClick = "Average Cost of Click";
-  private final String avgCostImpr = "Average Cost of Impression";
-  private final String avgCostAcq = "Average Cost of Acquisition";
+  private final String avgCostImpr = "Impressions";
+  private final String avgCostClick = "Clicks";
+  private final String avgCostAcq = "Conversions";
 
   private final String totalImpressions = "Impressions";
   private final String totalClicks = "Clicks";
@@ -96,8 +95,7 @@ public class PrimaryViewModel implements ViewModel {
     rates = FXCollections.observableArrayList();
 
     campaigns.addAll(Campaign.getCampaigns());
-    //TODO reorder so same as totals?
-    averages.addAll(avgCostClick, avgCostImpr, avgCostAcq);
+    averages.addAll(avgCostImpr, avgCostClick, avgCostAcq);
     demographics.addAll(Demographics.Demographic.values());
     totals.addAll(totalImpressions, totalClicks, totalUniques, totalBounces, totalConversions);
     rates.addAll(rateBounce, rateCTR);
@@ -335,16 +333,14 @@ public class PrimaryViewModel implements ViewModel {
    * Updates all metrics upon changing campaigns
    */
   private void updateCampaign(){
-    //TODO move all selectors to correct positions when switching campaigns, maybe save all selectors' positions (such as time-gran/graphs) along with applied filter
-    Filter filter = (selectedCampaign.getValue().hasAppliedFilter() ? selectedCampaign.getValue().getAppliedFilter() : new Filter());
+    selectedCampaign.getValue().resetGranularity();
+
     updateTotalMetrics();
     updateTotalCosts();
-
     updateBounceMetrics();
-
     updatePieChartData(selectedCampaign.getValue().getPercentageMap(Demographic.Gender));
-    updateAverages();
-    updateTotals();
+    //updateAverages();
+    //updateTotals();
   }
 
   /**
@@ -356,12 +352,12 @@ public class PrimaryViewModel implements ViewModel {
         Optional<String> matchingAverage = averages.stream().filter(newVal::equals).findFirst();
         matchingAverage.ifPresent(avg -> selectedAverage.setValue(avg));
       } else {
-        selectedAverage.setValue(avgCostClick);
+        selectedAverage.setValue(avgCostImpr);
       }
       updateAverages();
     });
 
-    selectedAverage.setValue(avgCostClick);
+    selectedAverage.setValue(avgCostImpr);
   }
 
   /**
@@ -604,7 +600,6 @@ public class PrimaryViewModel implements ViewModel {
 
         updateTotalMetrics();
         updateTotalCosts();
-        //TODO change to apply correct bounce method
         updateBouncesCount(filter);
 
         updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
