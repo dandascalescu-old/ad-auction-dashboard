@@ -24,6 +24,12 @@ import java.util.ResourceBundle;
 
 public class CompareView implements FxmlView<CompareLeftViewModel>, Initializable{
 
+    public static final String GRAN_NOTIFICATION = "TOTALS_GRANULARITY";
+    public static final String GRAN_NOTIFICATION_AVG = "AVGS_GRANULARITY";
+    public static final String GRAN_NOTIFICATION_COST_TOTAL_LEFT = "COST_TOTALS_GRANULARITY_LEFT";
+    public static final String GRAN_NOTIFICATION_COST_TOTAL_RIGHT = "COST_TOTALS_GRANULARITY_RIGHT";
+    public static final String GRAN_NOTIFICATION_RATES = "RATES_GRANULARITY";
+
     @FXML
     private JFXComboBox<Campaign> campaignComboboxLeft, campaignComboboxRight;
 
@@ -46,13 +52,13 @@ public class CompareView implements FxmlView<CompareLeftViewModel>, Initializabl
     private Text totalImpressionsRight, totalClicksRight, totalUniquesRight, totalBouncesRight, totalConversionsRight;
 
     @FXML
-    private JFXComboBox<String> averageCombobox, totalCombobox;
+    private JFXComboBox<String> averageCombobox, totalCombobox, rateCombobox;
 
     @FXML
     private JFXComboBox<Demographics.Demographic> demogRightCombobox, demogLeftCombobox;
 
     @FXML
-    private HoverLineChart<String, Number> averageChart;
+    private HoverLineChart<String, Number> averageChart, totalCostChartRight, totalCostChartLeft, rateChart;
 
     @FXML
     private PieChart demogLeftChart, demogRightChart;
@@ -109,11 +115,16 @@ public class CompareView implements FxmlView<CompareLeftViewModel>, Initializabl
         bounceRateTextRight.textProperty().bind(viewModelLeft.bounceRateTextPropertyRight());
         bounceConvTextRight.textProperty().bind(viewModelLeft.bounceConversionTextPropertyRight());
 
+
+
         demogRightCombobox.setItems(viewModelLeft.demographicsList());
         demogRightCombobox.valueProperty().bindBidirectional(viewModelLeft.selectedDemographicPropertyRight());
 
         demogRightChart.setData(viewModelLeft.demographicsChartDataRight());
         demogRightChart.setLegendVisible(false);
+
+        totalCostChartRight.setData(viewModelLeft.totalCostChartDataRight());
+        totalCostChartRight.setLegendVisible(false);
 
 
     }
@@ -147,69 +158,77 @@ public class CompareView implements FxmlView<CompareLeftViewModel>, Initializabl
         demogLeftChart.setData(viewModelLeft.demographicsChartData());
         demogLeftChart.setLegendVisible(false);
 
+        totalCostChartLeft.setData(viewModelLeft.totalCostChartDataLeft());
+        totalCostChartLeft.setLegendVisible(false);
+
         totalCombobox.setItems(viewModelLeft.totalList());
         totalCombobox.valueProperty().bindBidirectional(viewModelLeft.selectedTotalMetricProperty());
 
         totalChart.setData(viewModelLeft.totalMetricChartData());
-        totalChart.setLegendVisible(false);
+        totalChart.setLegendVisible(true);
         totalChart.getXAxis().setTickLabelRotation(-30);
         totalChart.getYAxis().setAutoRanging(true);
 
         averageChart.setData(viewModelLeft.averageChartData());
-        averageChart.setLegendVisible(false);
+        averageChart.setLegendVisible(true);
         averageChart.getYAxis().setAutoRanging(true);
 
+        rateCombobox.setItems(viewModelLeft.ratesList());
+        rateCombobox.valueProperty().bindBidirectional(viewModelLeft.selectedRatePropery());
 
+        rateChart.setData(viewModelLeft.rateChartData());
+        rateChart.setLegendVisible(true);
+        rateChart.getXAxis().setTickLabelRotation(-30);
 
     }
 
     public void changeAverageGran(ActionEvent event) {
         if (averageSix.isSelected()){
-
+            MvvmFX.getNotificationCenter().publish(CompareView.GRAN_NOTIFICATION_AVG, (byte) 6);
         } else if (averageTwelve.isSelected()){
-
+            MvvmFX.getNotificationCenter().publish(CompareView.GRAN_NOTIFICATION_AVG, (byte) 12);
         } else if (averageDay.isSelected()){
-
+            MvvmFX.getNotificationCenter().publish(CompareView.GRAN_NOTIFICATION_AVG, (byte) 24);
         }
     }
 
     public void changeTotalCostLeftGran(ActionEvent event) {
-        if (totalCostLeftSix.isSelected()){
-
-        } else if (totalCostLeftTwelve.isSelected()){
-
-        } else if (totalCostLeftDay.isSelected()){
-
+        if(totalCostLeftSix.isSelected()){
+            MvvmFX.getNotificationCenter().publish(CompareView.GRAN_NOTIFICATION_COST_TOTAL_LEFT, (byte) 6);
+        }else if(totalCostLeftTwelve.isSelected()){
+            MvvmFX.getNotificationCenter().publish(CompareView.GRAN_NOTIFICATION_COST_TOTAL_LEFT, (byte) 12);
+        }else if(totalCostLeftDay.isSelected()){
+            MvvmFX.getNotificationCenter().publish(CompareView.GRAN_NOTIFICATION_COST_TOTAL_LEFT, (byte) 24);
         }
     }
 
     public void changeTotalCostRightGran(ActionEvent event) {
-        if (totalCostRightSix.isSelected()){
-
-        } else if (totalCostRightTwelve.isSelected()){
-
-        } else if (totalCostRightDay.isSelected()){
-
+        if(totalCostRightSix.isSelected()){
+            MvvmFX.getNotificationCenter().publish(CompareView.GRAN_NOTIFICATION_COST_TOTAL_RIGHT, (byte) 6);
+        }else if(totalCostRightTwelve.isSelected()){
+            MvvmFX.getNotificationCenter().publish(CompareView.GRAN_NOTIFICATION_COST_TOTAL_RIGHT, (byte) 12);
+        }else if(totalCostRightDay.isSelected()){
+            MvvmFX.getNotificationCenter().publish(CompareView.GRAN_NOTIFICATION_COST_TOTAL_RIGHT, (byte) 24);
         }
     }
 
     public void changeRatesGran(ActionEvent event) {
-        if (rateSix.isSelected()){
-
-        }else if (rateTwelve.isSelected()){
-
-        }else if (rateDay.isSelected()){
-
+        if(rateSix.isSelected()){
+            MvvmFX.getNotificationCenter().publish(CompareView.GRAN_NOTIFICATION_RATES, (byte) 6);
+        }else if(rateTwelve.isSelected()){
+            MvvmFX.getNotificationCenter().publish(CompareView.GRAN_NOTIFICATION_RATES, (byte) 12);
+        }else if(rateDay.isSelected()){
+            MvvmFX.getNotificationCenter().publish(CompareView.GRAN_NOTIFICATION_RATES, (byte) 24);
         }
     }
 
     public void changeTotalMetricsGran(ActionEvent event) {
         if (totalSix.isSelected()){
-
-        }else if (totalTwelve.isSelected()){
-
-        }else if (totalDay.isSelected()){
-
+            MvvmFX.getNotificationCenter().publish(CompareView.GRAN_NOTIFICATION, (byte) 6);
+        } else if (totalTwelve.isSelected()){
+            MvvmFX.getNotificationCenter().publish(CompareView.GRAN_NOTIFICATION, (byte) 12);
+        } else if (totalDay.isSelected()){
+            MvvmFX.getNotificationCenter().publish(CompareView.GRAN_NOTIFICATION, (byte) 24);
         }
 
     }
@@ -218,6 +237,7 @@ public class CompareView implements FxmlView<CompareLeftViewModel>, Initializabl
         if (primaryDialogViewLeft == null)
             primaryDialogViewLeft = FluentViewLoader.fxmlView(PrimaryFilterDialog.class).load();
         JFXDialogLayout dialogLayout = new JFXDialogLayout();
+        primaryDialogViewLeft.getViewModel().updateLocation("leftCompare");
         dialogLayout.setBody(primaryDialogViewLeft.getView());
         dialogFilterLeft = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
         dialogFilterLeft.setTranslateY(-950);
@@ -228,9 +248,12 @@ public class CompareView implements FxmlView<CompareLeftViewModel>, Initializabl
         if (primaryDialogViewRight == null)
             primaryDialogViewRight = FluentViewLoader.fxmlView(PrimaryFilterDialog.class).load();
         JFXDialogLayout dialogLayout = new JFXDialogLayout();
+        primaryDialogViewLeft.getViewModel().updateLocation("rightCompare");
         dialogLayout.setBody(primaryDialogViewRight.getView());
         dialogFilterRight = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
         dialogFilterRight.setTranslateY(-950);
         dialogFilterRight.show();
     }
+
+
 }

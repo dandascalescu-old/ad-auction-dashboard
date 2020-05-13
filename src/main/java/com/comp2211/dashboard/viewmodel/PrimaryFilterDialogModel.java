@@ -21,6 +21,10 @@ public class PrimaryFilterDialogModel implements ViewModel {
 
     private NotificationCenter notificationCenter;
     public static final String FILTER_NOTIFICATION = "FILTERS";
+    public static final String FILTER_NOTIFICATION_LEFTCOMPARE = "FILTERS_LEFT";
+    public static final String FILTER_NOTIFICATION_RIGHTCOMPARE = "FILTERS_RIGHT";
+
+    private String location = "";
 
     private ObservableList<String> genderList;
     private ObservableList<String> ageList;
@@ -91,11 +95,31 @@ public class PrimaryFilterDialogModel implements ViewModel {
     }
 
     public void applyFilters() {
-        notificationCenter.publish(FILTER_NOTIFICATION,
-                new Filter(startDate.getValue(), endDate.getValue(),
-                        genderString.getValue(), ageString.getValue(), incomeString.getValue(), contextString.getValue()
-                ));
+        if (location.equals("primary")){
+            notificationCenter.publish(FILTER_NOTIFICATION,
+                    new Filter(startDate.getValue(), endDate.getValue(),
+                            genderString.getValue(), ageString.getValue(), incomeString.getValue(), contextString.getValue()
+                    ));
+        }else if (location.equals("leftCompare")){
+            notificationCenter.publish(FILTER_NOTIFICATION_LEFTCOMPARE,
+                    new Filter(startDate.getValue(), endDate.getValue(),
+                            genderString.getValue(), ageString.getValue(), incomeString.getValue(), contextString.getValue()
+                    ));
 
+        }else if (location.equals("rightCompare")){
+            notificationCenter.publish(FILTER_NOTIFICATION_RIGHTCOMPARE,
+                    new Filter(startDate.getValue(), endDate.getValue(),
+                            genderString.getValue(), ageString.getValue(), incomeString.getValue(), contextString.getValue()
+                    ));
+        }
+
+
+
+
+    }
+
+    public void updateLocation(String location){
+        this.location = location;
 
     }
 

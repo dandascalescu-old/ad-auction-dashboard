@@ -241,6 +241,7 @@ public class PrimaryView implements FxmlView<PrimaryViewModel> {
     if (primaryDialogView == null)
       primaryDialogView = FluentViewLoader.fxmlView(PrimaryFilterDialog.class).load();
     JFXDialogLayout dialogLayout = new JFXDialogLayout();
+    primaryDialogView.getViewModel().updateLocation("primary");
     dialogLayout.setBody(primaryDialogView.getView());
     dialogFilter = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
     dialogFilter.setTranslateY(-400);
