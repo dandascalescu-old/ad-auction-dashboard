@@ -20,10 +20,12 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
@@ -518,26 +520,48 @@ public class PrimaryViewModel implements ViewModel {
         Filter filter = (Filter) payload[0];
         filter.setCampaignID(selectedCampaign.get().getCampaignID());
         Logger.log("[INFO] Applying filter...");
-        selectedCampaign.getValue().resetGranularity();
+        Thread runLater = new Thread(){
+          @Override
+          public void run() {
+            Platform.runLater(()->{
+              selectedCampaign.getValue().resetGranularity();
+              updateTotalMetrics();
+              updateTotalCosts();
+              //TODO change to apply correct bounce method
+              updateBouncesCount(filter);
+
+              updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
+              updateTotals();
+              updateAverages();
+              updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
+              updateRates();
+              Logger.log("[INFO] Filter applied successfully.");
+            });
+          }
+        };
         selectedCampaign.getValue().cacheData(filter);
 
-        updateTotalMetrics();
-        updateTotalCosts();
-        //TODO change to apply correct bounce method
-        updateBouncesCount(filter);
-
-        updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
-        updateTotals();
-        updateAverages();
-        updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
-        updateRates();
-
-        Logger.log("[INFO] Filter applied successfully.");
+        runLater.start();
       } catch (ClassCastException e) {
         e.printStackTrace();
         Logger.log("[ERROR] Invalid filter received.");
       }
     });
+  }
+
+  public void updateAll(Filter filter){
+    selectedCampaign.getValue().resetGranularity();
+    updateTotalMetrics();
+    updateTotalCosts();
+    //TODO change to apply correct bounce method
+    updateBouncesCount(filter);
+
+    updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
+    updateTotals();
+    updateAverages();
+    updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
+    updateRates();
+    Logger.log("[INFO] Filter applied successfully.");
   }
 
   private void setupGranReceiving() {
