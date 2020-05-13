@@ -749,28 +749,28 @@ public class CompareLeftViewModel implements ViewModel {
         MvvmFX.getNotificationCenter().subscribe(PrimaryFilterDialogModel.FILTER_NOTIFICATION_RIGHTCOMPARE, (key, payload) -> {
             try {
                 Filter filter = (Filter) payload[0];
-                filter.setCampaignID(selectedCampaign.get().getCampaignID());
+                filter.setCampaignID(selectedCampaignRight.get().getCampaignID());
                 Logger.log("[INFO] Applying filter...");
                 Thread runLater = new Thread(){
                     @Override
                     public void run() {
                         Platform.runLater(()->{
-                            selectedCampaign.getValue().resetGranularity();
+                            selectedCampaignRight.getValue().resetGranularity();
                             updateTotalMetrics();
                             updateTotalCosts();
                             //TODO change to apply correct bounce method
-                            selectedCampaign.getValue().updateBouncesByPages((byte)1, filter);
+                            selectedCampaignRight.getValue().updateBouncesByPages((byte)1, filter);
 
-                            updatePieChartData(selectedCampaign.getValue().getPercentageMap(selectedDemographic.getValue()));
+                            updatePieChartDataRight(selectedCampaignRight.getValue().getPercentageMap(selectedDemographic.getValue()));
                             updateTotals();
                             updateAverages();
-                            updateTotalCostLineChartData(selectedCampaign.getValue().getDatedCostTotals());
+                            updateTotalCostLineChartDataRight(selectedCampaignRight.getValue().getDatedCostTotals());
                             updateRates();
                             Logger.log("[INFO] Filter applied successfully.");
                         });
                     }
                 };
-                selectedCampaign.getValue().cacheData(filter);
+                selectedCampaignRight.getValue().cacheData(filter);
 
                 runLater.start();
 
