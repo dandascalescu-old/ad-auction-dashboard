@@ -669,7 +669,7 @@ public class MySQLManager extends DatabaseManager {
    * @param table table in which the query is to be executed (so correct headings can be used)
    * @return string containing body of 'CASE' statement
    */
-  private static String hoursToCase(byte hoursGranularity, Table table) {
+  public static String hoursToCase(byte hoursGranularity, Table table) {
     String dateTitle = "Date";
     if (table.equals(Table.server_table)) dateTitle = "Entry_Date";
 
