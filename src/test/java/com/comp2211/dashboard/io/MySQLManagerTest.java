@@ -14,25 +14,36 @@ class MySQLManagerTest {
     void tearDown() {}
 
     @Test
-    void hoursToCase() {
+    void hoursToCase6() {
         Table table = Table.click_table;
         String dateTitle = "Date";
         String string6 = "WHEN TIME("+dateTitle+") BETWEEN '00:00:00' AND '05:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 00:00:00') " +
                 "WHEN TIME("+dateTitle+") BETWEEN '06:00:00' AND '11:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 06:00:00') " +
                 "WHEN TIME("+dateTitle+") BETWEEN '12:00:00' AND '17:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 12:00:00') " +
                 "WHEN TIME("+dateTitle+") BETWEEN '18:00:00' AND '23:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 18:00:00')";
-        String string12 = "WHEN TIME("+dateTitle+") BETWEEN '00:00:00' AND '11:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 00:00:00') " +
-                "WHEN TIME("+dateTitle+") BETWEEN '12:00:00' AND '23:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 12:00:00')";
-        String string24 = "WHEN TIME("+dateTitle+") BETWEEN '00:00:00' AND '23:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 00:00:00')";
-
         assertEquals(
                 string6,
                 MySQLManager.hoursToCase((byte) 6, table)
         );
+    }
+
+    @Test
+    void hoursToCase12() {
+        Table table = Table.click_table;
+        String dateTitle = "Date";
+        String string12 = "WHEN TIME("+dateTitle+") BETWEEN '00:00:00' AND '11:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 00:00:00') " +
+                "WHEN TIME("+dateTitle+") BETWEEN '12:00:00' AND '23:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 12:00:00')";
         assertEquals(
                 string12,
                 MySQLManager.hoursToCase((byte) 12, table)
         );
+    }
+
+    @Test
+    void hoursToCase24() {
+        Table table = Table.click_table;
+        String dateTitle = "Date";
+        String string24 = "WHEN TIME("+dateTitle+") BETWEEN '00:00:00' AND '23:59:59' THEN CONCAT(DATE("+dateTitle+"), ' 00:00:00')";
         assertEquals(
                 string24,
                 MySQLManager.hoursToCase((byte) 24, table)
