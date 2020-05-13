@@ -11,7 +11,7 @@
 }
 
 .combo-box .combo-box-popup .list-cell:hover {
-    /*-fx-background-color:  #494949 ;*/
+    -fx-background-color:  #bbbbbb ;
     /*-fx-text-fill: #bbbbbb;*/
 }
 
@@ -29,10 +29,11 @@
     -fx-background-color: transparent;
 }
 
+
 .default-color0.chart-line-symbol { -fx-background-color: lightgrey, transparent; }
 .default-color0.chart-series-line { -fx-stroke: lightblue; }
 .default-color1.chart-line-symbol { -fx-background-color: lightgrey, transparent; }
-.default-color1.chart-series-line { -fx-stroke: orange; }
+.default-color1.chart-series-line { -fx-stroke: #3c3f41; }
 
 .axis:left {
     -fx-border-color: transparent #3c3f41 transparent transparent;
@@ -41,16 +42,21 @@
     -fx-border-color: #3c3f41 transparent transparent;
 }
 
-.chart-bar { -fx-bar-fill: orange; }
 
-.default-color0.chart-bar { -fx-bar-color: orange; } /*#3c3f41*/
+.chart-bar { -fx-bar-fill: #3c3f41; }
+
+.default-color0.chart-bar { -fx-bar-color: #3c3f41; } /*#3c3f41*/
 
 .axis {
     -fx-tick-label-fill: #3c3f41;
     -fx-font-family: SansSerif;
     -fx-font-weight: bold;
     -fx-tick-label-rotation: 45;
+    -fx-tick-label-font-size: 0.7em;
+
 }
+.vertical { -fx-rotate: -90; }
+
 
 .scroll-pane{
     -fx-background-color: #e1e1e1;
