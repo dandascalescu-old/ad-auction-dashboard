@@ -3,18 +3,15 @@ package com.comp2211.dashboard.view;
 import com.comp2211.dashboard.Campaign;
 import com.comp2211.dashboard.model.data.Demographics;
 import com.comp2211.dashboard.viewmodel.CompareLeftViewModel;
-import com.comp2211.dashboard.viewmodel.CompareRightViewModel;
 import com.comp2211.dashboard.viewmodel.PrimaryFilterDialogModel;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXToggleNode;
 import de.saxsys.mvvmfx.*;
-import de.saxsys.mvvmfx.internal.viewloader.View;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
@@ -66,11 +63,8 @@ public class CompareView implements FxmlView<CompareLeftViewModel>, Initializabl
     @FXML
     private StackPane stackPane2;
 
-
-
     @InjectViewModel
     private CompareLeftViewModel viewModelLeft;
-
 
     @FXML
     private HoverLineChart<String, Number> totalChart;
@@ -87,6 +81,16 @@ public class CompareView implements FxmlView<CompareLeftViewModel>, Initializabl
             totalCostRightSix, totalCostRightTwelve, totalCostRightDay,
             rateSix, rateTwelve, rateDay,
             totalCostLeftSix, totalCostLeftTwelve, totalCostLeftDay;
+
+    public static void cancelDialogActionLeft() {
+        dialogFilterLeft.close();
+    }
+
+    public static void cancelDialogActionRight() {
+        dialogFilterRight.close();
+    }
+
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -238,6 +242,7 @@ public class CompareView implements FxmlView<CompareLeftViewModel>, Initializabl
             primaryDialogViewLeft = FluentViewLoader.fxmlView(PrimaryFilterDialog.class).load();
         JFXDialogLayout dialogLayout = new JFXDialogLayout();
         primaryDialogViewLeft.getViewModel().updateLocation("leftCompare");
+        PrimaryFilterDialog.updateLocation("leftCompare");
         dialogLayout.setBody(primaryDialogViewLeft.getView());
         dialogFilterLeft = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
         dialogFilterLeft.setTranslateY(-950);
@@ -248,7 +253,8 @@ public class CompareView implements FxmlView<CompareLeftViewModel>, Initializabl
         if (primaryDialogViewRight == null)
             primaryDialogViewRight = FluentViewLoader.fxmlView(PrimaryFilterDialog.class).load();
         JFXDialogLayout dialogLayout = new JFXDialogLayout();
-        primaryDialogViewLeft.getViewModel().updateLocation("rightCompare");
+        primaryDialogViewRight.getViewModel().updateLocation("rightCompare");
+        PrimaryFilterDialog.updateLocation("rightCompare");
         dialogLayout.setBody(primaryDialogViewRight.getView());
         dialogFilterRight = new JFXDialog(stackPane2, dialogLayout, JFXDialog.DialogTransition.BOTTOM);
         dialogFilterRight.setTranslateY(-950);

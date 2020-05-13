@@ -113,9 +113,6 @@ public class PrimaryFilterDialogModel implements ViewModel {
                     ));
         }
 
-
-
-
     }
 
     public void updateLocation(String location){
