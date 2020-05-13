@@ -602,7 +602,7 @@ public class MySQLManager extends DatabaseManager {
     return where;
   }
 
-  private static String hoursToCase(byte hoursGranularity, Table table) {
+  public static String hoursToCase(byte hoursGranularity, Table table) {
     String dateTitle = "Date";
     if (table.equals(Table.server_table)) dateTitle = "Entry_Date";
 
