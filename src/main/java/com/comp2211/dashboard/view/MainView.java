@@ -6,6 +6,7 @@ import com.comp2211.dashboard.viewmodel.*;
 import com.jfoenix.controls.JFXButton;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.FxmlView;
+import de.saxsys.mvvmfx.MvvmFX;
 import de.saxsys.mvvmfx.ViewTuple;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,9 +44,6 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
         recSettings.setVisible(false);
 
         //ViewTuple<PrimaryView, PrimaryViewModel> viewTuple1 = FluentViewLoader.fxmlView(PrimaryViewView.class).load();
-
-        if (primaryTutple == null)
-            primaryTutple = FluentViewLoader.fxmlView(PrimaryView.class).load();
         mainPane.setCenter(primaryTutple.getView());
     }
 
@@ -55,7 +53,6 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
         recCompare.setVisible(false);
         recSettings.setVisible(false);
 
-        databaseTuple = FluentViewLoader.fxmlView(DatabaseView.class).load();
         mainPane.setCenter(databaseTuple.getView());
     }
 
@@ -69,7 +66,13 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
         recSettings.setVisible(false);
 
         primaryTutple = FluentViewLoader.fxmlView(PrimaryView.class).load();
+        compareTuple = FluentViewLoader.fxmlView(CompareView.class).load();
+        databaseTuple = FluentViewLoader.fxmlView(DatabaseView.class).load();
+        settingsTuple = FluentViewLoader.fxmlView(SettingsView.class).load();
+
         mainPane.setCenter(primaryTutple.getView());
+        setupDarkModeReceiving();
+        setupLightModeReceiving();
 
     }
 
@@ -83,7 +86,6 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
         recCompare.setVisible(true);
         recSettings.setVisible(false);
 
-        compareTuple = FluentViewLoader.fxmlView(CompareView.class).load();
         mainPane.setCenter(compareTuple.getView());
     }
 
@@ -94,7 +96,43 @@ public class MainView implements Initializable, FxmlView<MainViewModel> {
         recSettings.setVisible(true);
 
 
-        settingsTuple = FluentViewLoader.fxmlView(SettingsView.class).load();
         mainPane.setCenter(settingsTuple.getView());
+    }
+
+    private void setupDarkModeReceiving(){
+        MvvmFX.getNotificationCenter().subscribe(App.DARK_MODE, (key, payload) -> {
+            this.mainPane.getStylesheets().clear();
+            this.mainPane.getStylesheets().add(App.styleDark);
+
+            primaryTutple.getView().getStylesheets().clear();
+            primaryTutple.getView().getStylesheets().add(App.styleDark);
+
+            databaseTuple.getView().getStylesheets().clear();
+            databaseTuple.getView().getStylesheets().add(App.styleDark);
+
+            compareTuple.getView().getStylesheets().clear();
+            compareTuple.getView().getStylesheets().add(App.styleDark);
+
+            settingsTuple.getView().getStylesheets().clear();
+            settingsTuple.getView().getStylesheets().add(App.styleDark);
+        });
+    }
+    private void setupLightModeReceiving(){
+        MvvmFX.getNotificationCenter().subscribe(App.LIGHT_MODE, (key, payload) -> {
+            this.mainPane.getStylesheets().clear();
+            this.mainPane.getStylesheets().add(App.styleLight);
+
+            primaryTutple.getView().getStylesheets().clear();
+            primaryTutple.getView().getStylesheets().add(App.styleLight);
+
+            databaseTuple.getView().getStylesheets().clear();
+            databaseTuple.getView().getStylesheets().add(App.styleLight);
+
+            compareTuple.getView().getStylesheets().clear();
+            compareTuple.getView().getStylesheets().add(App.styleLight);
+
+            settingsTuple.getView().getStylesheets().clear();
+            settingsTuple.getView().getStylesheets().add(App.styleLight);
+        });
     }
 }
